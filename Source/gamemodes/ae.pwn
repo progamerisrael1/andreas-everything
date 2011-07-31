@@ -42,8 +42,10 @@
 #define COLOR_DBLUE 0x2641FEAA
 #define COLOR_ALLDEPT 0xFF8282AA
 // Dialog Defines
-#define DIALOG_REGISTER 100
-#define DIALOG_LOGIN 101
+#define DIALOG_BLANK 100
+#define DIALOG_REGISTER 101
+#define DIALOG_LOGIN 102
+#define DIALOG_HELP 103
 // Variables
 new
 	LoggedIn[MAX_PLAYERS];
@@ -172,20 +174,12 @@ public OnPlayerText(playerid, text[])
 	return 1;
 }
 
-/*public OnPlayerCommandText(playerid, cmdtext[])
-{
-	if (strcmp("/mycommand", cmdtext, true, 10) == 0)
-	{
-		// Do something here
-		return 1;
-	}
-	return 0;
-}*/
-
 //============================================================================//
 // ZCMD Commands
 CMD:help(playerid, params[])
 {
+	ShowPlayerDialog(playerid, DIALOG_HELP, DIALOG_STYLE_LIST, "Andreas Everything - Help List",
+	"Rules\nCommands\nServer Info", "Ok", "Close");
 	return 1;
 }
 //============================================================================//
@@ -355,6 +349,31 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		    ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "Welcome back to Andreas Everything!",
 			"Please enter your desired password below, and click 'Login'.\nIf you wish to leave, click 'Leave'.", "Login", "Leave");
   	}
+  	// Help Dialog
+  	if(dialogid == DIALOG_HELP)
+  	{
+  	    if(response)
+  	    {
+			switch(listitem)
+			{
+		    	case 0: // Rules
+		    	{
+		            ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Rules",
+		            "Andreas Everything rules comming soon.", "Ok", "");
+		    	}
+		    	case 1: // Commands
+		    	{
+		    	    ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Commands",
+		            "Andreas Everything rules comming soon.", "Ok", "");
+		    	}
+				case 2: // Server Info
+				{
+				    ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Server Info",
+		            "Andreas Everything rules comming soon.", "Ok", "");
+				}
+			}
+		}
+	}
 	return 1;
 }
 

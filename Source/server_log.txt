@@ -165,3 +165,260 @@ v0.3c R5, (C)2005-2011 SA-MP Team
 
 *** Streamer Plugin v2.5.2 by Incognito unloaded ***
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[17:45:26] filterscripts = ""  (string)
+[17:45:26] weburl = "www.sa-mp.com"  (string)
+[17:45:26] 
+[17:45:26] Server Plugins
+[17:45:26] --------------
+[17:45:26]  Loading plugin: sscanf
+[17:45:26] 
+
+[17:45:26]  ===============================
+
+[17:45:26]       sscanf plugin loaded.     
+
+[17:45:26]    (c) 2009 Alex "Y_Less" Cole
+
+[17:45:26]  ===============================
+
+[17:45:26]   Loaded.
+[17:45:26]  Loading plugin: streamer
+[17:45:26] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[17:45:26]   Loaded.
+[17:45:26]  Loaded 2 plugins.
+
+[17:45:26] 
+[17:45:26] Filter Scripts
+[17:45:26] ---------------
+[17:45:26]   Loaded 0 filter scripts.
+
+[17:45:26] BUD v1.0.3 BETA loaded.
+[17:45:26] 
+----------------------------------
+[17:45:26]  Andreas Everything 
+[17:45:26]  Script Lines: 431 
+[17:45:26]  Coded by: SA-MP Community 
+[17:45:26] ----------------------------------
+
+[17:45:26] Number of vehicle models: 0
+[17:48:47] Incoming connection: 127.0.0.1:1620
+[17:48:47] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[17:50:43] [chat] [Brady_Clouser]: yo
+[17:50:46] [part] Brady_Clouser has left the server (0:1)
+[17:51:02] --- Server Shutting Down.
+[17:51:02] 
+
+[17:51:02]  ===============================
+
+[17:51:02]      sscanf plugin unloaded.    
+
+[17:51:02]  ===============================
+
+[17:51:02] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[17:53:12] filterscripts = ""  (string)
+[17:53:12] weburl = "www.sa-mp.com"  (string)
+[17:53:12] 
+[17:53:12] Server Plugins
+[17:53:12] --------------
+[17:53:12]  Loading plugin: sscanf
+[17:53:12] 
+
+[17:53:12]  ===============================
+
+[17:53:12]       sscanf plugin loaded.     
+
+[17:53:12]    (c) 2009 Alex "Y_Less" Cole
+
+[17:53:12]  ===============================
+
+[17:53:12]   Loaded.
+[17:53:12]  Loading plugin: streamer
+[17:53:12] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[17:53:12]   Loaded.
+[17:53:12]  Loaded 2 plugins.
+
+[17:53:12] 
+[17:53:12] Filter Scripts
+[17:53:12] ---------------
+[17:53:12]   Loaded 0 filter scripts.
+
+[17:53:12] BUD v1.0.3 BETA loaded.
+[17:53:12] 
+----------------------------------
+[17:53:12]  Andreas Everything 
+[17:53:12]  Script Lines: 431 
+[17:53:12]  Coded by: SA-MP Community 
+[17:53:12] ----------------------------------
+
+[17:53:12] Number of vehicle models: 0
+[17:53:41] Incoming connection: 127.0.0.1:1631
+[17:53:41] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[17:54:58] [part] Brady_Clouser has left the server (0:1)
+[17:56:32] --- Server Shutting Down.
+[17:56:32] 
+
+[17:56:32]  ===============================
+
+[17:56:32]      sscanf plugin unloaded.    
+
+[17:56:32]  ===============================
+
+[17:56:32] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[17:58:13] filterscripts = ""  (string)
+[17:58:13] weburl = "www.sa-mp.com"  (string)
+[17:58:13] 
+[17:58:13] Server Plugins
+[17:58:13] --------------
+[17:58:13]  Loading plugin: sscanf
+[17:58:13] 
+
+[17:58:13]  ===============================
+
+[17:58:13]       sscanf plugin loaded.     
+
+[17:58:13]    (c) 2009 Alex "Y_Less" Cole
+
+[17:58:13]  ===============================
+
+[17:58:13]   Loaded.
+[17:58:13]  Loading plugin: streamer
+[17:58:13] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[17:58:13]   Loaded.
+[17:58:13]  Loaded 2 plugins.
+
+[17:58:13] 
+[17:58:13] Filter Scripts
+[17:58:13] ---------------
+[17:58:13]   Loaded 0 filter scripts.
+
+[17:58:13] BUD v1.0.3 BETA loaded.
+[17:58:13] 
+----------------------------------
+[17:58:13]  Andreas Everything 
+[17:58:13]  Script Lines: 431 
+[17:58:13]  Coded by: SA-MP Community 
+[17:58:13] ----------------------------------
+
+[17:58:13] Number of vehicle models: 0
+[17:58:56] Incoming connection: 127.0.0.1:2247
+[17:58:57] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[17:59:55] [part] Brady_Clouser has left the server (0:1)
+[18:03:37] --- Server Shutting Down.
+[18:03:37] 
+
+[18:03:37]  ===============================
+
+[18:03:37]      sscanf plugin unloaded.    
+
+[18:03:37]  ===============================
+
+[18:03:37] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[18:04:50] filterscripts = ""  (string)
+[18:04:50] weburl = "www.sa-mp.com"  (string)
+[18:04:50] 
+[18:04:50] Server Plugins
+[18:04:50] --------------
+[18:04:50]  Loading plugin: sscanf
+[18:04:50] 
+
+[18:04:50]  ===============================
+
+[18:04:50]       sscanf plugin loaded.     
+
+[18:04:50]    (c) 2009 Alex "Y_Less" Cole
+
+[18:04:50]  ===============================
+
+[18:04:50]   Loaded.
+[18:04:50]  Loading plugin: streamer
+[18:04:50] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[18:04:50]   Loaded.
+[18:04:50]  Loaded 2 plugins.
+
+[18:04:50] 
+[18:04:50] Filter Scripts
+[18:04:50] ---------------
+[18:04:50]   Loaded 0 filter scripts.
+
+[18:04:50] BUD v1.0.3 BETA loaded.
+[18:04:50] 
+----------------------------------
+[18:04:50]  Andreas Everything 
+[18:04:50]  Script Lines: 431 
+[18:04:50]  Coded by: SA-MP Community 
+[18:04:50] ----------------------------------
+
+[18:04:50] Number of vehicle models: 0
+[18:05:27] Incoming connection: 127.0.0.1:2395
+[18:05:28] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[18:05:58] [part] Brady_Clouser has left the server (0:1)
+[18:06:58] --- Server Shutting Down.
+[18:06:58] 
+
+[18:06:58]  ===============================
+
+[18:06:58]      sscanf plugin unloaded.    
+
+[18:06:58]  ===============================
+
+[18:06:58] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+

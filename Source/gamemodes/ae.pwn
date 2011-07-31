@@ -61,8 +61,7 @@ enum pData
  	Float:Health,
  	Float:Armour
 }
-new
-	PlayerData[MAX_PLAYERS][pData];
+new PlayerData[MAX_PLAYERS][pData], IPADDRESSES[MAX_PLAYERS][18];
 //============================================================================//
 main()
 {
@@ -122,6 +121,7 @@ public OnPlayerConnect(playerid)
 	// Misc
 	TogglePlayerClock(playerid, 0);
 	SetPlayerScore(playerid, 0);
+	GetPlayerIp(playerid, IPADDRESSES[playerid], 18);
 	return 1;
 }
 
@@ -130,14 +130,13 @@ public OnPlayerDisconnect(playerid, reason)
 	// User Account System
 	SaveAccount(playerid);
 	//Disconnect Log
-	new hour, minute, second, month, year, day, name[MAX_PLAYER_NAME], string[128], ipaddress[16];
+	new hour, minute, second, month, year, day, name[MAX_PLAYER_NAME], string[128];
 	GetPlayerName(playerid, name, MAX_PLAYER_NAME);
-	GetPlayerIp( playerid, ipaddress, sizeof(ipaddress));
 	gettime(hour, minute, second);
 	getdate(year, month, day);
-	if(minute < 10 && second < 10) format(string, sizeof(string), "[%s %i, %i] - [%i:0%i:0%i] User: %s disconnected from %s\r\n", Months[month], day, year, hour, minute, second, name, ipaddress);
-	if(minute < 10 && second >= 10) format(string, sizeof(string), "[%s %i, %i] - [%i:0%i:%i] User: %s disconnected from %s\r\n", Months[month], day, year, hour, minute, second, name, ipaddress);
-	if(minute >= 10 && second < 10) format(string, sizeof(string), "[%s %i, %i] - [%i:%i:0%i] User: %s disconnected from %s\r\n", Months[month], day, year, hour, minute, second, name, ipaddress);
+	if(minute < 10 && second < 10) format(string, sizeof(string), "[%s %i, %i] - [%i:0%i:0%i] User: %s disconnected from %s\r\n", Months[month], day, year, hour, minute, second, name, IPADDRESSES[playerid]);
+	if(minute < 10 && second >= 10) format(string, sizeof(string), "[%s %i, %i] - [%i:0%i:%i] User: %s disconnected from %s\r\n", Months[month], day, year, hour, minute, second, name, IPADDRESSES[playerid]);
+	if(minute >= 10 && second < 10) format(string, sizeof(string), "[%s %i, %i] - [%i:%i:0%i] User: %s disconnected from %s\r\n", Months[month], day, year, hour, minute, second, name, IPADDRESSES[playerid]);
 	new File:disconnectlog = fopen( "Logs/Disconnects.txt", io_append);
 	fwrite( disconnectlog, string);
 	fclose(disconnectlog);

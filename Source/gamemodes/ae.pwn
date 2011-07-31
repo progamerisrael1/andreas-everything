@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
 	Andreas Everything
 	coded by:
-	Steven82, *add credits here*
+	Steven82, Dowster
 	
 	Thanks to Incognito - Streamer
 	Thanks to Y_Less - sscanf

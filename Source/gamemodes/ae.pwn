@@ -182,6 +182,14 @@ CMD:help(playerid, params[])
 	"Rules\nCommands\nServer Info", "Ok", "Close");
 	return 1;
 }
+// Admin Commands
+CMD:kick(playerid, params[])
+{
+	new targetid, reason[128];
+	if(sscanf(params, "us", targetid, reason))
+	    return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /kick [playerid] [reason]");
+	return 1;
+}
 //============================================================================//
 public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger)
 {

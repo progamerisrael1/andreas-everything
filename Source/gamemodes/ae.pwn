@@ -7,7 +7,6 @@
 	Thanks to Y_Less - sscanf
 	Thanks to Splice - BUD(Blazing User Database)
 ------------------------------------------------------------------------------*/
-//ads fas sdf assfsfasfsfas
 #include <a_samp>
 #define BUD_MAX_COLUMNS 50
 #define BUD_USE_WHIRLPOOL false

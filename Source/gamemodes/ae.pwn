@@ -13,6 +13,8 @@
 #include <bud>
 #include <zcmd>
 #include <sscanf2>
+//Arrays Include
+#include <arrays>
 // Server/Script Defines
 #define SCRIPT_MODE "AE v1.0"
 #define SCRIPT_WEB "forum.sa-mp.com"
@@ -127,6 +129,18 @@ public OnPlayerDisconnect(playerid, reason)
 {
 	// User Account System
 	SaveAccount(playerid);
+	//Disconnect Log
+	new hour, minute, second, month, year, day, name[MAX_PLAYER_NAME], string[128], ipaddress[16];
+	GetPlayerName(playerid, name, MAX_PLAYER_NAME);
+	GetPlayerIp( playerid, ipaddress, sizeof(ipaddress));
+	gettime(hour, minute, second);
+	getdate(year, month, day);
+	if(minute < 10 && second < 10) format(string, sizeof(string), "[%s %i, %i] - [%i:0%i:0%i] User: %s disconnected from %s\r\n", Months[month], day, year, hour, minute, second, name, ipaddress);
+	if(minute < 10 && second >= 10) format(string, sizeof(string), "[%s %i, %i] - [%i:0%i:%i] User: %s disconnected from %s\r\n", Months[month], day, year, hour, minute, second, name, ipaddress);
+	if(minute >= 10 && second < 10) format(string, sizeof(string), "[%s %i, %i] - [%i:%i:0%i] User: %s disconnected from %s\r\n", Months[month], day, year, hour, minute, second, name, ipaddress);
+	new File:disconnectlog = fopen( "Logs/Disconnects.txt", io_append);
+	fwrite( disconnectlog, string);
+	fclose(disconnectlog);
 	return 1;
 }
 
@@ -156,6 +170,22 @@ public OnPlayerSpawn(playerid)
 
 public OnPlayerDeath(playerid, killerid, reason)
 {
+	new string[96], deadplayer[MAX_PLAYER_NAME], killer[MAX_PLAYER_NAME], hour, minute, second, year, month, day;
+	gettime( hour, minute, second);
+	getdate( year, month, day);
+	GetPlayerName( playerid, deadplayer, sizeof(deadplayer));
+	if (IsPlayerConnected(killerid))
+	{
+		GetPlayerName( killerid, killer, sizeof(killer));
+		format(string, sizeof(string), "[%s %i, %i] - [%i:%i:%i] - %s killed %s, with a %s\r\n", Months[month], day, year, hour, minute, second, killer, deadplayer, DeathReason[reason]);
+	}
+	else
+	{
+		format(string, sizeof(string), "[%s %i, %i] - [%i:%i:%i] - %s has died from %s\r\n", Months[month], day, year, hour, minute, second, deadplayer, DeathReason[reason]);
+	}
+	new File:deathlog = fopen("Logs/Death Log.txt", io_append);
+	fwrite(deathlog, string);
+	fclose(deathlog);
 	return 1;
 }
 
@@ -186,19 +216,19 @@ CMD:help(playerid, params[])
 CMD:kick(playerid, params[])
 {
 	new targetid, reason[128], string[128];
-    if(PlayerData[playerid][Adminlevel] <= 1)
-    {
-		if(sscanf(params, "us", targetid, reason))
-	    	return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /kick [playerid] [reason]");
-		//
-		format(string, sizeof(string), "Adm: You have kicked %s(%d) from the server.", GetPlayerNameEx(targetid), targetid);
-		SendClientMessage(playerid, COLOR_YELLOW, string);
-		format(string, sizeof(string), "Adm: You have been kicked from the server by %s(%d)", GetPlayerNameEx(playerid), playerid);
-		SendClientMessage(targetid, COLOR_YELLOW, string);
-		Kick(targetid);
-	}
+    if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
 	else
-	    SendClientMessage(playerid, COLOR_LIGHTRED, "You don't have a high enough admin level to use this command.");
+    {
+		if(sscanf(params, "us", targetid, reason)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /kick [playerid] [reason]");
+		else
+		{
+			format(string, sizeof(string), "Adm: You have kicked %s(%d) from the server.", GetPlayerNameEx(targetid), targetid);
+			SendClientMessage(playerid, COLOR_YELLOW, string);
+			format(string, sizeof(string), "Adm: You have been kicked from the server by %s(%d)", GetPlayerNameEx(playerid), playerid);
+			SendClientMessage(targetid, COLOR_YELLOW, string);
+			Kick(targetid);
+		}
+	}
 	return 1;
 }
 //============================================================================//

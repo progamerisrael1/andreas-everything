@@ -66,7 +66,7 @@ main()
 {
 	print("\n----------------------------------");
 	print(" Andreas Everything ");
-	print(" Script Lines: 393 ");
+	print(" Script Lines: 431 ");
 	print(" Coded by: SA-MP Community ");
 	print("----------------------------------\n");
 }
@@ -185,9 +185,20 @@ CMD:help(playerid, params[])
 // Admin Commands
 CMD:kick(playerid, params[])
 {
-	new targetid, reason[128];
-	if(sscanf(params, "us", targetid, reason))
-	    return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /kick [playerid] [reason]");
+	new targetid, reason[128], string[128];
+    if(PlayerData[playerid][Adminlevel] <= 1)
+    {
+		if(sscanf(params, "us", targetid, reason))
+	    	return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /kick [playerid] [reason]");
+		//
+		format(string, sizeof(string), "Adm: You have kicked %s(%d) from the server.", GetPlayerNameEx(targetid), targetid);
+		SendClientMessage(playerid, COLOR_YELLOW, string);
+		format(string, sizeof(string), "Adm: You have been kicked from the server by %s(%d)", GetPlayerNameEx(playerid), playerid);
+		SendClientMessage(targetid, COLOR_YELLOW, string);
+		Kick(targetid);
+	}
+	else
+	    SendClientMessage(playerid, COLOR_LIGHTRED, "You don't have a high enough admin level to use this command.");
 	return 1;
 }
 //============================================================================//

@@ -6,6 +6,7 @@
 	Thanks to Incognito - Streamer
 	Thanks to Y_Less - sscanf
 	Thanks to Splice - BUD(Blazing User Database)
+	Thanks to Incognito - Streamer Plugin
 ------------------------------------------------------------------------------*/
 #include <a_samp>
 #define BUD_MAX_COLUMNS 50
@@ -13,8 +14,8 @@
 #include <bud>
 #include <zcmd>
 #include <sscanf2>
-//Arrays Include
 #include <arrays>
+#include <streamer>
 // Server/Script Defines
 #define SCRIPT_MODE "AE v1.0"
 #define SCRIPT_WEB "forum.sa-mp.com"
@@ -516,7 +517,6 @@ stock GetPlayerNameEx(playerid)
 	return pName;
 }
 // Mode Stocks
-
 stock CNR(playerid)
 {
 	return 1;

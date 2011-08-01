@@ -65,16 +65,18 @@
 // Variables
 new
 	LoggedIn[MAX_PLAYERS];
+// Menu Variables
+new Menu:CnRselect;
 // Enums
 enum pData
 {
+    MODE,
 	Adminlevel,
 	Muted,
  	Money,
  	Score,
  	Float:Health,
- 	Float:Armour,
-	MODE
+ 	Float:Armour
 }
 //Arrays
 new 
@@ -92,7 +94,7 @@ main()
 {
 	print("\n----------------------------------");
 	print(" Andreas Everything ");
-	print(" Script Lines: 431 ");
+	print(" Script Lines: 673 ");
 	print(" Coded by: SA-MP Community ");
 	print("----------------------------------\n");
 }
@@ -107,6 +109,7 @@ public OnGameModeInit()
 	BUD::Setting(opt.KeepAliveTime, 3000);
 	BUD::Setting(opt.CheckForUpdates, true);
 	BUD::Initialize();
+	BUD::VerifyColumn("mode", BUD::TYPE_NUMBER);
 	BUD::VerifyColumn("adminlevel", BUD::TYPE_NUMBER);
 	BUD::VerifyColumn("muted", BUD::TYPE_NUMBER);
 	BUD::VerifyColumn("money", BUD::TYPE_NUMBER);
@@ -116,6 +119,11 @@ public OnGameModeInit()
 	BUD::VerifyColumn("health", BUD::TYPE_FLOAT);
 	BUD::VerifyColumn("armour", BUD::TYPE_FLOAT);
 	LobbyObjects();
+	// Menus
+	CnRselect = CreateMenu("CnR Class Slection", 1, 200.0, 100.0, 20.0, 0.0);
+	AddMenuItem(CnRselect, 0, "Next");
+	AddMenuItem(CnRselect, 0, "Previous");
+	AddMenuItem(CnRselect, 0, "Select");
 	return 1;
 }
 
@@ -167,10 +175,7 @@ public OnPlayerDisconnect(playerid, reason)
 public OnPlayerSpawn(playerid)
 {
 	// User Account System
-	if(LoggedIn[playerid] == 1)
-	{
-
-	}
+	if(LoggedIn[playerid] == 1) {}
 	else
 	{
 	    if(BUD::IsNameRegistered(GetPlayerNameEx(playerid)))
@@ -232,6 +237,28 @@ CMD:help(playerid, params[])
 	"Rules\nCommands\nServer Info", "Ok", "Close");
 	return 1;
 }
+
+// CnR Mini Mode Commands
+CMD:cuff(playerid, params[])
+{
+	return 1;
+}
+
+CMD:uncuff(playerid, params[])
+{
+	return 1;
+}
+
+CMD:ticket(playerid, params[])
+{
+	return 1;
+}
+
+CMD:arrest(playerid, params[])
+{
+	return 1;
+}
+
 // Admin Commands
 CMD:mute(playerid, params[])
 {
@@ -394,6 +421,15 @@ public OnVehicleRespray(playerid, vehicleid, color1, color2)
 
 public OnPlayerSelectedMenuRow(playerid, row)
 {
+    new Menu:CurrentMenu = GetPlayerMenu(playerid);
+	// CnR Class Selection
+	if(CurrentMenu == CnRselect)
+	{
+    	switch(row)
+    	{
+    
+    	}
+	}
 	return 1;
 }
 
@@ -453,7 +489,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		BUD::RegisterName(GetPlayerNameEx(playerid), inputtext);
         new
 			userid = BUD::GetNameUID(GetPlayerNameEx(playerid));
-        BUD::MultiSet(userid, "iiiiff",
+        BUD::MultiSet(userid, "iiiiiff",
+        "mode", 0,
         "adminlevel", 0,
         "muted", 0,
         "money", 0,
@@ -474,6 +511,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		//
 		if(BUD::CheckAuth(GetPlayerNameEx(playerid), inputtext))
 		{
+		    PlayerData[playerid][MODE] = BUD::GetIntEntry(userid, "mode");
 			PlayerData[playerid][Adminlevel] = BUD::GetIntEntry(userid, "adminlevel");
 			PlayerData[playerid][Muted] = BUD::GetIntEntry(userid, "muted");
 			PlayerData[playerid][Money] = BUD::GetIntEntry(userid, "money");
@@ -584,6 +622,7 @@ public SaveAccount(playerid)
     GetPlayerArmour(playerid, armour);
     userid = BUD::GetNameUID(GetPlayerNameEx(playerid));
     //
+    BUD::SetIntEntry(userid, "mode", PlayerData[playerid][MODE]);
     BUD::SetIntEntry(userid, "adminlevel", PlayerData[playerid][Adminlevel]);
 	BUD::SetIntEntry(userid, "muted", PlayerData[playerid][Muted]);
 	BUD::SetIntEntry(userid, "money", GetPlayerMoney(playerid));
@@ -606,6 +645,12 @@ stock GetPlayerNameEx(playerid)
 // Mode Stocks
 stock CNR(playerid)
 {
+	SetPlayerVirtualWorld(playerid, CNR_VW);
+	SetPlayerPos(playerid, 1958.5851, 1343.0352, 15.3746);
+	SetPlayerFacingAngle(playerid, 89.1425);
+	TogglePlayerControllable(playerid, 0);
+    ShowMenuForPlayer(CnRselect, playerid);
+	PlayerData[playerid][MODE] = MODE_CNR;
 	return 1;
 }
 

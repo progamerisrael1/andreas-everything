@@ -18,6 +18,10 @@
 // Server/Script Defines
 #define SCRIPT_MODE "AE v1.0"
 #define SCRIPT_WEB "forum.sa-mp.com"
+//Virtual World Defines
+#define DEATHMATCH_VW 5
+#define FREEROAM_VW 10
+#define CNR_VW 15
 // Color Defines
 #define COLOR_GRAD1 0xB4B5B7FF
 #define COLOR_GRAD2 0xBFC0C2FF
@@ -48,6 +52,9 @@
 #define DIALOG_REGISTER 101
 #define DIALOG_LOGIN 102
 #define DIALOG_HELP 103
+#define DIALOG_MODE_SELECT 104
+//Max Modes Define
+#define MAX_MODES 3
 // Variables
 new
 	LoggedIn[MAX_PLAYERS];
@@ -61,7 +68,16 @@ enum pData
  	Float:Health,
  	Float:Armour
 }
-new PlayerData[MAX_PLAYERS][pData], IPADDRESSES[MAX_PLAYERS][18];
+//Arrays
+new 
+	PlayerData[MAX_PLAYERS][pData],
+	IPADDRESSES[MAX_PLAYERS][18];
+new MODES[MAX_MODES][2][17] = 
+{
+	{"Deathmatch", 0},
+	{"Free Roam", 0},
+	{"Cops n' Robbers", 0}
+};
 //============================================================================//
 main()
 {
@@ -392,6 +408,14 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			PlayerData[playerid][Health] = BUD::GetFloatEntry(userid, "health");
 			PlayerData[playerid][Armour] = BUD::GetFloatEntry(userid, "armour");
 			LoggedIn[playerid] = 1;
+			new 
+				string[512];
+			for(new i = 0; i < MAX_MODES; i++)
+			{
+				if(MODES[i][1][0] == 0) format(string, sizeof(string), "%s %s: {FF0000} Inactive\r\n", string, MODES[i][0]);
+				else format(string, sizeof(string), "%s %s: {00FF00} Active\r\n", string, MODES[i][0]);
+			}
+			ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "Please select a mode to play", string, "Enter", "Quit");
 		}
 		else
 		    ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "Welcome back to Andreas Everything!",
@@ -418,6 +442,39 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				{
 				    ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Server Info",
 		            "Andreas Everything rules comming soon.", "Ok", "");
+				}
+			}
+		}
+	}
+	//Mode Selection Dialog
+	if(dialogid == DIALOG_MODE_SELECT)
+	{
+		if(!response)
+		{
+			new 
+				string[512];
+			for(new i = 0; i < MAX_MODES; i++)
+			{
+				if(MODES[i][1][0] == 0) format(string, sizeof(string), "%s %s: {FF0000} Inactive\r\n", string, MODES[i][0]);
+				else format(string, sizeof(string), "%s %s: {00FF00} Active\r\n", string, MODES[i][0]);
+			}
+			ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "{FF0000}You must select a mode!", string, "Enter", "Quit");
+		}
+		else
+		{
+			switch(listitem)
+			{
+				case 0: //Deathmatch
+				{
+					DeathMatch(playerid);
+				}
+				case 1: //Free Roam
+				{
+					FreeRoam(playerid);
+				}
+				case 2: //CNR
+				{
+					CNR(playerid);
 				}
 			}
 		}
@@ -457,4 +514,20 @@ stock GetPlayerNameEx(playerid)
 	}
 	else pName = "Unknow";
 	return pName;
+}
+// Mode Stocks
+
+stock CNR(playerid)
+{
+	return 1;
+}
+
+stock DeathMatch(playerid)
+{
+	return 1;
+}
+
+stock FreeRoam(playerid)
+{
+	return 1;
 }

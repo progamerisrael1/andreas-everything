@@ -16,10 +16,12 @@
 #include <sscanf2>
 #include <arrays>
 #include <streamer>
+#include <objects>
 // Server/Script Defines
 #define SCRIPT_MODE "AE v1.0"
 #define SCRIPT_WEB "forum.sa-mp.com"
 //Virtual World Defines
+#define LOBBY_VW 0
 #define DEATHMATCH_VW 5
 #define FREEROAM_VW 10
 #define CNR_VW 15
@@ -54,8 +56,12 @@
 #define DIALOG_LOGIN 102
 #define DIALOG_HELP 103
 #define DIALOG_MODE_SELECT 104
-//Max Modes Define
-#define MAX_MODES 3
+//Mode Defines
+#define MAX_MODES 4
+#define MODE_DEATHMATCH 0
+#define MODE_FREE_ROAM 1
+#define MODE_CNR 2
+#define MODE_LOBBY 3
 // Variables
 new
 	LoggedIn[MAX_PLAYERS];
@@ -67,7 +73,8 @@ enum pData
  	Money,
  	Score,
  	Float:Health,
- 	Float:Armour
+ 	Float:Armour,
+	MODE
 }
 //Arrays
 new 
@@ -77,7 +84,8 @@ new MODES[MAX_MODES][2][17] =
 {
 	{"Deathmatch", 0},
 	{"Free Roam", 0},
-	{"Cops n' Robbers", 0}
+	{"Cops n' Robbers", 0},
+	{"Lobby", 1}
 };
 //============================================================================//
 main()
@@ -107,8 +115,7 @@ public OnGameModeInit()
 	BUD::VerifyColumn("virtualwolrd", BUD::TYPE_NUMBER);
 	BUD::VerifyColumn("health", BUD::TYPE_FLOAT);
 	BUD::VerifyColumn("armour", BUD::TYPE_FLOAT);
-	// Player Class
-	AddPlayerClass(0, 1958.3783, 1343.1572, 15.3746, 269.1425, 0, 0, 0, 0, 0, 0);
+	LobbyObjects();
 	return 1;
 }
 
@@ -120,9 +127,6 @@ public OnGameModeExit()
 
 public OnPlayerRequestClass(playerid, classid)
 {
-	SetPlayerPos(playerid, 1958.3783, 1343.1572, 15.3746);
-	SetPlayerCameraPos(playerid, 1958.3783, 1343.1572, 15.3746);
-	SetPlayerCameraLookAt(playerid, 1958.3783, 1343.1572, 15.3746);
 	return 1;
 }
 
@@ -409,12 +413,23 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			PlayerData[playerid][Health] = BUD::GetFloatEntry(userid, "health");
 			PlayerData[playerid][Armour] = BUD::GetFloatEntry(userid, "armour");
 			LoggedIn[playerid] = 1;
+			SetSpawnInfo(playerid, 0, 0, 1958.3783, 1343.1572, 15.3746, 269.1425, 0, 0, 0, 0, 0, 0);
+			SpawnPlayer(playerid);
 			new 
 				string[512];
 			for(new i = 0; i < MAX_MODES; i++)
 			{
 				if(MODES[i][1][0] == 0) format(string, sizeof(string), "%s %s: {FF0000} Inactive\r\n", string, MODES[i][0]);
-				else format(string, sizeof(string), "%s %s: {00FF00} Active\r\n", string, MODES[i][0]);
+				else
+				{
+					new players;
+					for(new p = 0; p < MAX_PLAYERS; p++)
+					{
+						if(PlayerData[playerid][MODE] == i) players++;
+						else continue;
+					}
+					format(string, sizeof(string), "%s %s: {00FF00} Active {FFFFFF} Players: %i\r\n", string, MODES[i][0], players);
+				}
 			}
 			ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "Please select a mode to play", string, "Enter", "Quit");
 		}
@@ -465,17 +480,21 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		{
 			switch(listitem)
 			{
-				case 0: //Deathmatch
+				case MODE_DEATHMATCH: //Deathmatch
 				{
 					DeathMatch(playerid);
 				}
-				case 1: //Free Roam
+				case MODE_FREE_ROAM: //Free Roam
 				{
 					FreeRoam(playerid);
 				}
-				case 2: //CNR
+				case MODE_CNR: //CNR
 				{
 					CNR(playerid);
+				}
+				case MODE_LOBBY:
+				{
+					Lobby(playerid);
 				}
 			}
 		}
@@ -529,5 +548,13 @@ stock DeathMatch(playerid)
 
 stock FreeRoam(playerid)
 {
+	return 1;
+}
+stock Lobby(playerid)
+{
+	SetPlayerVirtualWorld( playerid, LOBBY_VW);
+	SetPlayerInterior( playerid, 18);
+	SetPlayerPos( playerid, 1727.328125, -1639.4775390625, 20.223743438721);
+	PlayerData[playerid][MODE] = MODE_LOBBY;
 	return 1;
 }

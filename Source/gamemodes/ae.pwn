@@ -120,7 +120,7 @@ public OnGameModeInit()
 	BUD::VerifyColumn("armour", BUD::TYPE_FLOAT);
 	LobbyObjects();
 	// Menus
-	CnRselect = CreateMenu("CnR Class Slection", 1, 200.0, 100.0, 20.0, 0.0);
+	CnRselect = CreateMenu("CnR", 1, 200.0, 100.0, 50.0, 0.0);
 	AddMenuItem(CnRselect, 0, "Next");
 	AddMenuItem(CnRselect, 0, "Previous");
 	AddMenuItem(CnRselect, 0, "Select");

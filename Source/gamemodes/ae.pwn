@@ -607,7 +607,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						if(PlayerData[playerid][MODE] == i) players++;
 						else continue;
 					}
-					format(string, sizeof(string), "%s %s: {00FF00} Active {FFFFFF} Players: %i\r\n", string, MODES[i][0], players);
+					format(string, sizeof(string), "%s %s: {00FF00} Active {FFFFFF} - Players: %i\r\n", string, MODES[i][0], players);
 				}
 			}
 			ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "Please select a mode to play", string, "Enter", "Quit");

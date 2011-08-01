@@ -235,7 +235,7 @@ CMD:help(playerid, params[])
 // Admin Commands
 CMD:kick(playerid, params[])
 {
-	new targetid, reason[128], string[128];
+ 	new targetid, reason[128], string[128];
     if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
 	else
     {
@@ -244,9 +244,36 @@ CMD:kick(playerid, params[])
 		{
 			format(string, sizeof(string), "Adm: You have kicked %s(%d) from the server.", GetPlayerNameEx(targetid), targetid);
 			SendClientMessage(playerid, COLOR_YELLOW, string);
+			format(string, sizeof(string), "Reason: %s", reason);
+			SendClientMessage(playerid, COLOR_YELLOW, string);
 			format(string, sizeof(string), "Adm: You have been kicked from the server by %s(%d)", GetPlayerNameEx(playerid), playerid);
 			SendClientMessage(targetid, COLOR_YELLOW, string);
+            format(string, sizeof(string), "Reason: %s", reason);
+			SendClientMessage(playerid, COLOR_YELLOW, string);
 			Kick(targetid);
+		}
+	}
+	return 1;
+}
+
+CMD:ban(playerid, params[])
+{
+    new targetid, reason[128], string[128];
+    if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
+	else
+    {
+		if(sscanf(params, "us", targetid, reason)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /ban [playerid] [reason]");
+		else
+		{
+			format(string, sizeof(string), "Adm: You have ban %s(%d) from the server.", GetPlayerNameEx(targetid), targetid);
+			SendClientMessage(playerid, COLOR_YELLOW, string);
+			format(string, sizeof(string), "Reason: %s", reason);
+			SendClientMessage(targetid, COLOR_YELLOW, string);
+			format(string, sizeof(string), "Adm: You have been ban from the server by %s(%d)", GetPlayerNameEx(playerid), playerid);
+			SendClientMessage(targetid, COLOR_YELLOW, string);
+			format(string, sizeof(string), "Reason: %s", reason);
+			SendClientMessage(targetid, COLOR_YELLOW, string);
+			Ban(targetid);
 		}
 	}
 	return 1;

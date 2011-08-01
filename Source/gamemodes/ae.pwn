@@ -233,13 +233,43 @@ CMD:help(playerid, params[])
 	return 1;
 }
 // Admin Commands
+CMD:mute(playerid, params[])
+{
+	new targetid, string[128];
+    if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
+	else
+	{
+	    if(sscanf(params, "u", targetid)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /mute [playerid]");
+		else
+		{
+			PlayerData[targetid][Muted] = 1;
+		}
+	}
+	return 1;
+}
+
+CMD:unmute(playerid, params[])
+{
+    new targetid, string[128];
+    if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
+	else
+	{
+	    if(sscanf(params, "u", targetid)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /unmute [playerid]");
+		else
+		{
+			PlayerData[targetid][Muted] = 0;
+		}
+	}
+	return 1;
+}
+
 CMD:kick(playerid, params[])
 {
  	new targetid, reason[128], string[128];
     if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
 	else
     {
-		if(sscanf(params, "us", targetid, reason)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /kick [playerid] [reason]");
+  		if(sscanf(params, "us", targetid, reason)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /kick [playerid] [reason]");
 		else
 		{
 			format(string, sizeof(string), "Adm: You have kicked %s(%d) from the server.", GetPlayerNameEx(targetid), targetid);

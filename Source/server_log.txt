@@ -60,3 +60,188 @@ v0.3c R5, (C)2005-2011 SA-MP Team
 
 *** Streamer Plugin v2.5.2 by Incognito unloaded ***
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[19:46:30] filterscripts = ""  (string)
+[19:46:30] weburl = "www.sa-mp.com"  (string)
+[19:46:30] 
+[19:46:30] Server Plugins
+[19:46:30] --------------
+[19:46:30]  Loading plugin: sscanf
+[19:46:30] 
+
+[19:46:30]  ===============================
+
+[19:46:30]       sscanf plugin loaded.     
+
+[19:46:30]    (c) 2009 Alex "Y_Less" Cole
+
+[19:46:30]  ===============================
+
+[19:46:30]   Loaded.
+[19:46:30]  Loading plugin: streamer
+[19:46:30] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[19:46:30]   Loaded.
+[19:46:30]  Loaded 2 plugins.
+
+[19:46:31] 
+[19:46:31] Filter Scripts
+[19:46:31] ---------------
+[19:46:31]   Loaded 0 filter scripts.
+
+[19:46:31] BUD v1.0.3 BETA loaded.
+[19:46:31] 
+----------------------------------
+[19:46:31]  Andreas Everything 
+[19:46:31]  Script Lines: 431 
+[19:46:31]  Coded by: SA-MP Community 
+[19:46:31] ----------------------------------
+
+[19:46:31] Number of vehicle models: 0
+[19:48:21] Incoming connection: 127.0.0.1:1795
+[19:48:21] [join] Steven82 has joined the server (0:127.0.0.1)
+[19:49:01] [part] Steven82 has left the server (0:2)
+[19:50:36] --- Server Shutting Down.
+[19:50:36] 
+
+[19:50:36]  ===============================
+
+[19:50:36]      sscanf plugin unloaded.    
+
+[19:50:36]  ===============================
+
+[19:50:36] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[19:51:13] filterscripts = ""  (string)
+[19:51:13] weburl = "www.sa-mp.com"  (string)
+[19:51:13] 
+[19:51:13] Server Plugins
+[19:51:13] --------------
+[19:51:13]  Loading plugin: sscanf
+[19:51:14] 
+
+[19:51:14]  ===============================
+
+[19:51:14]       sscanf plugin loaded.     
+
+[19:51:14]    (c) 2009 Alex "Y_Less" Cole
+
+[19:51:14]  ===============================
+
+[19:51:14]   Loaded.
+[19:51:14]  Loading plugin: streamer
+[19:51:14] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[19:51:14]   Loaded.
+[19:51:14]  Loaded 2 plugins.
+
+[19:51:14] 
+[19:51:14] Filter Scripts
+[19:51:14] ---------------
+[19:51:14]   Loaded 0 filter scripts.
+
+[19:51:14] BUD - Notice: The database "AE.db" doesn't exist; it will be created.
+[19:51:14] BUD v1.0.3 BETA loaded.
+[19:51:14] BUD - Notice: The column "adminlevel" doesn't exist; attempting to create it.
+[19:51:14] BUD - Notice: The column "muted" doesn't exist; attempting to create it.
+[19:51:14] BUD - Notice: The column "money" doesn't exist; attempting to create it.
+[19:51:14] BUD - Notice: The column "score" doesn't exist; attempting to create it.
+[19:51:14] BUD - Notice: The column "interior" doesn't exist; attempting to create it.
+[19:51:14] BUD - Notice: The column "virtualwolrd" doesn't exist; attempting to create it.
+[19:51:14] BUD - Notice: The column "health" doesn't exist; attempting to create it.
+[19:51:14] BUD - Notice: The column "armour" doesn't exist; attempting to create it.
+[19:51:14] 
+----------------------------------
+[19:51:14]  Andreas Everything 
+[19:51:14]  Script Lines: 431 
+[19:51:14]  Coded by: SA-MP Community 
+[19:51:14] ----------------------------------
+
+[19:51:14] Number of vehicle models: 0
+[19:52:03] Incoming connection: 127.0.0.1:1801
+[19:52:03] [join] Steven82 has joined the server (0:127.0.0.1)
+[19:52:21] [chat] [Steven82]: hello
+[19:52:25] [chat] [Steven82]: welcome to the lobby
+[19:52:44] Incoming connection: 206.126.209.6:11965
+[19:52:45] [join] Brady_Clouser has joined the server (1:206.126.209.6)
+[19:53:10] [chat] [Brady_Clouser]: hmm.. it didnt show you as active 
+[19:53:12] [chat] [Brady_Clouser]: wierd
+[19:53:19] [chat] [Steven82]: Ah, well thats why we bug fix
+[19:53:22] [chat] [Brady_Clouser]: but yeah lol this is the lobby so far
+[19:53:26] [chat] [Steven82]: Sweet
+[19:53:32] [chat] [Steven82]: It's fine if it stays like this
+[19:53:34] [chat] [Brady_Clouser]: im thinking of making a pickup at these monitors
+[19:53:46] [chat] [Brady_Clouser]: that function as survelience to the modes kinda
+[19:53:51] [chat] [Brady_Clouser]: so users can see whats going on
+[19:53:54] [chat] [Steven82]: That would be nice
+[19:53:59] [chat] [Steven82]: just have cameras setup :P
+[19:54:02] [chat] [Brady_Clouser]: yeah with a textdraw border and stuff
+[19:54:06] [chat] [Steven82]: Or set there camera i mean
+[19:54:13] [chat] [Steven82]: And yeah, around the mode maps
+[19:54:14] [chat] [Brady_Clouser]: then maybe use audio plugin
+[19:54:20] [chat] [Brady_Clouser]: to stream a station here
+[19:54:25] [chat] [Brady_Clouser]: thats why i put up the speakers
+[19:54:38] [chat] [Brady_Clouser]: for now we can use one of the ingame sounds tho
+[19:54:44] [chat] [Steven82]: Mhm
+[19:54:56] [chat] [Brady_Clouser]: i wonder if theres a way we can edit the code online
+[19:55:00] [chat] [Brady_Clouser]: sort of like google docs
+[19:55:11] [chat] [Brady_Clouser]: where if two people are editing they see the changes realtime
+[19:55:16] [chat] [Steven82]: I know
+[19:55:18] [chat] [Brady_Clouser]: and they can see the other person type etc
+[19:55:21] [chat] [Steven82]: that would be so much nicers
+[19:55:23] [chat] [Steven82]: nicer*
+[19:55:34] [chat] [Brady_Clouser]: yeah
+[19:55:43] [chat] [Brady_Clouser]: the only way we can have that is if we make it lol
+[19:55:53] [chat] [Steven82]: Yup
+[19:55:56] [chat] [Brady_Clouser]: or figure out this svn stuff a bit more
+[19:56:00] [chat] [Steven82]: Yes sir
+[19:56:15] [chat] [Steven82]: Ah beautiful LS
+[19:56:15] [chat] [Brady_Clouser]: but yeah, is this good for a lobby?
+[19:56:22] [chat] [Steven82]: Yup
+[19:56:26] [chat] [Brady_Clouser]: i just went somewhere quick in mta
+[19:56:43] [chat] [Steven82]: Yeah, i think we need a freeroam mode too
+[19:56:48] [chat] [Steven82]: So people can just roam around
+[19:56:58] [chat] [Steven82]: And do stunts
+[19:57:01] [chat] [Steven82]: butnot kill
+[19:57:04] [chat] [Brady_Clouser]: im gonna /q and read up on svn a bit more, and yeah, more of like freeroam/rpg ish mode 
+[19:57:05] [chat] [Steven82]: Freeroam/stunts
+[19:57:10] [chat] [Steven82]: Yes
+[19:57:13] [chat] [Steven82]: Me too
+[19:57:13] [part] Steven82 has left the server (0:1)
+[19:57:19] [part] Brady_Clouser has left the server (1:1)
+[19:57:22] --- Server Shutting Down.
+[19:57:22] 
+
+[19:57:22]  ===============================
+
+[19:57:22]      sscanf plugin unloaded.    
+
+[19:57:22]  ===============================
+
+[19:57:22] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+

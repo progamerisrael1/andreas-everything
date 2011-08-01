@@ -423,6 +423,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
         "health", 100.0,
         "armour", 0.0
     	);
+    	ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "Welcome back to Andreas Everything!",
+		"Please enter your desired password below, and click 'Login'.\nIf you wish to leave, click 'Leave'.", "Login", "Leave");
+
 	}
 	if(dialogid == DIALOG_LOGIN)
 	{

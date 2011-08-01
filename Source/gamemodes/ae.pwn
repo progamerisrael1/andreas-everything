@@ -242,6 +242,10 @@ CMD:mute(playerid, params[])
 	    if(sscanf(params, "u", targetid)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /mute [playerid]");
 		else
 		{
+		    format(string, sizeof(string), "Adm: You have muted %s(%d).", GetPlayerNameEx(targetid), targetid);
+			SendClientMessage(playerid, COLOR_YELLOW, string);
+			format(string, sizeof(string), "Adm: You have been muted  by %s(%d).", GetPlayerNameEx(playerid), playerid);
+			SendClientMessage(targetid, COLOR_YELLOW, string);
 			PlayerData[targetid][Muted] = 1;
 		}
 	}
@@ -257,6 +261,10 @@ CMD:unmute(playerid, params[])
 	    if(sscanf(params, "u", targetid)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /unmute [playerid]");
 		else
 		{
+            format(string, sizeof(string), "Adm: You have unmuted %s(%d).", GetPlayerNameEx(targetid), targetid);
+			SendClientMessage(playerid, COLOR_YELLOW, string);
+			format(string, sizeof(string), "Adm: You have been unmuted  by %s(%d).", GetPlayerNameEx(playerid), playerid);
+			SendClientMessage(targetid, COLOR_YELLOW, string);
 			PlayerData[targetid][Muted] = 0;
 		}
 	}

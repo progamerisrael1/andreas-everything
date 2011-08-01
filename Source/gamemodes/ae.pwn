@@ -4,9 +4,8 @@
 	Steven82, Dowster
 	
 	Thanks to Incognito - Streamer
-	Thanks to Y_Less - sscanf
+	Thanks to Y_Less - sscanf, foreach
 	Thanks to Splice - BUD(Blazing User Database)
-	Thanks to Incognito - Streamer Plugin
 ------------------------------------------------------------------------------*/
 #include <a_samp>
 #define BUD_MAX_COLUMNS 50
@@ -16,6 +15,7 @@
 #include <sscanf2>
 #include <arrays>
 #include <streamer>
+#include <foreach>
 #include <objects>
 // Server/Script Defines
 #define SCRIPT_MODE "AE v1.0"
@@ -96,12 +96,12 @@ new CnRSkins[2][5] =
 	{122, 247, 254, 111, 124}
 };
 
-new MODES[MAX_MODES][2][17] = 
+new MODES[MAX_MODES][3][17] = 
 {
-	{"Deathmatch", 0},
-	{"Free Roam", 0},
-	{"Cops n' Robbers", 0},
-	{"Lobby", 1}
+	{"Deathmatch", 0, 0},
+	{"Free Roam", 0, 0},
+	{"Cops n' Robbers", 0, 0},
+	{"Lobby", 1, 0}
 };
 //============================================================================//
 main()
@@ -168,6 +168,7 @@ public OnPlayerConnect(playerid)
 	TogglePlayerClock(playerid, 0);
 	SetPlayerScore(playerid, 0);
 	GetPlayerIp(playerid, IPADDRESSES[playerid], 18);
+	PlayerData[playerid][MODE] = 100;
 	return 1;
 }
 
@@ -186,6 +187,7 @@ public OnPlayerDisconnect(playerid, reason)
 	new File:disconnectlog = fopen( "Logs/Disconnects.txt", io_append);
 	fwrite( disconnectlog, string);
 	fclose(disconnectlog);
+	if(MODES[PlayerData[playerid][MODE]][2][0] != 0) MODES[PlayerData[playerid][MODE]][2][0] = (MODES[PlayerData[playerid][MODE]][2][0] - 1);
 	return 1;
 }
 
@@ -599,18 +601,10 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			for(new i = 0; i < MAX_MODES; i++)
 			{
 				if(MODES[i][1][0] == 0) format(string, sizeof(string), "%s %s: {FF0000} Inactive\r\n", string, MODES[i][0]);
-				else
-				{
-					new players;
-					for(new p = 0; p < MAX_PLAYERS; p++)
-					{
-						if(PlayerData[playerid][MODE] == i) players++;
-						else continue;
-					}
-					format(string, sizeof(string), "%s %s: {00FF00} Active {FFFFFF} - Players: %i\r\n", string, MODES[i][0], players);
-				}
+				else format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], MODES[i][2]);
 			}
-			ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "Please select a mode to play", string, "Enter", "Quit");
+			format(string, sizeof(string), "%s Leave\r\n", string);
+			ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "Please select a mode to play", string, "Enter", "Refresh");
 		}
 		else
 		    ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "Welcome back to Andreas Everything!",
@@ -651,9 +645,10 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			for(new i = 0; i < MAX_MODES; i++)
 			{
 				if(MODES[i][1][0] == 0) format(string, sizeof(string), "%s %s: {FF0000} Inactive\r\n", string, MODES[i][0]);
-				else format(string, sizeof(string), "%s %s: {00FF00} Active\r\n", string, MODES[i][0]);
+				else format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], MODES[i][2]);
 			}
-			ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "{FF0000}You must select a mode!", string, "Enter", "Quit");
+			format(string, sizeof(string), "%s Leave\r\n", string);
+			ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "Please select a mode to play", string, "Enter", "Refresh");
 		}
 		else
 		{
@@ -661,19 +656,28 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 				case MODE_DEATHMATCH: //Deathmatch
 				{
+					MODES[MODE_DEATHMATCH][2][0]++;
 					DeathMatch(playerid);
 				}
 				case MODE_FREE_ROAM: //Free Roam
 				{
+					MODES[MODE_FREE_ROAM][2][0]++;
 					FreeRoam(playerid);
 				}
 				case MODE_CNR: //CNR
 				{
+					MODES[MODE_CNR][2][0]++;
 					CNR(playerid);
 				}
 				case MODE_LOBBY:
 				{
+					MODES[MODE_LOBBY][2][0]++;
 					Lobby(playerid);
+				}
+				case MAX_MODES:
+				{
+					SendClientMessage(playerid, COLOR_RED, "Goodbye");
+					Kick(playerid);
 				}
 			}
 		}

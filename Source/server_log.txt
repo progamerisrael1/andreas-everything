@@ -1151,3 +1151,1095 @@ v0.3c R5, (C)2005-2011 SA-MP Team
 *** Streamer Plugin v2.5.2 by Incognito unloaded ***
 
 >>>>>>> .r61
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[12:59:27] filterscripts = ""  (string)
+[12:59:27] weburl = "www.sa-mp.com"  (string)
+[12:59:27] 
+[12:59:27] Server Plugins
+[12:59:27] --------------
+[12:59:27]  Loading plugin: sscanf
+[12:59:27] 
+
+[12:59:27]  ===============================
+
+[12:59:27]       sscanf plugin loaded.     
+
+[12:59:27]    (c) 2009 Alex "Y_Less" Cole
+
+[12:59:27]  ===============================
+
+[12:59:27]   Loaded.
+[12:59:27]  Loading plugin: streamer
+[12:59:27] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[12:59:27]   Loaded.
+[12:59:27]  Loaded 2 plugins.
+
+[12:59:28] 
+[12:59:28] Filter Scripts
+[12:59:28] ---------------
+[12:59:28]   Loaded 0 filter scripts.
+
+[12:59:28] BUD v1.0.3 BETA loaded.
+[12:59:28] 
+----------------------------------
+[12:59:28]  Andreas Everything 
+[12:59:28]  Script Lines: 700 
+[12:59:28]  Coded by: SA-MP Community 
+[12:59:28] ----------------------------------
+
+[12:59:28] Number of vehicle models: 0
+[13:01:52] Incoming connection: 192.168.1.151:62924
+[13:01:53] [join] Brady has joined the server (0:192.168.1.151)
+[13:03:35] Incoming connection: 127.0.0.1:13008
+[13:03:36] [join] dowster has joined the server (1:127.0.0.1)
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[13:05:22] filterscripts = ""  (string)
+[13:05:22] weburl = "www.sa-mp.com"  (string)
+[13:05:22] 
+[13:05:22] Server Plugins
+[13:05:22] --------------
+[13:05:22]  Loading plugin: sscanf
+[13:05:22] 
+
+[13:05:22]  ===============================
+
+[13:05:22]       sscanf plugin loaded.     
+
+[13:05:22]    (c) 2009 Alex "Y_Less" Cole
+
+[13:05:22]  ===============================
+
+[13:05:22]   Loaded.
+[13:05:22]  Loading plugin: streamer
+[13:05:22] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[13:05:22]   Loaded.
+[13:05:22]  Loaded 2 plugins.
+
+[13:05:22] 
+[13:05:22] Filter Scripts
+[13:05:22] ---------------
+[13:05:22]   Loaded 0 filter scripts.
+
+[13:05:22] BUD v1.0.3 BETA loaded.
+[13:05:22] 
+----------------------------------
+[13:05:22]  Andreas Everything 
+[13:05:22]  Script Lines: 700 
+[13:05:22]  Coded by: SA-MP Community 
+[13:05:22] ----------------------------------
+
+[13:05:22] Number of vehicle models: 0
+[13:10:20] Incoming connection: 192.168.1.160:62060
+[13:10:21] [join] Brady has joined the server (0:192.168.1.160)
+[13:11:08] [chat] [Brady]: moo
+[13:11:12] Incoming connection: 127.0.0.1:13022
+[13:11:12] [join] dowster has joined the server (1:127.0.0.1)
+[13:11:14] [chat] [Brady]: cow
+[13:11:20] [chat] [dowster]: damn...
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[13:13:01] filterscripts = ""  (string)
+[13:13:01] weburl = "www.sa-mp.com"  (string)
+[13:13:01] 
+[13:13:01] Server Plugins
+[13:13:01] --------------
+[13:13:01]  Loading plugin: sscanf
+[13:13:01] 
+
+[13:13:01]  ===============================
+
+[13:13:01]       sscanf plugin loaded.     
+
+[13:13:01]    (c) 2009 Alex "Y_Less" Cole
+
+[13:13:01]  ===============================
+
+[13:13:01]   Loaded.
+[13:13:01]  Loading plugin: streamer
+[13:13:01] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[13:13:01]   Loaded.
+[13:13:01]  Loaded 2 plugins.
+
+[13:13:01] Incoming connection: 192.168.1.160:50427
+[13:13:01] 
+[13:13:01] Filter Scripts
+[13:13:01] ---------------
+[13:13:01]   Loaded 0 filter scripts.
+
+[13:13:01] BUD v1.0.3 BETA loaded.
+[13:13:01] 
+----------------------------------
+[13:13:01]  Andreas Everything 
+[13:13:01]  Script Lines: 700 
+[13:13:01]  Coded by: SA-MP Community 
+[13:13:01] ----------------------------------
+
+[13:13:01] Number of vehicle models: 0
+[13:13:02] [join] Brady has joined the server (0:192.168.1.160)
+[13:13:56] [chat] [Brady]: how do i swich weapons.. i forgot -.-
+[13:14:01] Incoming connection: 127.0.0.1:13025
+[13:14:01] [join] dowster has joined the server (1:127.0.0.1)
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[13:15:36] filterscripts = ""  (string)
+[13:15:36] weburl = "www.sa-mp.com"  (string)
+[13:15:36] 
+[13:15:36] Server Plugins
+[13:15:36] --------------
+[13:15:36]  Loading plugin: sscanf
+[13:15:36] 
+
+[13:15:36]  ===============================
+
+[13:15:36]       sscanf plugin loaded.     
+
+[13:15:36]    (c) 2009 Alex "Y_Less" Cole
+
+[13:15:36]  ===============================
+
+[13:15:36]   Loaded.
+[13:15:36]  Loading plugin: streamer
+[13:15:36] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[13:15:36]   Loaded.
+[13:15:36]  Loaded 2 plugins.
+
+[13:15:36] Incoming connection: 192.168.1.160:58966
+[13:15:36] 
+[13:15:36] Filter Scripts
+[13:15:36] ---------------
+[13:15:36]   Loaded 0 filter scripts.
+
+[13:15:36] BUD v1.0.3 BETA loaded.
+[13:15:36] 
+----------------------------------
+[13:15:36]  Andreas Everything 
+[13:15:36]  Script Lines: 700 
+[13:15:36]  Coded by: SA-MP Community 
+[13:15:36] ----------------------------------
+
+[13:15:36] Number of vehicle models: 0
+[13:15:37] [join] Brady has joined the server (0:192.168.1.160)
+[13:16:04] Incoming connection: 127.0.0.1:13029
+[13:16:04] [join] dowster has joined the server (1:127.0.0.1)
+[13:16:37] [part] dowster has left the server (1:1)
+[13:16:48] --- Server Shutting Down.
+[13:16:48] [part] Brady has left the server (0:0)
+[13:16:48] 
+
+[13:16:48]  ===============================
+
+[13:16:48]      sscanf plugin unloaded.    
+
+[13:16:48]  ===============================
+
+[13:16:48] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[13:19:22] filterscripts = ""  (string)
+[13:19:22] weburl = "www.sa-mp.com"  (string)
+[13:19:22] 
+[13:19:22] Server Plugins
+[13:19:22] --------------
+[13:19:22]  Loading plugin: sscanf
+[13:19:22] 
+
+[13:19:22]  ===============================
+
+[13:19:22]       sscanf plugin loaded.     
+
+[13:19:22]    (c) 2009 Alex "Y_Less" Cole
+
+[13:19:22]  ===============================
+
+[13:19:22]   Loaded.
+[13:19:22]  Loading plugin: streamer
+[13:19:22] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[13:19:22]   Loaded.
+[13:19:22]  Loaded 2 plugins.
+
+[13:19:22] 
+[13:19:22] Filter Scripts
+[13:19:22] ---------------
+[13:19:22]   Loaded 0 filter scripts.
+
+[13:19:22] BUD v1.0.3 BETA loaded.
+[13:19:22] 
+----------------------------------
+[13:19:22]  Andreas Everything 
+[13:19:22]  Script Lines: 700 
+[13:19:22]  Coded by: SA-MP Community 
+[13:19:22] ----------------------------------
+
+[13:19:22] Number of vehicle models: 0
+[13:19:53] Incoming connection: 127.0.0.1:13033
+[13:19:53] [join] dowster has joined the server (0:127.0.0.1)
+[13:20:21] Incoming connection: 192.168.1.160:53427
+[13:20:21] [join] Brady has joined the server (1:192.168.1.160)
+[13:21:09] [chat] [dowster]: q
+[13:21:12] [part] dowster has left the server (0:1)
+[13:21:20] [chat] [Brady]: >.<
+Console input: gmx
+[13:29:39] BUD v1.0.3 BETA loaded.
+[13:29:39] 
+----------------------------------
+[13:29:39]  Andreas Everything 
+[13:29:39]  Script Lines: 700 
+[13:29:39]  Coded by: SA-MP Community 
+[13:29:39] ----------------------------------
+
+[13:29:39] Number of vehicle models: 0
+[13:30:08] [part] Brady has left the server (1:1)
+[13:30:24] --- Server Shutting Down.
+[13:30:24] 
+
+[13:30:24]  ===============================
+
+[13:30:24]      sscanf plugin unloaded.    
+
+[13:30:24]  ===============================
+
+[13:30:24] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[13:30:32] filterscripts = ""  (string)
+[13:30:32] weburl = "www.sa-mp.com"  (string)
+[13:30:32] 
+[13:30:32] Server Plugins
+[13:30:32] --------------
+[13:30:32]  Loading plugin: sscanf
+[13:30:32] 
+
+[13:30:32]  ===============================
+
+[13:30:32]       sscanf plugin loaded.     
+
+[13:30:32]    (c) 2009 Alex "Y_Less" Cole
+
+[13:30:32]  ===============================
+
+[13:30:32]   Loaded.
+[13:30:32]  Loading plugin: streamer
+[13:30:32] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[13:30:32]   Loaded.
+[13:30:32]  Loaded 2 plugins.
+
+[13:30:32] 
+[13:30:32] Filter Scripts
+[13:30:32] ---------------
+[13:30:32]   Loaded 0 filter scripts.
+
+[13:30:32] BUD v1.0.3 BETA loaded.
+[13:30:32] 
+----------------------------------
+[13:30:32]  Andreas Everything 
+[13:30:32]  Script Lines: 700 
+[13:30:32]  Coded by: SA-MP Community 
+[13:30:32] ----------------------------------
+
+[13:30:32] Number of vehicle models: 0
+[13:30:58] Incoming connection: 127.0.0.1:13122
+[13:30:59] [join] dowster has joined the server (0:127.0.0.1)
+[13:31:18] [part] dowster has left the server (0:1)
+[13:33:46] --- Server Shutting Down.
+[13:33:46] 
+
+[13:33:46]  ===============================
+
+[13:33:46]      sscanf plugin unloaded.    
+
+[13:33:46]  ===============================
+
+[13:33:46] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[13:33:50] filterscripts = ""  (string)
+[13:33:50] weburl = "www.sa-mp.com"  (string)
+[13:33:50] 
+[13:33:50] Server Plugins
+[13:33:50] --------------
+[13:33:50]  Loading plugin: sscanf
+[13:33:50] 
+
+[13:33:50]  ===============================
+
+[13:33:50]       sscanf plugin loaded.     
+
+[13:33:50]    (c) 2009 Alex "Y_Less" Cole
+
+[13:33:50]  ===============================
+
+[13:33:50]   Loaded.
+[13:33:50]  Loading plugin: streamer
+[13:33:50] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[13:33:50]   Loaded.
+[13:33:50]  Loaded 2 plugins.
+
+[13:33:50] 
+[13:33:50] Filter Scripts
+[13:33:50] ---------------
+[13:33:50]   Loaded 0 filter scripts.
+
+[13:33:50] BUD v1.0.3 BETA loaded.
+[13:33:50] 
+----------------------------------
+[13:33:50]  Andreas Everything 
+[13:33:50]  Script Lines: 700 
+[13:33:50]  Coded by: SA-MP Community 
+[13:33:50] ----------------------------------
+
+[13:33:50] Number of vehicle models: 0
+[13:34:19] Incoming connection: 127.0.0.1:13129
+[13:34:20] [join] dowster has joined the server (0:127.0.0.1)
+[13:34:46] Incoming connection: 192.168.1.160:60147
+[13:34:47] [join] Brady has joined the server (1:192.168.1.160)
+[13:35:23] [part] dowster has left the server (0:1)
+[13:35:36] --- Server Shutting Down.
+[13:35:36] [part] Brady has left the server (1:0)
+[13:35:36] 
+
+[13:35:36]  ===============================
+
+[13:35:36]      sscanf plugin unloaded.    
+
+[13:35:36]  ===============================
+
+[13:35:36] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[13:35:40] filterscripts = ""  (string)
+[13:35:40] weburl = "www.sa-mp.com"  (string)
+[13:35:40] 
+[13:35:40] Server Plugins
+[13:35:40] --------------
+[13:35:40]  Loading plugin: sscanf
+[13:35:40] 
+
+[13:35:40]  ===============================
+
+[13:35:40]       sscanf plugin loaded.     
+
+[13:35:40]    (c) 2009 Alex "Y_Less" Cole
+
+[13:35:40]  ===============================
+
+[13:35:40]   Loaded.
+[13:35:40]  Loading plugin: streamer
+[13:35:40] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[13:35:40]   Loaded.
+[13:35:40]  Loaded 2 plugins.
+
+[13:35:40] 
+[13:35:40] Filter Scripts
+[13:35:40] ---------------
+[13:35:40]   Loaded 0 filter scripts.
+
+[13:35:40] BUD v1.0.3 BETA loaded.
+[13:35:40] 
+----------------------------------
+[13:35:40]  Andreas Everything 
+[13:35:40]  Script Lines: 700 
+[13:35:40]  Coded by: SA-MP Community 
+[13:35:40] ----------------------------------
+
+[13:35:40] Number of vehicle models: 0
+[13:36:04] Incoming connection: 127.0.0.1:13131
+[13:36:05] [join] dowster has joined the server (0:127.0.0.1)
+[13:36:16] [part] dowster has left the server (0:1)
+[13:36:32] --- Server Shutting Down.
+[13:36:32] 
+
+[13:36:32]  ===============================
+
+[13:36:32]      sscanf plugin unloaded.    
+
+[13:36:32]  ===============================
+
+[13:36:32] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[13:37:32] filterscripts = ""  (string)
+[13:37:32] weburl = "www.sa-mp.com"  (string)
+[13:37:32] 
+[13:37:32] Server Plugins
+[13:37:32] --------------
+[13:37:32]  Loading plugin: sscanf
+[13:37:32] 
+
+[13:37:32]  ===============================
+
+[13:37:32]       sscanf plugin loaded.     
+
+[13:37:32]    (c) 2009 Alex "Y_Less" Cole
+
+[13:37:32]  ===============================
+
+[13:37:32]   Loaded.
+[13:37:32]  Loading plugin: streamer
+[13:37:32] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[13:37:32]   Loaded.
+[13:37:32]  Loaded 2 plugins.
+
+[13:37:32] 
+[13:37:32] Filter Scripts
+[13:37:32] ---------------
+[13:37:32]   Loaded 0 filter scripts.
+
+[13:37:32] BUD v1.0.3 BETA loaded.
+[13:37:32] 
+----------------------------------
+[13:37:32]  Andreas Everything 
+[13:37:32]  Script Lines: 700 
+[13:37:32]  Coded by: SA-MP Community 
+[13:37:32] ----------------------------------
+
+[13:37:32] Number of vehicle models: 0
+[13:37:58] Incoming connection: 127.0.0.1:13134
+[13:37:59] [join] dowster has joined the server (0:127.0.0.1)
+[13:38:07] [part] dowster has left the server (0:1)
+[13:45:41] --- Server Shutting Down.
+[13:45:41] 
+
+[13:45:41]  ===============================
+
+[13:45:41]      sscanf plugin unloaded.    
+
+[13:45:41]  ===============================
+
+[13:45:41] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[13:56:28] filterscripts = ""  (string)
+[13:56:28] weburl = "www.sa-mp.com"  (string)
+[13:56:28] 
+[13:56:28] Server Plugins
+[13:56:28] --------------
+[13:56:28]  Loading plugin: sscanf
+[13:56:28] 
+
+[13:56:28]  ===============================
+
+[13:56:28]       sscanf plugin loaded.     
+
+[13:56:28]    (c) 2009 Alex "Y_Less" Cole
+
+[13:56:28]  ===============================
+
+[13:56:28]   Loaded.
+[13:56:28]  Loading plugin: streamer
+[13:56:28] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[13:56:28]   Loaded.
+[13:56:28]  Loaded 2 plugins.
+
+[13:56:28] 
+[13:56:28] Filter Scripts
+[13:56:28] ---------------
+[13:56:28]   Loaded 0 filter scripts.
+
+[13:56:28] BUD v1.0.3 BETA loaded.
+[13:56:28] 
+----------------------------------
+[13:56:28]  Andreas Everything 
+[13:56:28]  Script Lines: 700 
+[13:56:28]  Coded by: SA-MP Community 
+[13:56:28] ----------------------------------
+
+[13:56:28] Number of vehicle models: 0
+[13:56:57] Incoming connection: 127.0.0.1:14484
+[13:56:57] [join] dowster has joined the server (0:127.0.0.1)
+[13:57:35] Incoming connection: 192.168.1.160:51809
+[13:57:35] [join] Brady has joined the server (1:192.168.1.160)
+[13:58:55] [part] dowster has left the server (0:1)
+[13:59:00] --- Server Shutting Down.
+[13:59:00] [part] Brady has left the server (1:0)
+[13:59:00] 
+
+[13:59:00]  ===============================
+
+[13:59:00]      sscanf plugin unloaded.    
+
+[13:59:00]  ===============================
+
+[13:59:00] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[13:59:40] filterscripts = ""  (string)
+[13:59:40] weburl = "www.sa-mp.com"  (string)
+[13:59:40] 
+[13:59:40] Server Plugins
+[13:59:40] --------------
+[13:59:40]  Loading plugin: sscanf
+[13:59:40] 
+
+[13:59:40]  ===============================
+
+[13:59:40]       sscanf plugin loaded.     
+
+[13:59:40]    (c) 2009 Alex "Y_Less" Cole
+
+[13:59:40]  ===============================
+
+[13:59:40]   Loaded.
+[13:59:40]  Loading plugin: streamer
+[13:59:40] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[13:59:40]   Loaded.
+[13:59:40]  Loaded 2 plugins.
+
+[13:59:40] 
+[13:59:40] Filter Scripts
+[13:59:40] ---------------
+[13:59:40]   Loaded 0 filter scripts.
+
+[13:59:40] BUD v1.0.3 BETA loaded.
+[13:59:40] 
+----------------------------------
+[13:59:40]  Andreas Everything 
+[13:59:40]  Script Lines: 700 
+[13:59:40]  Coded by: SA-MP Community 
+[13:59:40] ----------------------------------
+
+[13:59:40] Number of vehicle models: 0
+[14:00:40] Incoming connection: 192.168.1.160:58986
+[14:00:40] [join] Brady has joined the server (0:192.168.1.160)
+[14:00:59] Incoming connection: 127.0.0.1:14489
+[14:00:59] [join] dowster has joined the server (1:127.0.0.1)
+[14:01:11] [part] dowster has left the server (1:1)
+[14:01:50] --- Server Shutting Down.
+[14:01:50] [part] Brady has left the server (0:0)
+[14:01:50] 
+
+[14:01:50]  ===============================
+
+[14:01:50]      sscanf plugin unloaded.    
+
+[14:01:50]  ===============================
+
+[14:01:50] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[14:01:52] filterscripts = ""  (string)
+[14:01:52] weburl = "www.sa-mp.com"  (string)
+[14:01:52] 
+[14:01:52] Server Plugins
+[14:01:52] --------------
+[14:01:52]  Loading plugin: sscanf
+[14:01:52] 
+
+[14:01:52]  ===============================
+
+[14:01:52]       sscanf plugin loaded.     
+
+[14:01:52]    (c) 2009 Alex "Y_Less" Cole
+
+[14:01:52]  ===============================
+
+[14:01:52]   Loaded.
+[14:01:52]  Loading plugin: streamer
+[14:01:52] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[14:01:52]   Loaded.
+[14:01:52]  Loaded 2 plugins.
+
+[14:01:53] 
+[14:01:53] Filter Scripts
+[14:01:53] ---------------
+[14:01:53]   Loaded 0 filter scripts.
+
+[14:01:53] BUD v1.0.3 BETA loaded.
+[14:01:53] 
+----------------------------------
+[14:01:53]  Andreas Everything 
+[14:01:53]  Script Lines: 700 
+[14:01:53]  Coded by: SA-MP Community 
+[14:01:53] ----------------------------------
+
+[14:01:53] Number of vehicle models: 0
+[14:02:17] Incoming connection: 127.0.0.1:14492
+[14:02:17] [join] dowster has joined the server (0:127.0.0.1)
+[14:02:29] [part] dowster has left the server (0:1)
+[14:02:59] --- Server Shutting Down.
+[14:02:59] 
+
+[14:02:59]  ===============================
+
+[14:02:59]      sscanf plugin unloaded.    
+
+[14:02:59]  ===============================
+
+[14:02:59] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[14:03:40] filterscripts = ""  (string)
+[14:03:40] weburl = "www.sa-mp.com"  (string)
+[14:03:40] 
+[14:03:40] Server Plugins
+[14:03:40] --------------
+[14:03:40]  Loading plugin: sscanf
+[14:03:40] 
+
+[14:03:40]  ===============================
+
+[14:03:40]       sscanf plugin loaded.     
+
+[14:03:40]    (c) 2009 Alex "Y_Less" Cole
+
+[14:03:40]  ===============================
+
+[14:03:40]   Loaded.
+[14:03:40]  Loading plugin: streamer
+[14:03:40] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[14:03:40]   Loaded.
+[14:03:40]  Loaded 2 plugins.
+
+[14:03:40] 
+[14:03:40] Filter Scripts
+[14:03:40] ---------------
+[14:03:40]   Loaded 0 filter scripts.
+
+[14:03:40] BUD v1.0.3 BETA loaded.
+[14:03:40] 
+----------------------------------
+[14:03:40]  Andreas Everything 
+[14:03:40]  Script Lines: 700 
+[14:03:40]  Coded by: SA-MP Community 
+[14:03:40] ----------------------------------
+
+[14:03:40] Number of vehicle models: 0
+[14:03:45] Incoming connection: 127.0.0.1:14496
+[14:03:45] [join] dowster has joined the server (0:127.0.0.1)
+[14:04:52] Incoming connection: 192.168.1.160:63789
+[14:04:53] [join] Brady has joined the server (1:192.168.1.160)
+[14:05:48] [part] dowster has left the server (0:1)
+[14:06:15] --- Server Shutting Down.
+[14:06:15] [part] Brady has left the server (1:0)
+[14:06:15] 
+
+[14:06:15]  ===============================
+
+[14:06:15]      sscanf plugin unloaded.    
+
+[14:06:15]  ===============================
+
+[14:06:15] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[14:13:00] filterscripts = ""  (string)
+[14:13:00] weburl = "www.sa-mp.com"  (string)
+[14:13:00] 
+[14:13:00] Server Plugins
+[14:13:00] --------------
+[14:13:00]  Loading plugin: sscanf
+[14:13:00] 
+
+[14:13:00]  ===============================
+
+[14:13:00]       sscanf plugin loaded.     
+
+[14:13:00]    (c) 2009 Alex "Y_Less" Cole
+
+[14:13:00]  ===============================
+
+[14:13:00]   Loaded.
+[14:13:00]  Loading plugin: streamer
+[14:13:00] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[14:13:00]   Loaded.
+[14:13:00]  Loaded 2 plugins.
+
+[14:13:01] 
+[14:13:01] Filter Scripts
+[14:13:01] ---------------
+[14:13:01]   Loaded 0 filter scripts.
+
+[14:13:01] BUD v1.0.3 BETA loaded.
+[14:13:01] 
+----------------------------------
+[14:13:01]  Andreas Everything 
+[14:13:01]  Script Lines: 700 
+[14:13:01]  Coded by: SA-MP Community 
+[14:13:01] ----------------------------------
+
+[14:13:01] Number of vehicle models: 0
+[14:13:28] Incoming connection: 127.0.0.1:14604
+[14:13:28] [join] dowster has joined the server (0:127.0.0.1)
+[14:15:14] Incoming connection: 192.168.1.160:49265
+[14:15:15] [join] Brady has joined the server (1:192.168.1.160)
+[14:15:33] [part] dowster has left the server (0:1)
+[14:16:00] Incoming connection: 127.0.0.1:14605
+[14:16:00] [join] dowster has joined the server (0:127.0.0.1)
+[14:16:13] [part] dowster has left the server (0:1)
+[14:16:19] [part] Brady has left the server (1:1)
+[14:16:29] --- Server Shutting Down.
+[14:16:29] 
+
+[14:16:29]  ===============================
+
+[14:16:29]      sscanf plugin unloaded.    
+
+[14:16:29]  ===============================
+
+[14:16:29] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[14:19:27] filterscripts = ""  (string)
+[14:19:27] weburl = "www.sa-mp.com"  (string)
+[14:19:27] 
+[14:19:27] Server Plugins
+[14:19:27] --------------
+[14:19:27]  Loading plugin: sscanf
+[14:19:27] 
+
+[14:19:27]  ===============================
+
+[14:19:27]       sscanf plugin loaded.     
+
+[14:19:27]    (c) 2009 Alex "Y_Less" Cole
+
+[14:19:27]  ===============================
+
+[14:19:27]   Loaded.
+[14:19:27]  Loading plugin: streamer
+[14:19:27] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[14:19:27]   Loaded.
+[14:19:27]  Loaded 2 plugins.
+
+[14:19:27] 
+[14:19:27] Filter Scripts
+[14:19:27] ---------------
+[14:19:27]   Loaded 0 filter scripts.
+
+[14:19:27] BUD v1.0.3 BETA loaded.
+[14:19:27] 
+----------------------------------
+[14:19:27]  Andreas Everything 
+[14:19:27]  Script Lines: 700 
+[14:19:27]  Coded by: SA-MP Community 
+[14:19:27] ----------------------------------
+
+[14:19:27] Number of vehicle models: 0
+[14:19:54] Incoming connection: 127.0.0.1:14610
+[14:19:54] [join] dowster has joined the server (0:127.0.0.1)
+[14:20:13] [part] dowster has left the server (0:1)
+[14:20:18] --- Server Shutting Down.
+[14:20:18] 
+
+[14:20:18]  ===============================
+
+[14:20:18]      sscanf plugin unloaded.    
+
+[14:20:18]  ===============================
+
+[14:20:18] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[14:21:34] filterscripts = ""  (string)
+[14:21:34] weburl = "www.sa-mp.com"  (string)
+[14:21:34] 
+[14:21:34] Server Plugins
+[14:21:34] --------------
+[14:21:34]  Loading plugin: sscanf
+[14:21:34] 
+
+[14:21:34]  ===============================
+
+[14:21:34]       sscanf plugin loaded.     
+
+[14:21:34]    (c) 2009 Alex "Y_Less" Cole
+
+[14:21:34]  ===============================
+
+[14:21:34]   Loaded.
+[14:21:34]  Loading plugin: streamer
+[14:21:34] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[14:21:34]   Loaded.
+[14:21:34]  Loaded 2 plugins.
+
+[14:21:34] 
+[14:21:34] Filter Scripts
+[14:21:34] ---------------
+[14:21:34]   Loaded 0 filter scripts.
+
+[14:21:35] BUD v1.0.3 BETA loaded.
+[14:21:35] 
+----------------------------------
+[14:21:35]  Andreas Everything 
+[14:21:35]  Script Lines: 700 
+[14:21:35]  Coded by: SA-MP Community 
+[14:21:35] ----------------------------------
+
+[14:21:35] Number of vehicle models: 0
+[14:21:59] Incoming connection: 127.0.0.1:14613
+[14:21:59] [join] dowster has joined the server (0:127.0.0.1)
+[14:22:25] [part] dowster has left the server (0:1)
+[14:22:29] --- Server Shutting Down.
+[14:22:29] 
+
+[14:22:29]  ===============================
+
+[14:22:29]      sscanf plugin unloaded.    
+
+[14:22:29]  ===============================
+
+[14:22:29] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[14:23:14] filterscripts = ""  (string)
+[14:23:14] weburl = "www.sa-mp.com"  (string)
+[14:23:14] 
+[14:23:14] Server Plugins
+[14:23:14] --------------
+[14:23:14]  Loading plugin: sscanf
+[14:23:14] 
+
+[14:23:14]  ===============================
+
+[14:23:14]       sscanf plugin loaded.     
+
+[14:23:14]    (c) 2009 Alex "Y_Less" Cole
+
+[14:23:14]  ===============================
+
+[14:23:14]   Loaded.
+[14:23:14]  Loading plugin: streamer
+[14:23:14] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[14:23:14]   Loaded.
+[14:23:14]  Loaded 2 plugins.
+
+[14:23:14] 
+[14:23:14] Filter Scripts
+[14:23:14] ---------------
+[14:23:14]   Loaded 0 filter scripts.
+
+[14:23:14] BUD v1.0.3 BETA loaded.
+[14:23:14] 
+----------------------------------
+[14:23:14]  Andreas Everything 
+[14:23:14]  Script Lines: 700 
+[14:23:14]  Coded by: SA-MP Community 
+[14:23:14] ----------------------------------
+
+[14:23:14] Number of vehicle models: 0
+[14:23:38] Incoming connection: 127.0.0.1:14620
+[14:23:38] [join] dowster has joined the server (0:127.0.0.1)
+[14:23:44] [part] dowster has left the server (0:2)
+[14:23:55] --- Server Shutting Down.
+[14:23:55] 
+
+[14:23:55]  ===============================
+
+[14:23:55]      sscanf plugin unloaded.    
+
+[14:23:55]  ===============================
+
+[14:23:55] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+

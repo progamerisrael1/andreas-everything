@@ -1,0 +1,5 @@
+[August 1, 2011] - [13:30:08] User: Brady disconnected from 192.168.1.160
+[August 1, 2011] - [13:38:07] User: dowster disconnected from 127.0.0.1
+[August 1, 2011] - [14:01:11] User: dowster disconnected from 127.0.0.1
+[August 1, 2011] - [14:02:29] User: dowster disconnected from 127.0.0.1
+[August 1, 2011] - [14:05:48] User: dowster disconnected from 127.0.0.1

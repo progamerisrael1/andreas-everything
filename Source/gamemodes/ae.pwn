@@ -20,6 +20,7 @@
 // Server/Script Defines
 #define SCRIPT_MODE "AE v1.0"
 #define SCRIPT_WEB "forum.sa-mp.com"
+#define MAX_SKINS 300
 //Virtual World Defines
 #define LOBBY_VW 0
 #define DEATHMATCH_VW 5
@@ -82,6 +83,10 @@ enum pData
 new 
 	PlayerData[MAX_PLAYERS][pData],
 	IPADDRESSES[MAX_PLAYERS][18];
+
+new CnRskin[MAX_SKINS] =
+	{280, 281, 282, 283, 288};
+
 new MODES[MAX_MODES][2][17] = 
 {
 	{"Deathmatch", 0},
@@ -94,7 +99,7 @@ main()
 {
 	print("\n----------------------------------");
 	print(" Andreas Everything ");
-	print(" Script Lines: 673 ");
+	print(" Script Lines: 700 ");
 	print(" Coded by: SA-MP Community ");
 	print("----------------------------------\n");
 }
@@ -427,7 +432,18 @@ public OnPlayerSelectedMenuRow(playerid, row)
 	{
     	switch(row)
     	{
-    
+            case 0: // Next
+            {
+                ShowMenuForPlayer(CnRselect, playerid);
+            }
+            case 1: // Previous
+            {
+                ShowMenuForPlayer(CnRselect, playerid);
+            }
+            case 2: // Select
+            {
+                SendClientMessage(playerid, COLOR_YELLOW, "You have pressed select.");
+            }
     	}
 	}
 	return 1;
@@ -642,12 +658,23 @@ stock GetPlayerNameEx(playerid)
 	else pName = "Unknow";
 	return pName;
 }
+
+stock IsCopSkin(playerid)
+{
+	new skinid = GetPlayerSkin(playerid);
+	switch(skinid)
+	{
+		case 0: return false;
+	}
+	return skind;
+}
 // Mode Stocks
 stock CNR(playerid)
 {
 	SetPlayerVirtualWorld(playerid, CNR_VW);
 	SetPlayerPos(playerid, 1958.5851, 1343.0352, 15.3746);
 	SetPlayerFacingAngle(playerid, 89.1425);
+	SetPlayerSkin(playerid, CnRskin[0]);
 	TogglePlayerControllable(playerid, 0);
     ShowMenuForPlayer(CnRselect, playerid);
 	PlayerData[playerid][MODE] = MODE_CNR;

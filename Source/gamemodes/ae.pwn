@@ -63,15 +63,22 @@
 #define MODE_FREE_ROAM 1
 #define MODE_CNR 2
 #define MODE_LOBBY 3
+//CnR Class Defines
+#define CLASS_COP 0
+#define CLASS_ROBBER 1
 // Variables
 new
 	LoggedIn[MAX_PLAYERS];
 // Menu Variables
-new Menu:CnRselect;
+new 
+	Menu:CnRselect,
+	Menu:CnRClassSelect;
 // Enums
 enum pData
 {
     MODE,
+	CLASS,
+	SKIN,
 	Adminlevel,
 	Muted,
  	Money,
@@ -84,8 +91,10 @@ new
 	PlayerData[MAX_PLAYERS][pData],
 	IPADDRESSES[MAX_PLAYERS][18];
 
-new CnRskin[MAX_SKINS] =
-	{280, 281, 282, 283, 288};
+new CnRSkins[2][5] =
+{	{280, 281, 282, 283, 288},
+	{122, 247, 254, 111, 124}
+};
 
 new MODES[MAX_MODES][2][17] = 
 {
@@ -125,10 +134,13 @@ public OnGameModeInit()
 	BUD::VerifyColumn("armour", BUD::TYPE_FLOAT);
 	LobbyObjects();
 	// Menus
-	CnRselect = CreateMenu("CnR", 1, 200.0, 100.0, 50.0, 0.0);
+	CnRselect = CreateMenu("Skin", 1, 200.0, 100.0, 100.0, 0.0);
 	AddMenuItem(CnRselect, 0, "Next");
 	AddMenuItem(CnRselect, 0, "Previous");
 	AddMenuItem(CnRselect, 0, "Select");
+	CnRClassSelect = CreateMenu("Class", 1, 300.0, 100.0, 100.0, 0.0);
+	AddMenuItem(CnRClassSelect, 0, "Cops");
+	AddMenuItem(CnRClassSelect, 0, "Robbers");
 	return 1;
 }
 
@@ -264,6 +276,14 @@ CMD:arrest(playerid, params[])
 	return 1;
 }
 
+//Debug Commands
+CMD:vw(playerid)
+{
+	new vw = GetPlayerVirtualWorld(playerid), string[32];
+	format(string, sizeof(string), "VW = %i", vw);
+	SendClientMessage(playerid, COLOR_MAGENTA, string);
+	return 1;
+}
 // Admin Commands
 CMD:mute(playerid, params[])
 {
@@ -430,21 +450,58 @@ public OnPlayerSelectedMenuRow(playerid, row)
 	// CnR Class Selection
 	if(CurrentMenu == CnRselect)
 	{
-    	switch(row)
-    	{
-            case 0: // Next
-            {
-                ShowMenuForPlayer(CnRselect, playerid);
-            }
-            case 1: // Previous
-            {
-                ShowMenuForPlayer(CnRselect, playerid);
-            }
-            case 2: // Select
-            {
-                SendClientMessage(playerid, COLOR_YELLOW, "You have pressed select.");
-            }
-    	}
+		switch(row)
+		{
+			case 0: // Next
+			{
+				if(PlayerData[playerid][SKIN] == 4) // 4 is the last part of the array so we need to set their skin back to zero so they don't crash the game
+				{
+					PlayerData[playerid][SKIN] = 0;
+				}
+				else PlayerData[playerid][SKIN]++;
+				SetPlayerSkin(playerid, CnRSkins[PlayerData[playerid][CLASS]][PlayerData[playerid][SKIN]]);
+				ShowMenuForPlayer(CnRselect, playerid);
+			}
+			case 1: // Previous
+			{
+				if(PlayerData[playerid][SKIN] == 0) // 0 is the first part so we need to reset them at the end
+				{
+					PlayerData[playerid][SKIN] = 4;
+				}
+				else PlayerData[playerid][SKIN]--;
+				SetPlayerSkin(playerid, CnRSkins[PlayerData[playerid][CLASS]][PlayerData[playerid][SKIN]]);
+				ShowMenuForPlayer(CnRselect, playerid);
+			}
+			case 2: // Select
+			{
+				SendClientMessage(playerid, COLOR_YELLOW, "You have pressed select.");
+				TogglePlayerControllable( playerid, 1);
+				if(PlayerData[playerid][CLASS] == CLASS_COP) SetSpawnInfo( playerid, 0, CnRSkins[PlayerData[playerid][CLASS]][PlayerData[playerid][SKIN]],2339.9080,2456.2988,14.9688,179.5063,0,0,0,0,0,0);
+				SpawnPlayer(playerid);
+			}
+		}
+	}
+	if(CurrentMenu == CnRClassSelect)
+	{
+		switch(row)
+		{
+			case 0: //Cop
+			{
+				ShowMenuForPlayer(CnRselect, playerid);
+				PlayerData[playerid][CLASS] = CLASS_COP;
+				SetPlayerSkin(playerid, CnRSkins[PlayerData[playerid][CLASS]][PlayerData[playerid][SKIN]]);
+				SetPlayerPos(playerid, 1958.5851, 1343.0352, 15.3746);
+				SetPlayerFacingAngle(playerid, 89.1425);
+			}
+			case 1: //Robber
+			{
+				ShowMenuForPlayer( CnRselect, playerid);
+				PlayerData[playerid][CLASS] = CLASS_ROBBER;
+				SetPlayerSkin(playerid, CnRSkins[PlayerData[playerid][CLASS]][PlayerData[playerid][SKIN]]);
+				SetPlayerPos(playerid, 1958.5851, 1343.0352, 15.3746);
+				SetPlayerFacingAngle(playerid, 89.1425);
+			}
+		}
 	}
 	return 1;
 }
@@ -672,11 +729,8 @@ stock IsCopSkin(playerid)
 stock CNR(playerid)
 {
 	SetPlayerVirtualWorld(playerid, CNR_VW);
-	SetPlayerPos(playerid, 1958.5851, 1343.0352, 15.3746);
-	SetPlayerFacingAngle(playerid, 89.1425);
-	SetPlayerSkin(playerid, CnRskin[0]);
 	TogglePlayerControllable(playerid, 0);
-    ShowMenuForPlayer(CnRselect, playerid);
+    ShowMenuForPlayer(CnRClassSelect, playerid);
 	PlayerData[playerid][MODE] = MODE_CNR;
 	return 1;
 }

@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
 	Andreas Everything
 	coded by:
-	Steven82, Dowster
+	Steven82, Dowster, Famalamalam
 	
 	Thanks to Incognito - Streamer
 	Thanks to Y_Less - sscanf, foreach
@@ -18,6 +18,8 @@
 #include <foreach>
 #include <objects>
 // Server/Script Defines
+#define BETA_BUILD 1                    // Set to 1 to activate beta features.
+
 #define SCRIPT_MODE "AE v1.0"
 #define SCRIPT_WEB "forum.sa-mp.com"
 #define MAX_SKINS 300
@@ -147,11 +149,17 @@ public OnGameModeInit()
 public OnGameModeExit()
 {
     BUD::Exit();
+    #if BETA_BUILD == 1
+    print("Executed OnGameModeExit");
+    #endif
 	return 1;
 }
 
 public OnPlayerRequestClass(playerid, classid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerRequestClass");
+    #endif
 	return 1;
 }
 
@@ -169,6 +177,10 @@ public OnPlayerConnect(playerid)
 	SetPlayerScore(playerid, 0);
 	GetPlayerIp(playerid, IPADDRESSES[playerid], 18);
 	PlayerData[playerid][MODE] = 100;
+	
+	#if BETA_BUILD == 1
+    print("Executed OnPlayerConnect");
+    #endif
 	return 1;
 }
 
@@ -188,6 +200,10 @@ public OnPlayerDisconnect(playerid, reason)
 	fwrite( disconnectlog, string);
 	fclose(disconnectlog);
 	if(MODES[PlayerData[playerid][MODE]][2][0] != 0) MODES[PlayerData[playerid][MODE]][2][0] = (MODES[PlayerData[playerid][MODE]][2][0] - 1);
+
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerDisconnect");
+    #endif
 	return 1;
 }
 
@@ -209,6 +225,10 @@ public OnPlayerSpawn(playerid)
 		}
 	}
 	// Misc
+	
+	#if BETA_BUILD == 1
+    print("Executed OnPlayerSpawn");
+    #endif
 	return 1;
 }
 
@@ -230,21 +250,34 @@ public OnPlayerDeath(playerid, killerid, reason)
 	new File:deathlog = fopen("Logs/Death Log.txt", io_append);
 	fwrite(deathlog, string);
 	fclose(deathlog);
+	
+	#if BETA_BUILD == 1
+    print("Executed OnPlayerDeath");
+    #endif
 	return 1;
 }
 
 public OnVehicleSpawn(vehicleid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnVehicleSpawn");
+    #endif
 	return 1;
 }
 
 public OnVehicleDeath(vehicleid, killerid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnVehicleDeath");
+    #endif
 	return 1;
 }
 
 public OnPlayerText(playerid, text[])
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerText"); // This could become spammy, we'll see..
+    #endif
 	return 1;
 }
 
@@ -373,76 +406,121 @@ CMD:ban(playerid, params[])
 //============================================================================//
 public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerEnterVehicle");
+    #endif
 	return 1;
 }
 
 public OnPlayerExitVehicle(playerid, vehicleid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerExitVehicle");
+    #endif
 	return 1;
 }
 
 public OnPlayerStateChange(playerid, newstate, oldstate)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerStateChange");
+    #endif
 	return 1;
 }
 
 public OnPlayerEnterCheckpoint(playerid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerEnterCheckpoint");
+    #endif
 	return 1;
 }
 
 public OnPlayerLeaveCheckpoint(playerid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerLeaveCheckpoint");
+    #endif
 	return 1;
 }
 
 public OnPlayerEnterRaceCheckpoint(playerid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerEnterRaceCheckpoint");
+    #endif
 	return 1;
 }
 
 public OnPlayerLeaveRaceCheckpoint(playerid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerLeaveRaceCheckpoint");
+    #endif
 	return 1;
 }
 
 public OnRconCommand(cmd[])
 {
+    #if BETA_BUILD == 1
+    print("Executed OnRconCommand");
+    #endif
 	return 1;
 }
 
 public OnPlayerRequestSpawn(playerid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerRequestSpawn");
+    #endif
 	return 1;
 }
 
 public OnObjectMoved(objectid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnObjectMoved");
+    #endif
 	return 1;
 }
 
 public OnPlayerObjectMoved(playerid, objectid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerObjectMoved");
+    #endif
 	return 1;
 }
 
-public OnPlayerPickUpPickup(playerid, pickupid)
+public OnPlayerPickUpPickup(playerid, pickupid) // Should maybe deprecate this, in favour of Incognitos plug-in(?)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerPickUpPickup");
+    #endif
 	return 1;
 }
 
 public OnVehicleMod(playerid, vehicleid, componentid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnVehicleMod");
+    #endif
 	return 1;
 }
 
 public OnVehiclePaintjob(playerid, vehicleid, paintjobid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnVehiclePaintjob");
+    #endif
 	return 1;
 }
 
 public OnVehicleRespray(playerid, vehicleid, color1, color2)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnVehicleRespray");
+    #endif
 	return 1;
 }
 
@@ -505,51 +583,80 @@ public OnPlayerSelectedMenuRow(playerid, row)
 			}
 		}
 	}
+	
+	#if BETA_BUILD == 1
+    print("Executed OnPlayerSelectedMenuRow");
+    #endif
 	return 1;
 }
 
 public OnPlayerExitedMenu(playerid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerExitedMenu");
+    #endif
 	return 1;
 }
 
 public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerInteriorChange");
+    #endif
 	return 1;
 }
 
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerKeyStateChange");
+    #endif
 	return 1;
 }
 
 public OnRconLoginAttempt(ip[], password[], success)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnRconLoginAttempt");
+    #endif
 	return 1;
 }
 
 public OnPlayerUpdate(playerid)
 {
+	// I guess it's not a good idea to add a debug option here as it will be spammed every 30ms or something - Famalam
 	return 1;
 }
 
 public OnPlayerStreamIn(playerid, forplayerid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerStreamIn");
+    #endif
 	return 1;
 }
 
 public OnPlayerStreamOut(playerid, forplayerid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerStreamOut");
+    #endif
 	return 1;
 }
 
 public OnVehicleStreamIn(vehicleid, forplayerid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnVehicleStreamIn");
+    #endif
 	return 1;
 }
 
 public OnVehicleStreamOut(vehicleid, forplayerid)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnVehicleStreamOut");
+    #endif
 	return 1;
 }
 
@@ -682,11 +789,18 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			}
 		}
 	}
+	
+	#if BETA_BUILD == 1
+    print("Executed OnDialogResponse");
+    #endif
 	return 1;
 }
 
 public OnPlayerClickPlayer(playerid, clickedplayerid, source)
 {
+    #if BETA_BUILD == 1
+    print("Executed OnPlayerClickPlayer");
+    #endif
 	return 1;
 }
 //============================================================================//
@@ -706,6 +820,10 @@ public SaveAccount(playerid)
 	BUD::SetIntEntry(userid, "score", GetPlayerScore(playerid));
 	BUD::SetFloatEntry(userid, "health", health);
 	BUD::SetFloatEntry(userid, "armour", armour);
+	
+	#if BETA_BUILD == 1
+    print("Executed SaveAccount");
+    #endif
 	return 1;
 }
 // stocks
@@ -736,16 +854,30 @@ stock CNR(playerid)
 	TogglePlayerControllable(playerid, 0);
     ShowMenuForPlayer(CnRClassSelect, playerid);
 	PlayerData[playerid][MODE] = MODE_CNR;
+	
+	#if BETA_BUILD == 1
+    print("Executed CNR()");
+    #endif
 	return 1;
 }
 
 stock DeathMatch(playerid)
 {
+	#pragma unused playerid // Comment out/remove when you need it, this is to supress PAWNO warnings - Famalam
+
+    #if BETA_BUILD == 1
+    print("Executed DeathMatch()");
+    #endif
 	return 1;
 }
 
 stock FreeRoam(playerid)
 {
+    #pragma unused playerid // Comment out/remove when you need it, this is to supress PAWNO warnings - Famalam
+
+	#if BETA_BUILD == 1
+    print("Executed FreeRoam()");
+    #endif
 	return 1;
 }
 stock Lobby(playerid)
@@ -754,5 +886,9 @@ stock Lobby(playerid)
 	SetPlayerInterior( playerid, 18);
 	SetPlayerPos( playerid, 1727.328125, -1639.4775390625, 20.223743438721);
 	PlayerData[playerid][MODE] = MODE_LOBBY;
+	
+	#if BETA_BUILD == 1
+    print("Executed Lobby()");
+    #endif
 	return 1;
 }

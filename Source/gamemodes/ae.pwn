@@ -17,7 +17,6 @@
 #include <arrays>
 #include <streamer>
 #include <foreach>
-#include <objects>
 // Server/Script Defines
 #define BETA_BUILD 1                    // Set to 1 to activate beta features.
 #define DEBUG 0                         // Set to 1 to enable debugging in console
@@ -31,6 +30,9 @@
 #define DEATHMATCH_VW 5
 #define FREEROAM_VW 10
 #define CNR_VW 15
+#define ADMIN_LOUNGE_VW 20
+// Objects Include
+#include <objects> //This is below the VW defines because it uses them to know which VWs objects go in
 // Color Defines
 #define COLOR_GRAD1 0xB4B5B7FF
 #define COLOR_GRAD2 0xBFC0C2FF
@@ -141,7 +143,9 @@ public OnGameModeInit()
 	BUD::VerifyColumn("virtualwolrd", BUD::TYPE_NUMBER);
 	BUD::VerifyColumn("health", BUD::TYPE_FLOAT);
 	BUD::VerifyColumn("armour", BUD::TYPE_FLOAT);
+	// Objects
 	LobbyObjects();
+	AdminAreaObjects();
 	// Menus
 	CnRselect = CreateMenu("Skin", 1, 200.0, 100.0, 100.0, 0.0);
 	AddMenuItem(CnRselect, 0, "Next");
@@ -891,7 +895,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				case MODE_ADMIN_LOUNGE:
 				{
 					MODES[MODE_ADMIN_LOUNGE][2][0]++;
-					//ALounge(playerid);
+					ALounge(playerid);
 				}
 				case MAX_MODES:
 				{
@@ -1009,6 +1013,37 @@ stock Lobby(playerid)
 	#if DEBUG == 1
     print("Executed Lobby()");
     #endif
+	return 1;
+}
+stock ALounge(playerid)
+{
+	SetPlayerPos( playerid, -2157.6730957031, 642.63775634766, 1052.375);
+	SetPlayerInterior(playerid, 1);
+	SetPlayerVirtualWorld(playerid, ADMIN_LOUNGE_VW);
+	PlayerData[playerid][MODE] = MODE_ADMIN_LOUNGE;
+	ObjectFreeze(playerid);
+	#if DEBUG == 1
+	print("Executed ALounge()";
+	#endif
+	return 1;
+}
+stock ObjectFreeze(playerid) //When teleporting a player to a place with custom objects, insert this line so the player has time to load the objects and does not fall
+{
+	TogglePlayerControllable(playerid, 0);
+	SetTimerEx("UnFreeze", 2000, false, "i", playerid);
+	GameTextForPlayer(playerid, "~r~Objects Loading", 2000, 4);
+	#if DEBUG == 1
+	print("Executed ObjectFreeze()";
+	#endif
+	return 1;
+}
+forward UnFreeze(playerid);
+public UnFreeze(playerid)
+{
+	TogglePlayerControllable(playerid, 1);
+	#if DEBUG == 1
+	print("Executed UnFreeze()";
+	#endif
 	return 1;
 }
 // Admin Related Stocks

@@ -4,3 +4,5 @@
 [August 1, 2011] - [14:02:29] User: dowster disconnected from 127.0.0.1
 [August 1, 2011] - [14:05:48] User: dowster disconnected from 127.0.0.1
 [August 5, 2011] - [5:30:06] User: Famalamalam disconnected from 127.0.0.1
+[August 5, 2011] - [18:01:26] User: dowster disconnected from 127.0.0.1
+[August 5, 2011] - [18:10:03] User: dowster disconnected from 127.0.0.1

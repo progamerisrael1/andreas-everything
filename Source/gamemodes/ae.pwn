@@ -2,16 +2,17 @@
 	Andreas Everything
 	coded by:
 	Steven82, Dowster, Famalamalam
-	
+
 	Thanks to Incognito - Streamer
 	Thanks to Y_Less - sscanf, foreach
-	Thanks to Splice - BUD(Blazing User Database)
+	Thanks to Slice - BUD(Blazing User Database)
 ------------------------------------------------------------------------------*/
 #include <a_samp>
 #define BUD_MAX_COLUMNS 50
 #define BUD_USE_WHIRLPOOL false
 #include <bud>
 #include <zcmd>
+#include <YSI/y_ini>
 #include <sscanf2>
 #include <arrays>
 #include <streamer>
@@ -19,10 +20,12 @@
 #include <objects>
 // Server/Script Defines
 #define BETA_BUILD 1                    // Set to 1 to activate beta features.
-
+#define DEBUG 0                         // Set to 1 to enable debugging in console
 #define SCRIPT_MODE "AE v1.0"
 #define SCRIPT_WEB "forum.sa-mp.com"
 #define MAX_SKINS 300
+// Macros
+#define INI_Exist(%0) fexist(%0)
 //Virtual World Defines
 #define LOBBY_VW 0
 #define DEATHMATCH_VW 5
@@ -73,7 +76,7 @@
 new
 	LoggedIn[MAX_PLAYERS];
 // Menu Variables
-new 
+new
 	Menu:CnRselect,
 	Menu:CnRClassSelect;
 // Enums
@@ -90,7 +93,7 @@ enum pData
  	Float:Armour
 }
 //Arrays
-new 
+new
 	PlayerData[MAX_PLAYERS][pData],
 	IPADDRESSES[MAX_PLAYERS][18];
 
@@ -99,7 +102,7 @@ new CnRSkins[2][5] =
 	{122, 247, 254, 111, 124}
 };
 
-new MODES[MAX_MODES][3][17] = 
+new MODES[MAX_MODES][3][17] =
 {
 	{"Deathmatch", 0, 0},
 	{"Free Roam", 0, 0},
@@ -151,7 +154,7 @@ public OnGameModeInit()
 public OnGameModeExit()
 {
     BUD::Exit();
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnGameModeExit");
     #endif
 	return 1;
@@ -159,7 +162,7 @@ public OnGameModeExit()
 
 public OnPlayerRequestClass(playerid, classid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerRequestClass");
     #endif
 	return 1;
@@ -179,8 +182,8 @@ public OnPlayerConnect(playerid)
 	SetPlayerScore(playerid, 0);
 	GetPlayerIp(playerid, IPADDRESSES[playerid], 18);
 	PlayerData[playerid][MODE] = 100;
-	
-	#if BETA_BUILD == 1
+
+	#if DEBUG == 1
     print("Executed OnPlayerConnect");
     #endif
 	return 1;
@@ -203,7 +206,7 @@ public OnPlayerDisconnect(playerid, reason)
 	fclose(disconnectlog);
 	if(MODES[PlayerData[playerid][MODE]][2][0] != 0) MODES[PlayerData[playerid][MODE]][2][0] = (MODES[PlayerData[playerid][MODE]][2][0] - 1);
 
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerDisconnect");
     #endif
 	return 1;
@@ -227,8 +230,8 @@ public OnPlayerSpawn(playerid)
 		}
 	}
 	// Misc
-	
-	#if BETA_BUILD == 1
+
+	#if DEBUG == 1
     print("Executed OnPlayerSpawn");
     #endif
 	return 1;
@@ -252,8 +255,8 @@ public OnPlayerDeath(playerid, killerid, reason)
 	new File:deathlog = fopen("Logs/Death Log.txt", io_append);
 	fwrite(deathlog, string);
 	fclose(deathlog);
-	
-	#if BETA_BUILD == 1
+
+	#if DEBUG == 1
     print("Executed OnPlayerDeath");
     #endif
 	return 1;
@@ -261,7 +264,7 @@ public OnPlayerDeath(playerid, killerid, reason)
 
 public OnVehicleSpawn(vehicleid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnVehicleSpawn");
     #endif
 	return 1;
@@ -269,7 +272,7 @@ public OnVehicleSpawn(vehicleid)
 
 public OnVehicleDeath(vehicleid, killerid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnVehicleDeath");
     #endif
 	return 1;
@@ -277,7 +280,7 @@ public OnVehicleDeath(vehicleid, killerid)
 
 public OnPlayerText(playerid, text[])
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerText"); // This could become spammy, we'll see..
     #endif
 	return 1;
@@ -314,6 +317,7 @@ CMD:arrest(playerid, params[])
 }
 
 //Debug Commands
+#if DEBUG == 1
 CMD:vw(playerid)
 {
 	new vw = GetPlayerVirtualWorld(playerid), string[32];
@@ -321,6 +325,70 @@ CMD:vw(playerid)
 	SendClientMessage(playerid, COLOR_MAGENTA, string);
 	return 1;
 }
+#endif
+// Beta commands
+#if BETA_BUILD == 1
+CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an in-game dialog... in theory XD
+{
+    new FoundID = 0, ID, string[128], model, Float:Angle, pInterior, name[128], pWorld, Float:X, Float:Y, Float:Z, vID;
+	if(!sscanf(params, "s[128]", name))
+	{
+		// Get some player stuff
+		GetPlayerFacingAngle(playerid, Angle);
+		GetPlayerPos(playerid, X, Y, Z);
+		pInterior = GetPlayerInterior(playerid);
+		pWorld = GetPlayerVirtualWorld(playerid);
+		if(IsPlayerInAnyVehicle(playerid))
+		{
+		    vID = GetPlayerVehicleID(playerid);
+		    model = GetVehicleModel(vID);
+		}
+
+		for ( new i = 1; FoundID <= 0 ; i++)
+		{
+		    format(string,sizeof(string),"../bugs/%i.ini",i);
+		    if(!INI_Exist(string))
+		    {
+	 	   		ID = i;
+	   	   		FoundID = 1;
+		    }
+		}
+		format(string,sizeof(string),"../bugs/%i.ini",ID);
+	 	new INI:iniFile = INI_Open(string);
+		INI_WriteString(iniFile, "Description:", name);
+		INI_WriteFloat(iniFile, "X:", X, 3);
+		INI_WriteFloat(iniFile, "Y:", Y, 3);
+		INI_WriteFloat(iniFile, "Z:", Z, 3);
+		INI_WriteFloat(iniFile, "Angle:", Angle, 3);
+		INI_WriteInt(iniFile, "Interior:", pInterior);
+		INI_WriteInt(iniFile, "World:", pWorld);
+		INI_WriteString(iniFile, "Reported by:", GetPlayerNameEx(playerid));
+		if(LoggedIn[playerid])
+		{
+		    INI_WriteString(iniFile, "Logged in?:", "Yes");
+		}
+		else
+		{
+		    INI_WriteString(iniFile, "Logged in?:", "No");
+		}
+		if(IsPlayerInAnyVehicle(playerid))
+		{
+		    INI_WriteInt(iniFile, "Vehicle ID:", vID);
+		    INI_WriteInt(iniFile, "Model ID:", model);
+	        INI_WriteString(iniFile, "Model Name:", GetVehicleName(vID));
+		}
+		format(string, sizeof(string), "*Thanks for reporting this issue number %d, it will be reviewed shortly.", ID);
+		SendClientMessage(playerid, COLOR_YELLOW, string);
+		/*format(string, sizeof(string), "%s[%d] has reported issue number %d", GetPlayerNameEx(playerid), playerid, ID);
+		MessageToAdminsEx(playerid, White, string); */ // soon
+	}
+	else
+	{
+	    SendClientMessage(playerid, COLOR_RED, "USAGE: /bug [Short description]");
+	}
+	return 1;
+}
+#endif
 // Admin Commands
 CMD:mute(playerid, params[])
 {
@@ -408,7 +476,7 @@ CMD:ban(playerid, params[])
 //============================================================================//
 public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerEnterVehicle");
     #endif
 	return 1;
@@ -416,7 +484,7 @@ public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger)
 
 public OnPlayerExitVehicle(playerid, vehicleid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerExitVehicle");
     #endif
 	return 1;
@@ -424,7 +492,7 @@ public OnPlayerExitVehicle(playerid, vehicleid)
 
 public OnPlayerStateChange(playerid, newstate, oldstate)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerStateChange");
     #endif
 	return 1;
@@ -432,7 +500,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate)
 
 public OnPlayerEnterCheckpoint(playerid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerEnterCheckpoint");
     #endif
 	return 1;
@@ -440,7 +508,7 @@ public OnPlayerEnterCheckpoint(playerid)
 
 public OnPlayerLeaveCheckpoint(playerid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerLeaveCheckpoint");
     #endif
 	return 1;
@@ -448,7 +516,7 @@ public OnPlayerLeaveCheckpoint(playerid)
 
 public OnPlayerEnterRaceCheckpoint(playerid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerEnterRaceCheckpoint");
     #endif
 	return 1;
@@ -456,7 +524,7 @@ public OnPlayerEnterRaceCheckpoint(playerid)
 
 public OnPlayerLeaveRaceCheckpoint(playerid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerLeaveRaceCheckpoint");
     #endif
 	return 1;
@@ -464,7 +532,7 @@ public OnPlayerLeaveRaceCheckpoint(playerid)
 
 public OnRconCommand(cmd[])
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnRconCommand");
     #endif
 	return 1;
@@ -472,7 +540,7 @@ public OnRconCommand(cmd[])
 
 public OnPlayerRequestSpawn(playerid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerRequestSpawn");
     #endif
 	return 1;
@@ -480,7 +548,7 @@ public OnPlayerRequestSpawn(playerid)
 
 public OnObjectMoved(objectid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnObjectMoved");
     #endif
 	return 1;
@@ -488,7 +556,7 @@ public OnObjectMoved(objectid)
 
 public OnPlayerObjectMoved(playerid, objectid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerObjectMoved");
     #endif
 	return 1;
@@ -496,7 +564,7 @@ public OnPlayerObjectMoved(playerid, objectid)
 
 public OnPlayerPickUpPickup(playerid, pickupid) // Should maybe deprecate this, in favour of Incognitos plug-in(?)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerPickUpPickup");
     #endif
 	return 1;
@@ -504,7 +572,7 @@ public OnPlayerPickUpPickup(playerid, pickupid) // Should maybe deprecate this, 
 
 public OnVehicleMod(playerid, vehicleid, componentid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnVehicleMod");
     #endif
 	return 1;
@@ -512,7 +580,7 @@ public OnVehicleMod(playerid, vehicleid, componentid)
 
 public OnVehiclePaintjob(playerid, vehicleid, paintjobid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnVehiclePaintjob");
     #endif
 	return 1;
@@ -520,7 +588,7 @@ public OnVehiclePaintjob(playerid, vehicleid, paintjobid)
 
 public OnVehicleRespray(playerid, vehicleid, color1, color2)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnVehicleRespray");
     #endif
 	return 1;
@@ -585,8 +653,8 @@ public OnPlayerSelectedMenuRow(playerid, row)
 			}
 		}
 	}
-	
-	#if BETA_BUILD == 1
+
+	#if DEBUG == 1
     print("Executed OnPlayerSelectedMenuRow");
     #endif
 	return 1;
@@ -594,7 +662,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
 
 public OnPlayerExitedMenu(playerid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerExitedMenu");
     #endif
 	return 1;
@@ -602,7 +670,7 @@ public OnPlayerExitedMenu(playerid)
 
 public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerInteriorChange");
     #endif
 	return 1;
@@ -610,7 +678,7 @@ public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid)
 
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerKeyStateChange");
     #endif
 	return 1;
@@ -618,7 +686,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 
 public OnRconLoginAttempt(ip[], password[], success)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnRconLoginAttempt");
     #endif
 	return 1;
@@ -632,7 +700,7 @@ public OnPlayerUpdate(playerid)
 
 public OnPlayerStreamIn(playerid, forplayerid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerStreamIn");
     #endif
 	return 1;
@@ -640,7 +708,7 @@ public OnPlayerStreamIn(playerid, forplayerid)
 
 public OnPlayerStreamOut(playerid, forplayerid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerStreamOut");
     #endif
 	return 1;
@@ -648,7 +716,7 @@ public OnPlayerStreamOut(playerid, forplayerid)
 
 public OnVehicleStreamIn(vehicleid, forplayerid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnVehicleStreamIn");
     #endif
 	return 1;
@@ -656,7 +724,7 @@ public OnVehicleStreamIn(vehicleid, forplayerid)
 
 public OnVehicleStreamOut(vehicleid, forplayerid)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnVehicleStreamOut");
     #endif
 	return 1;
@@ -705,7 +773,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			LoggedIn[playerid] = 1;
 			SetSpawnInfo(playerid, 0, 0, 1958.3783, 1343.1572, 15.3746, 269.1425, 0, 0, 0, 0, 0, 0);
 			SpawnPlayer(playerid);
-			new 
+			new
 				string[512];
 			for(new i = 0; i < MAX_MODES; i++)
 			{
@@ -749,7 +817,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	{
 		if(!response)
 		{
-			new 
+			new
 				string[512];
 			for(new i = 0; i < MAX_MODES; i++)
 			{
@@ -786,7 +854,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				case MODE_ADMIN_LOUNGE:
 				{
 					MODES[MODE_ADMIN_LOUNGE][2][0]++;
-					//ALounge(playerid); 
+					//ALounge(playerid);
 				}
 				case MAX_MODES:
 				{
@@ -796,8 +864,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			}
 		}
 	}
-	
-	#if BETA_BUILD == 1
+
+	#if DEBUG == 1
     print("Executed OnDialogResponse");
     #endif
 	return 1;
@@ -805,7 +873,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 
 public OnPlayerClickPlayer(playerid, clickedplayerid, source)
 {
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed OnPlayerClickPlayer");
     #endif
 	return 1;
@@ -827,13 +895,20 @@ public SaveAccount(playerid)
 	BUD::SetIntEntry(userid, "score", GetPlayerScore(playerid));
 	BUD::SetFloatEntry(userid, "health", health);
 	BUD::SetFloatEntry(userid, "armour", armour);
-	
-	#if BETA_BUILD == 1
+
+	#if DEBUG == 1
     print("Executed SaveAccount");
     #endif
 	return 1;
 }
 // stocks
+stock GetVehicleName(vehicleid)
+{
+	new vn[50];
+	format(vn,sizeof(vn),"%s",VehicleNames[GetVehicleModel(vehicleid)-400]);
+	return vn;
+}
+
 stock GetPlayerNameEx(playerid)
 {
 	new pName[MAX_PLAYER_NAME];
@@ -841,7 +916,7 @@ stock GetPlayerNameEx(playerid)
 	{
 	    GetPlayerName(playerid, pName, sizeof(pName));
 	}
-	else pName = "Unknow";
+	else pName = "Unknown";
 	return pName;
 }
 
@@ -861,8 +936,8 @@ stock CNR(playerid)
 	TogglePlayerControllable(playerid, 0);
     ShowMenuForPlayer(CnRClassSelect, playerid);
 	PlayerData[playerid][MODE] = MODE_CNR;
-	
-	#if BETA_BUILD == 1
+
+	#if DEBUG == 1
     print("Executed CNR()");
     #endif
 	return 1;
@@ -872,7 +947,7 @@ stock DeathMatch(playerid)
 {
 	#pragma unused playerid // Comment out/remove when you need it, this is to supress PAWNO warnings - Famalam
 
-    #if BETA_BUILD == 1
+    #if DEBUG == 1
     print("Executed DeathMatch()");
     #endif
 	return 1;
@@ -882,7 +957,7 @@ stock FreeRoam(playerid)
 {
     #pragma unused playerid // Comment out/remove when you need it, this is to supress PAWNO warnings - Famalam
 
-	#if BETA_BUILD == 1
+	#if DEBUG == 1
     print("Executed FreeRoam()");
     #endif
 	return 1;
@@ -893,8 +968,8 @@ stock Lobby(playerid)
 	SetPlayerInterior( playerid, 18);
 	SetPlayerPos( playerid, 1727.328125, -1639.4775390625, 20.223743438721);
 	PlayerData[playerid][MODE] = MODE_LOBBY;
-	
-	#if BETA_BUILD == 1
+
+	#if DEBUG == 1
     print("Executed Lobby()");
     #endif
 	return 1;

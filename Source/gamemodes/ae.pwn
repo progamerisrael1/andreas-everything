@@ -115,7 +115,7 @@ main()
 {
 	print("\n----------------------------------");
 	print(" Andreas Everything ");
-	print(" Script Lines: 700 ");
+	print(" Script Lines: ~1000 ");
 	print(" Coded by: SA-MP Community ");
 	print("----------------------------------\n");
 }

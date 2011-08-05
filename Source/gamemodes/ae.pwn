@@ -60,11 +60,12 @@
 #define DIALOG_HELP 103
 #define DIALOG_MODE_SELECT 104
 //Mode Defines
-#define MAX_MODES 4
+#define MAX_MODES 5
 #define MODE_DEATHMATCH 0
 #define MODE_FREE_ROAM 1
 #define MODE_CNR 2
 #define MODE_LOBBY 3
+#define MODE_ADMIN_LOUNGE 4
 //CnR Class Defines
 #define CLASS_COP 0
 #define CLASS_ROBBER 1
@@ -103,7 +104,8 @@ new MODES[MAX_MODES][3][17] =
 	{"Deathmatch", 0, 0},
 	{"Free Roam", 0, 0},
 	{"Cops n' Robbers", 0, 0},
-	{"Lobby", 1, 0}
+	{"Lobby", 1, 0},
+	{"Admin Lounge", 1, 0}
 };
 //============================================================================//
 main()
@@ -780,6 +782,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				{
 					MODES[MODE_LOBBY][2][0]++;
 					Lobby(playerid);
+				}
+				case MODE_ADMIN_LOUNGE:
+				{
+					MODES[MODE_ADMIN_LOUNGE][2][0]++;
+					//ALounge(playerid); 
 				}
 				case MAX_MODES:
 				{

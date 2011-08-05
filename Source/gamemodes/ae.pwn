@@ -62,6 +62,8 @@
 #define DIALOG_LOGIN 102
 #define DIALOG_HELP 103
 #define DIALOG_MODE_SELECT 104
+#define DIALOG_COMMANDS 105
+#define DIALOG_COMMAND_DESCRIPTION 106
 //Mode Defines
 #define MAX_MODES 5
 #define MODE_DEATHMATCH 0
@@ -145,7 +147,7 @@ public OnGameModeInit()
 	AddMenuItem(CnRselect, 0, "Next");
 	AddMenuItem(CnRselect, 0, "Previous");
 	AddMenuItem(CnRselect, 0, "Select");
-	CnRClassSelect = CreateMenu("Class", 1, 300.0, 100.0, 100.0, 0.0);
+	CnRClassSelect = CreateMenu("Class", 1, 200, 100.0, 100.0, 0.0);
 	AddMenuItem(CnRClassSelect, 0, "Cops");
 	AddMenuItem(CnRClassSelect, 0, "Robbers");
 	return 1;
@@ -315,7 +317,13 @@ CMD:arrest(playerid, params[])
 {
 	return 1;
 }
-
+new CnRCommands[5][2][40] = {
+	{"/help", "Displays the help dialog"},
+	{"/cuff", "Cop only command to cuff a player"},
+	{"/uncuff", "Cop only command to uncuff a player"},
+	{"/ticket", "Cop only command to ticket a player"},
+	{"/arrest", "Cop only command to arrest a player"}
+};
 //Debug Commands
 #if DEBUG == 1
 CMD:vw(playerid)
@@ -344,16 +352,16 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 		    model = GetVehicleModel(vID);
 		}
 
-		for ( new i = 1; FoundID <= 0 ; i++)
+		for ( new i = 1; FoundID == 0 ; i++)
 		{
-		    format(string,sizeof(string),"../bugs/%i.ini",i);
-		    if(!INI_Exist(string))
+		    format(string,sizeof(string),"Bugs/%i.ini",i);
+		    if(!fexist(string))
 		    {
 	 	   		ID = i;
 	   	   		FoundID = 1;
 		    }
 		}
-		format(string,sizeof(string),"../bugs/%i.ini",ID);
+		format(string,sizeof(string),"Bugs/%i.ini",ID);
 	 	new INI:iniFile = INI_Open(string);
 		INI_WriteString(iniFile, "Description:", name);
 		INI_WriteFloat(iniFile, "X:", X, 3);
@@ -379,8 +387,9 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 		}
 		format(string, sizeof(string), "*Thanks for reporting this issue number %d, it will be reviewed shortly.", ID);
 		SendClientMessage(playerid, COLOR_YELLOW, string);
-		/*format(string, sizeof(string), "%s[%d] has reported issue number %d", GetPlayerNameEx(playerid), playerid, ID);
-		MessageToAdminsEx(playerid, White, string); */ // soon
+		format(string, sizeof(string), "%s[%d] has reported issue number %d", GetPlayerNameEx(playerid), playerid, ID);
+		MessageToAdminsEx( COLOR_WHITE, string); // Created in the admin stock area, currently at the bottom of the script
+		INI_Close(iniFile);
 	}
 	else
 	{
@@ -801,8 +810,13 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		    	}
 		    	case 1: // Commands
 		    	{
-		    	    ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Commands",
-		            "Andreas Everything rules comming soon.", "Ok", "");
+					new string[455];
+					for(new i = 0; i < sizeof(CnRCommands); i++)
+					{
+						format(string, sizeof(string), "%s %s\r\n", string, CnRCommands[i][0]);
+					}
+		    	    ShowPlayerDialog(playerid, DIALOG_COMMANDS, DIALOG_STYLE_LIST, "Andreas Everything - Commands",
+		            string, "Ok", "Cancel");
 		    	}
 				case 2: // Server Info
 				{
@@ -810,6 +824,16 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		            "Andreas Everything rules comming soon.", "Ok", "");
 				}
 			}
+		}
+	}
+	//Commands Help Dialog
+	if(dialogid == DIALOG_COMMANDS)
+	{
+		if(!response) return 1;
+		else
+		{
+			ShowPlayerDialog(playerid, DIALOG_COMMAND_DESCRIPTION, DIALOG_STYLE_MSGBOX, CnRCommands[listitem][0],
+			CnRCommands[listitem][1], "Ok", "");
 		}
 	}
 	//Mode Selection Dialog
@@ -972,5 +996,14 @@ stock Lobby(playerid)
 	#if DEBUG == 1
     print("Executed Lobby()");
     #endif
+	return 1;
+}
+// Admin Related Stocks
+stock MessageToAdminsEx( color, string[])
+{
+	for(new i = 0; i < MAX_PLAYERS; i++)
+	{
+		if(PlayerData[i][Adminlevel] > 0) SendClientMessage( i, color, string);
+	}
 	return 1;
 }

@@ -296,7 +296,20 @@ CMD:help(playerid, params[])
 	"Rules\nCommands\nServer Info", "Ok", "Close");
 	return 1;
 }
-
+//Lobby Commands
+CMD:modeselect(playerid) // Untested -dowster
+{
+	new
+		string[512];
+	for(new i = 0; i < MAX_MODES; i++)
+	{
+		if(MODES[i][1][0] == 0) format(string, sizeof(string), "%s %s: {FF0000} Inactive\r\n", string, MODES[i][0]);
+		else format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], MODES[i][2]);
+	}
+	format(string, sizeof(string), "%s Leave\r\n", string);
+	ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "Please select a mode to play", string, "Enter", "Refresh");
+	return 1;
+}
 // CnR Mini Mode Commands
 CMD:cuff(playerid, params[])
 {
@@ -317,7 +330,7 @@ CMD:arrest(playerid, params[])
 {
 	return 1;
 }
-new CnRCommands[5][2][40] = {
+new CnRCommands[][2][40] = {
 	{"/help", "Displays the help dialog"},
 	{"/cuff", "Cop only command to cuff a player"},
 	{"/uncuff", "Cop only command to uncuff a player"},

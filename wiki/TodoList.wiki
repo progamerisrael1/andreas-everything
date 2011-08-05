@@ -7,3 +7,4 @@
  # Create the base TDM mini mode.
  # Create the base DM(FFA) mini mode.
  # Create the base racing mini mode.
+ # Create the maps for the modes

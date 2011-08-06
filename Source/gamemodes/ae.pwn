@@ -303,6 +303,7 @@ CMD:help(playerid, params[])
 //Lobby Commands
 CMD:modeselect(playerid) // Untested -dowster
 {
+	if(PlayerData[playerid][MODE] != MODE_LOBBY) return SendClientMessage(playerid, COLOR_RED, "This command only availible in lobby mode");
 	new
 		string[512];
 	for(new i = 0; i < MAX_MODES; i++)
@@ -314,6 +315,9 @@ CMD:modeselect(playerid) // Untested -dowster
 	ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "Please select a mode to play", string, "Enter", "Refresh");
 	return 1;
 }
+new LobbyCommands[][2][40] = {
+	{"/modeselect", "Shows the dialog to switch modes"}
+};
 // CnR Mini Mode Commands
 CMD:cuff(playerid, params[])
 {
@@ -782,21 +786,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	}
 	if(dialogid == DIALOG_LOGIN)
 	{
-	    new
-			userid = BUD::GetNameUID(GetPlayerNameEx(playerid));
 	    if(!response)
 	        return SendClientMessage(playerid, COLOR_LIGHTRED, "Info: You have decided to leave the server, goodbye."), Kick(playerid);
 		//
 		if(BUD::CheckAuth(GetPlayerNameEx(playerid), inputtext))
 		{
-		    PlayerData[playerid][MODE] = BUD::GetIntEntry(userid, "mode");
-			PlayerData[playerid][Adminlevel] = BUD::GetIntEntry(userid, "adminlevel");
-			PlayerData[playerid][Muted] = BUD::GetIntEntry(userid, "muted");
-			PlayerData[playerid][Money] = BUD::GetIntEntry(userid, "money");
-			PlayerData[playerid][Score] = BUD::GetIntEntry(userid, "score");
-			PlayerData[playerid][Health] = BUD::GetFloatEntry(userid, "health");
-			PlayerData[playerid][Armour] = BUD::GetFloatEntry(userid, "armour");
-			LoggedIn[playerid] = 1;
+		    LoginPlayer(playerid);
 			SetSpawnInfo(playerid, 0, 0, 1958.3783, 1343.1572, 15.3746, 269.1425, 0, 0, 0, 0, 0, 0);
 			SpawnPlayer(playerid);
 			new
@@ -827,13 +822,39 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		    	}
 		    	case 1: // Commands
 		    	{
-					new string[455];
-					for(new i = 0; i < sizeof(CnRCommands); i++)
+					switch (PlayerData[playerid][MODE])
 					{
-						format(string, sizeof(string), "%s %s\r\n", string, CnRCommands[i][0]);
+						case MODE_CNR:
+						{
+							new string[455];
+							for(new i = 0; i < sizeof(CnRCommands); i++)
+							{
+								format(string, sizeof(string), "%s %s\r\n", string, CnRCommands[i][0]);
+							}
+							ShowPlayerDialog(playerid, DIALOG_COMMANDS, DIALOG_STYLE_LIST, "Andreas Everything - Commands",
+							string, "Ok", "Cancel");
+						}
+						case MODE_DEATHMATCH:
+						{
+							ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Commands",
+							"Deathmatch mode coming soon", "Ok", "");
+						}
+						case MODE_FREE_ROAM:
+						{
+							ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Commands",
+							"Free Roam coming soon", "Ok", "");
+						}
+						case MODE_LOBBY:
+						{
+							new string[455];
+							for(new i = 0; i < sizeof(LobbyCommands); i++)
+							{
+								format(string, sizeof(string), "%s %s\r\n", string, LobbyCommands[i][0]);
+							}
+							ShowPlayerDialog(playerid, DIALOG_COMMANDS, DIALOG_STYLE_LIST, "Andreas Everything - Commands",
+							string, "Ok", "Cancel");
+						}
 					}
-		    	    ShowPlayerDialog(playerid, DIALOG_COMMANDS, DIALOG_STYLE_LIST, "Andreas Everything - Commands",
-		            string, "Ok", "Cancel");
 		    	}
 				case 2: // Server Info
 				{
@@ -849,8 +870,29 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		if(!response) return 1;
 		else
 		{
-			ShowPlayerDialog(playerid, DIALOG_COMMAND_DESCRIPTION, DIALOG_STYLE_MSGBOX, CnRCommands[listitem][0],
-			CnRCommands[listitem][1], "Ok", "");
+			switch (PlayerData[playerid][MODE])
+			{
+				case MODE_CNR:
+				{
+					ShowPlayerDialog(playerid, DIALOG_COMMAND_DESCRIPTION, DIALOG_STYLE_MSGBOX, CnRCommands[listitem][0],
+					CnRCommands[listitem][1], "Ok", "");
+				}
+				case MODE_DEATHMATCH:
+				{
+					ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Commands",
+					"Deathmatch mode coming soon", "Ok", "");
+				}
+				case MODE_FREE_ROAM:
+				{
+					ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Commands",
+					"Free Roam coming soon", "Ok", "");
+				}
+				case MODE_LOBBY:
+				{
+					ShowPlayerDialog(playerid, DIALOG_COMMAND_DESCRIPTION, DIALOG_STYLE_MSGBOX, LobbyCommands[listitem][0],
+					LobbyCommands[listitem][1], "Ok", "");
+				}
+			}
 		}
 	}
 	//Mode Selection Dialog
@@ -940,6 +982,20 @@ public SaveAccount(playerid)
 	#if DEBUG == 1
     print("Executed SaveAccount");
     #endif
+	return 1;
+}
+stock LoginPlayer(playerid)
+{
+	new userid;
+	userid = BUD::GetNameUID(GetPlayerNameEx(playerid));
+	PlayerData[playerid][MODE] = BUD::GetIntEntry(userid, "mode");
+	PlayerData[playerid][Adminlevel] = BUD::GetIntEntry(userid, "adminlevel");
+	PlayerData[playerid][Muted] = BUD::GetIntEntry(userid, "muted");
+	PlayerData[playerid][Money] = BUD::GetIntEntry(userid, "money");
+	PlayerData[playerid][Score] = BUD::GetIntEntry(userid, "score");
+	PlayerData[playerid][Health] = BUD::GetFloatEntry(userid, "health");
+	PlayerData[playerid][Armour] = BUD::GetFloatEntry(userid, "armour");
+	LoggedIn[playerid] = 1;
 	return 1;
 }
 // stocks

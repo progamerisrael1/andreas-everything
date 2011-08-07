@@ -397,8 +397,8 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 		INI_WriteInt(iniFile, "Interior:", pInterior);
 		INI_WriteInt(iniFile, "World:", pWorld);
 		INI_WriteString(iniFile, "Reported by:", GetPlayerNameEx(playerid));
-		if(LoggedIn[playerid]) logged = "Yes";
-		else logged = "no";
+		if(LoggedIn[playerid]) format(logged, sizeof(logged), "yes");
+		else format(logged, sizeof(logged), "no");
 		INI_WriteString(iniFile, "Logged in?:", logged);
 		if(IsPlayerInAnyVehicle(playerid))
 		{
@@ -411,7 +411,7 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 		SendClientMessage(playerid, COLOR_RED, "Ping done, creating variable");
 		new query[1024];
 		SendClientMessage(playerid, COLOR_RED, "Variable Created, formatting Variable");
-		mysql_format( mysql, query, "INSERT INTO `bugs` (description, posx, posy, posz, angle, interior, world, reporter, logged, vehicleid, modelid, modelname) VALUES (%s, %f, %f, %f, %f, %i, %i, %s, %s, $i, $i, $s)", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, vID, model, GetVehicleName(vID));
+		format( query, sizeof(query), "INSERT INTO `bugs` (description,posx,posy,posz,angle,interior,world,reporter,logged,vehicleid,modelid,modelname) VALUES (%s, %f, %f, %f, %f, %i, %i, %s, %s, %i, %i, %s)", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, vID, model, GetVehicleName(vID));
 		SendClientMessage(playerid, COLOR_RED, "Variable formatted, sending query");
 		mysql_query(query, mysql);
 		format(string, sizeof(string), "*Thanks for reporting this issue number %d, it will be reviewed shortly.", ID);

@@ -6,3 +6,7 @@
 [August 5, 2011] - [5:30:06] User: Famalamalam disconnected from 127.0.0.1
 [August 5, 2011] - [18:01:26] User: dowster disconnected from 127.0.0.1
 [August 5, 2011] - [18:10:03] User: dowster disconnected from 127.0.0.1
+[August 7, 2011] - [17:02:35] User: Brady_Clouser disconnected from 127.0.0.1
+[August 7, 2011] - [17:03:41] User: dowster disconnected from 127.0.0.1
+[August 7, 2011] - [17:06:19] User: dowster disconnected from 127.0.0.1
+[August 7, 2011] - [17:30:06] User: dowster disconnected from 127.0.0.1

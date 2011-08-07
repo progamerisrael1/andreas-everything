@@ -6,6 +6,7 @@
 	Thanks to Incognito - Streamer
 	Thanks to Y_Less - sscanf, foreach
 	Thanks to Slice - BUD(Blazing User Database)
+	Thanks to G-sTyLeZzZ - MySQL Plugin
 ------------------------------------------------------------------------------*/
 #include <a_samp>
 #define BUD_MAX_COLUMNS 50
@@ -17,9 +18,10 @@
 #include <arrays>
 #include <streamer>
 #include <foreach>
+#include <a_mysql>
 // Server/Script Defines
 #define BETA_BUILD 1                    // Set to 1 to activate beta features.
-#define DEBUG 0                         // Set to 1 to enable debugging in console
+#define DEBUG 1                         // Set to 1 to enable debugging in console
 #define SCRIPT_MODE "AE v1.0"
 #define SCRIPT_WEB "forum.sa-mp.com"
 #define MAX_SKINS 300
@@ -78,7 +80,8 @@
 #define CLASS_ROBBER 1
 // Variables
 new
-	LoggedIn[MAX_PLAYERS];
+	LoggedIn[MAX_PLAYERS],
+	mysql;
 // Menu Variables
 new
 	Menu:CnRselect,
@@ -126,6 +129,7 @@ main()
 
 public OnGameModeInit()
 {
+	mysql = mysql_connect("localhost", "samp", "andreas_everything", "e8ECeY6U2aLVvEN7");
 	SetGameModeText(SCRIPT_MODE);
 	SendRconCommand(SCRIPT_WEB);
 	DisableInteriorEnterExits();
@@ -160,6 +164,7 @@ public OnGameModeInit()
 public OnGameModeExit()
 {
     BUD::Exit();
+	mysql_close(mysql);
     #if DEBUG == 1
     print("Executed OnGameModeExit");
     #endif
@@ -359,7 +364,7 @@ CMD:vw(playerid)
 #if BETA_BUILD == 1
 CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an in-game dialog... in theory XD
 {
-    new FoundID = 0, ID, string[128], model, Float:Angle, pInterior, name[128], pWorld, Float:X, Float:Y, Float:Z, vID;
+    new FoundID = 0, ID, string[128], model, Float:Angle, pInterior, name[128], pWorld, Float:X, Float:Y, Float:Z, vID, logged[4];
 	if(!sscanf(params, "s[128]", name))
 	{
 		// Get some player stuff
@@ -392,20 +397,23 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 		INI_WriteInt(iniFile, "Interior:", pInterior);
 		INI_WriteInt(iniFile, "World:", pWorld);
 		INI_WriteString(iniFile, "Reported by:", GetPlayerNameEx(playerid));
-		if(LoggedIn[playerid])
-		{
-		    INI_WriteString(iniFile, "Logged in?:", "Yes");
-		}
-		else
-		{
-		    INI_WriteString(iniFile, "Logged in?:", "No");
-		}
+		if(LoggedIn[playerid]) logged = "Yes";
+		else logged = "no";
+		INI_WriteString(iniFile, "Logged in?:", logged);
 		if(IsPlayerInAnyVehicle(playerid))
 		{
 		    INI_WriteInt(iniFile, "Vehicle ID:", vID);
 		    INI_WriteInt(iniFile, "Model ID:", model);
 	        INI_WriteString(iniFile, "Model Name:", GetVehicleName(vID));
 		}
+		SendClientMessage(playerid, COLOR_RED, "Going to ping the mysql server");
+		if(mysql_ping(mysql) != 1) mysql_reconnect(mysql);
+		SendClientMessage(playerid, COLOR_RED, "Ping done, creating variable");
+		new query[1024];
+		SendClientMessage(playerid, COLOR_RED, "Variable Created, formatting Variable");
+		mysql_format( mysql, query, "INSERT INTO `bugs` (description, posx, posy, posz, angle, interior, world, reporter, logged, vehicleid, modelid, modelname) VALUES (%s, %f, %f, %f, %f, %i, %i, %s, %s, $i, $i, $s)", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, vID, model, GetVehicleName(vID));
+		SendClientMessage(playerid, COLOR_RED, "Variable formatted, sending query");
+		mysql_query(query, mysql);
 		format(string, sizeof(string), "*Thanks for reporting this issue number %d, it will be reviewed shortly.", ID);
 		SendClientMessage(playerid, COLOR_YELLOW, string);
 		format(string, sizeof(string), "%s[%d] has reported issue number %d", GetPlayerNameEx(playerid), playerid, ID);
@@ -1079,7 +1087,7 @@ stock ALounge(playerid)
 	PlayerData[playerid][MODE] = MODE_ADMIN_LOUNGE;
 	ObjectFreeze(playerid);
 	#if DEBUG == 1
-	print("Executed ALounge()";
+	print("Executed ALounge()");
 	#endif
 	return 1;
 }
@@ -1089,7 +1097,7 @@ stock ObjectFreeze(playerid) //When teleporting a player to a place with custom 
 	SetTimerEx("UnFreeze", 2000, false, "i", playerid);
 	GameTextForPlayer(playerid, "~r~Objects Loading", 2000, 4);
 	#if DEBUG == 1
-	print("Executed ObjectFreeze()";
+	print("Executed ObjectFreeze()");
 	#endif
 	return 1;
 }
@@ -1098,7 +1106,7 @@ public UnFreeze(playerid)
 {
 	TogglePlayerControllable(playerid, 1);
 	#if DEBUG == 1
-	print("Executed UnFreeze()";
+	print("Executed UnFreeze()");
 	#endif
 	return 1;
 }

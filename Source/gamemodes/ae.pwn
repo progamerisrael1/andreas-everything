@@ -80,8 +80,7 @@
 #define CLASS_ROBBER 1
 // Variables
 new
-	LoggedIn[MAX_PLAYERS],
-	mysql;
+	LoggedIn[MAX_PLAYERS];
 // Menu Variables
 new
 	Menu:CnRselect,
@@ -129,7 +128,7 @@ main()
 
 public OnGameModeInit()
 {
-	mysql = mysql_connect("localhost", "samp", "andreas_everything", "e8ECeY6U2aLVvEN7");
+	mysql_connect("5.76.78.169", "samp", "andreas_everything", "e8ECeY6U2aLVvEN7");
 	SetGameModeText(SCRIPT_MODE);
 	SendRconCommand(SCRIPT_WEB);
 	DisableInteriorEnterExits();
@@ -164,7 +163,7 @@ public OnGameModeInit()
 public OnGameModeExit()
 {
     BUD::Exit();
-	mysql_close(mysql);
+	mysql_close();
     #if DEBUG == 1
     print("Executed OnGameModeExit");
     #endif
@@ -407,13 +406,13 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 	        INI_WriteString(iniFile, "Model Name:", GetVehicleName(vID));
 		}
 		SendClientMessage(playerid, COLOR_RED, "Going to ping the mysql server");
-		if(mysql_ping(mysql) != 1) mysql_reconnect(mysql);
+		if(mysql_ping() != 1) mysql_reconnect();
 		SendClientMessage(playerid, COLOR_RED, "Ping done, creating variable");
 		new query[1024];
 		SendClientMessage(playerid, COLOR_RED, "Variable Created, formatting Variable");
-		format( query, sizeof(query), "INSERT INTO `bugs` (description,posx,posy,posz,angle,interior,world,reporter,logged,vehicleid,modelid,modelname) VALUES (%s, %f, %f, %f, %f, %i, %i, %s, %s, %i, %i, %s)", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, vID, model, GetVehicleName(vID));
+		format( query, sizeof(query), "INSERT INTO bugs (description,posx,posy,posz,angle,interior,world,reporter,logged,vehicleid,modelid,modelname) VALUES ('%s', '%f', '%f', '%f', '%f', '%i', '%i', '%s', '%s', '%i', '%i', '%s')", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, vID, model, GetVehicleName(vID));
 		SendClientMessage(playerid, COLOR_RED, "Variable formatted, sending query");
-		mysql_query(query, mysql);
+		mysql_query(query);
 		format(string, sizeof(string), "*Thanks for reporting this issue number %d, it will be reviewed shortly.", ID);
 		SendClientMessage(playerid, COLOR_YELLOW, string);
 		format(string, sizeof(string), "%s[%d] has reported issue number %d", GetPlayerNameEx(playerid), playerid, ID);

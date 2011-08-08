@@ -408,7 +408,7 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 		SendClientMessage(playerid, COLOR_RED, "Going to ping the mysql server");
 		if(mysql_ping() != 1) mysql_reconnect();
 		SendClientMessage(playerid, COLOR_RED, "Ping done, creating variable");
-		new query[1024];
+		new query[4096];
 		SendClientMessage(playerid, COLOR_RED, "Variable Created, formatting Variable");
 		format( query, sizeof(query), "INSERT INTO bugs (description,posx,posy,posz,angle,interior,world,reporter,logged,vehicleid,modelid,modelname) VALUES ('%s', '%f', '%f', '%f', '%f', '%i', '%i', '%s', '%s', '%i', '%i', '%s')", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, vID, model, GetVehicleName(vID));
 		SendClientMessage(playerid, COLOR_RED, "Variable formatted, sending query");

@@ -2488,3 +2488,650 @@ v0.3c R5, (C)2005-2011 SA-MP Team
 
   > MySQL plugin unloaded.
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[16:14:31] filterscripts = ""  (string)
+[16:14:31] weburl = "www.sa-mp.com"  (string)
+[16:14:31] 
+[16:14:31] Server Plugins
+[16:14:31] --------------
+[16:14:31]  Loading plugin: sscanf
+[16:14:31] 
+
+[16:14:31]  ===============================
+
+[16:14:31]       sscanf plugin loaded.     
+
+[16:14:31]    (c) 2009 Alex "Y_Less" Cole
+
+[16:14:31]  ===============================
+
+[16:14:31]   Loaded.
+[16:14:31]  Loading plugin: streamer
+[16:14:31] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[16:14:31]   Loaded.
+[16:14:31]  Loading plugin: mysql
+[16:14:31] 
+
+  > MySQL plugin R5 successfully loaded.
+
+[16:14:31]   Loaded.
+[16:14:31]  Loaded 3 plugins.
+
+[16:14:31] 
+[16:14:31] Filter Scripts
+[16:14:31] ---------------
+[16:14:31]   Loaded 0 filter scripts.
+
+[16:14:31]  
+[16:14:31]  ======================================= 
+[16:14:31]  |                                     | 
+[16:14:31]  |        YSI version 1.03.0011        | 
+[16:14:31]  |        By Alex "Y_Less" Cole        | 
+[16:14:31]  |                                     | 
+[16:14:31]  |  Checking the latest YSI version..  | 
+[16:14:31]  |                                     | 
+[16:14:31]  ======================================= 
+[16:14:31]  
+[16:14:32] BUD v1.0.3 BETA loaded.
+[16:14:32] 
+----------------------------------
+[16:14:32]  Andreas Everything 
+[16:14:32]  Script Lines: ~1000 
+[16:14:32]  Coded by: SA-MP Community 
+[16:14:32] ----------------------------------
+
+[16:14:32] Number of vehicle models: 0
+[16:14:53]  
+[16:14:53]  ======================================= 
+[16:14:53]  |                                     | 
+[16:14:53]  |   Error: Could not connect to YSI   | 
+[16:14:53]  |  update server (response was 003).  | 
+[16:14:53]  |                                     | 
+[16:14:53]  ======================================= 
+[16:14:53]  
+[16:15:32] Incoming connection: 127.0.0.1:54585
+[16:15:32] [join] dowster has joined the server (0:127.0.0.1)
+[16:15:32] Executed OnPlayerConnect
+[16:20:02] Executed OnDialogResponse
+[16:20:02] Executed OnPlayerRequestClass
+[16:20:02] Executed OnPlayerStateChange
+[16:20:02] Executed OnPlayerSpawn
+[16:20:02] Executed OnPlayerStateChange
+[16:20:04] Executed Lobby()
+[16:20:04] Executed OnDialogResponse
+[16:20:04] Executed OnPlayerInteriorChange
+[16:20:09] Executed SaveAccount
+[16:20:09] Executed OnPlayerDisconnect
+[16:20:09] [part] dowster has left the server (0:1)
+[16:21:13] --- Server Shutting Down.
+[16:21:13] Executed OnGameModeExit
+[16:21:13] 
+
+[16:21:13]  ===============================
+
+[16:21:13]      sscanf plugin unloaded.    
+
+[16:21:13]  ===============================
+
+[16:21:13] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[16:21:13] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[16:21:15] filterscripts = ""  (string)
+[16:21:15] weburl = "www.sa-mp.com"  (string)
+[16:21:15] 
+[16:21:15] Server Plugins
+[16:21:15] --------------
+[16:21:15]  Loading plugin: sscanf
+[16:21:15] 
+
+[16:21:15]  ===============================
+
+[16:21:15]       sscanf plugin loaded.     
+
+[16:21:15]    (c) 2009 Alex "Y_Less" Cole
+
+[16:21:15]  ===============================
+
+[16:21:15]   Loaded.
+[16:21:15]  Loading plugin: streamer
+[16:21:15] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[16:21:15]   Loaded.
+[16:21:15]  Loading plugin: mysql
+[16:21:15] 
+
+  > MySQL plugin R5 successfully loaded.
+
+[16:21:15]   Loaded.
+[16:21:15]  Loaded 3 plugins.
+
+[16:21:15] 
+[16:21:15] Filter Scripts
+[16:21:15] ---------------
+[16:21:15]   Loaded 0 filter scripts.
+
+[16:21:15]  
+[16:21:15]  ======================================= 
+[16:21:15]  |                                     | 
+[16:21:15]  |        YSI version 1.03.0011        | 
+[16:21:15]  |        By Alex "Y_Less" Cole        | 
+[16:21:15]  |                                     | 
+[16:21:15]  |  Checking the latest YSI version..  | 
+[16:21:15]  |                                     | 
+[16:21:15]  ======================================= 
+[16:21:15]  
+[16:21:15] BUD v1.0.3 BETA loaded.
+[16:21:15] 
+----------------------------------
+[16:21:15]  Andreas Everything 
+[16:21:15]  Script Lines: ~1000 
+[16:21:15]  Coded by: SA-MP Community 
+[16:21:15] ----------------------------------
+
+[16:21:15] Number of vehicle models: 0
+[16:21:37]  
+[16:21:37]  ======================================= 
+[16:21:37]  |                                     | 
+[16:21:37]  |   Error: Could not connect to YSI   | 
+[16:21:37]  |  update server (response was 003).  | 
+[16:21:37]  |                                     | 
+[16:21:37]  ======================================= 
+[16:21:37]  
+[16:21:42] Incoming connection: 127.0.0.1:54621
+[16:21:42] [join] dowster has joined the server (0:127.0.0.1)
+[16:21:42] Executed OnPlayerConnect
+[16:21:44] Executed OnDialogResponse
+[16:21:44] Executed OnPlayerRequestClass
+[16:21:44] Executed OnPlayerStateChange
+[16:21:44] Executed OnPlayerSpawn
+[16:21:44] Executed OnPlayerStateChange
+[16:21:48] Executed Lobby()
+[16:21:48] Executed OnDialogResponse
+[16:21:48] Executed OnPlayerInteriorChange
+[16:21:51] Executed SaveAccount
+[16:21:51] Executed OnPlayerDisconnect
+[16:21:51] [part] dowster has left the server (0:1)
+[17:04:30] --- Server Shutting Down.
+[17:04:30] Executed OnGameModeExit
+[17:04:30] 
+
+[17:04:30]  ===============================
+
+[17:04:30]      sscanf plugin unloaded.    
+
+[17:04:30]  ===============================
+
+[17:04:30] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[17:04:30] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[17:10:42] filterscripts = ""  (string)
+[17:10:42] weburl = "www.sa-mp.com"  (string)
+[17:10:42] 
+[17:10:42] Server Plugins
+[17:10:42] --------------
+[17:10:42]  Loading plugin: sscanf
+[17:10:42] 
+
+[17:10:42]  ===============================
+
+[17:10:42]       sscanf plugin loaded.     
+
+[17:10:42]    (c) 2009 Alex "Y_Less" Cole
+
+[17:10:42]  ===============================
+
+[17:10:42]   Loaded.
+[17:10:42]  Loading plugin: streamer
+[17:10:42] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[17:10:42]   Loaded.
+[17:10:42]  Loading plugin: mysql
+[17:10:42] 
+
+  > MySQL plugin R5 successfully loaded.
+
+[17:10:42]   Loaded.
+[17:10:42]  Loaded 3 plugins.
+
+[17:10:42] 
+[17:10:42] Filter Scripts
+[17:10:42] ---------------
+[17:10:42]   Loaded 0 filter scripts.
+
+[17:10:42] Script[gamemodes/ae.amx]: Run time error 19: "File or function is not found"
+[17:10:42] Number of vehicle models: 0
+[17:10:54] --- Server Shutting Down.
+[17:10:54] 
+
+[17:10:54]  ===============================
+
+[17:10:54]      sscanf plugin unloaded.    
+
+[17:10:54]  ===============================
+
+[17:10:54] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[17:10:54] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[17:10:56] filterscripts = ""  (string)
+[17:10:56] weburl = "www.sa-mp.com"  (string)
+[17:10:56] 
+[17:10:56] Server Plugins
+[17:10:56] --------------
+[17:10:56]  Loading plugin: sscanf
+[17:10:56] 
+
+[17:10:56]  ===============================
+
+[17:10:56]       sscanf plugin loaded.     
+
+[17:10:56]    (c) 2009 Alex "Y_Less" Cole
+
+[17:10:56]  ===============================
+
+[17:10:56]   Loaded.
+[17:10:56]  Loading plugin: streamer
+[17:10:56] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[17:10:56]   Loaded.
+[17:10:56]  Loading plugin: mysql
+[17:10:56] 
+
+  > MySQL plugin R5 successfully loaded.
+
+[17:10:56]   Loaded.
+[17:10:56]  Loaded 3 plugins.
+
+[17:10:56] 
+[17:10:56] Filter Scripts
+[17:10:56] ---------------
+[17:10:56]   Loaded 0 filter scripts.
+
+[17:10:56] Script[gamemodes/ae.amx]: Run time error 19: "File or function is not found"
+[17:10:56] Number of vehicle models: 0
+[17:12:22] --- Server Shutting Down.
+[17:12:22] 
+
+[17:12:22]  ===============================
+
+[17:12:22]      sscanf plugin unloaded.    
+
+[17:12:22]  ===============================
+
+[17:12:22] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[17:12:22] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[17:12:34] filterscripts = ""  (string)
+[17:12:34] weburl = "www.sa-mp.com"  (string)
+[17:12:34] 
+[17:12:34] Server Plugins
+[17:12:34] --------------
+[17:12:34]  Loading plugin: sscanf
+[17:12:34] 
+
+[17:12:34]  ===============================
+
+[17:12:34]       sscanf plugin loaded.     
+
+[17:12:34]    (c) 2009 Alex "Y_Less" Cole
+
+[17:12:34]  ===============================
+
+[17:12:34]   Loaded.
+[17:12:34]  Loading plugin: streamer
+[17:12:34] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[17:12:34]   Loaded.
+[17:12:34]  Loading plugin: mysql
+[17:12:34] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[17:12:34]   Loaded.
+[17:12:34]  Loaded 3 plugins.
+
+[17:12:34] 
+[17:12:34] Filter Scripts
+[17:12:34] ---------------
+[17:12:34]   Loaded 0 filter scripts.
+
+[17:12:34]  
+[17:12:34]  ======================================= 
+[17:12:34]  |                                     | 
+[17:12:34]  |        YSI version 1.03.0011        | 
+[17:12:34]  |        By Alex "Y_Less" Cole        | 
+[17:12:34]  |                                     | 
+[17:12:34]  |  Checking the latest YSI version..  | 
+[17:12:34]  |                                     | 
+[17:12:34]  ======================================= 
+[17:12:34]  
+[17:12:34] BUD v1.0.3 BETA loaded.
+[17:12:34] 
+----------------------------------
+[17:12:34]  Andreas Everything 
+[17:12:34]  Script Lines: ~1000 
+[17:12:34]  Coded by: SA-MP Community 
+[17:12:34] ----------------------------------
+
+[17:12:34] Number of vehicle models: 0
+[17:12:55]  
+[17:12:55]  ======================================= 
+[17:12:55]  |                                     | 
+[17:12:55]  |   Error: Could not connect to YSI   | 
+[17:12:55]  |  update server (response was 003).  | 
+[17:12:55]  |                                     | 
+[17:12:55]  ======================================= 
+[17:12:55]  
+[17:13:02] Incoming connection: 127.0.0.1:54861
+[17:13:03] [join] dowster has joined the server (0:127.0.0.1)
+[17:13:03] Executed OnPlayerConnect
+[17:13:09] Executed OnDialogResponse
+[17:13:09] Executed OnPlayerRequestClass
+[17:13:09] Executed OnPlayerStateChange
+[17:13:09] Executed OnPlayerSpawn
+[17:13:09] Executed OnPlayerStateChange
+[17:13:11] Executed Lobby()
+[17:13:11] Executed OnDialogResponse
+[17:13:11] Executed OnPlayerInteriorChange
+[17:13:16] Executed SaveAccount
+[17:13:16] Executed OnPlayerDisconnect
+[17:13:16] [part] dowster has left the server (0:1)
+[17:16:02] --- Server Shutting Down.
+[17:16:02] Executed OnGameModeExit
+[17:16:02] 
+
+[17:16:02]  ===============================
+
+[17:16:02]      sscanf plugin unloaded.    
+
+[17:16:02]  ===============================
+
+[17:16:02] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[17:16:02] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[17:16:05] filterscripts = ""  (string)
+[17:16:05] weburl = "www.sa-mp.com"  (string)
+[17:16:05] 
+[17:16:05] Server Plugins
+[17:16:05] --------------
+[17:16:05]  Loading plugin: sscanf
+[17:16:05] 
+
+[17:16:05]  ===============================
+
+[17:16:05]       sscanf plugin loaded.     
+
+[17:16:05]    (c) 2009 Alex "Y_Less" Cole
+
+[17:16:05]  ===============================
+
+[17:16:05]   Loaded.
+[17:16:05]  Loading plugin: streamer
+[17:16:05] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[17:16:05]   Loaded.
+[17:16:05]  Loading plugin: mysql
+[17:16:05] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[17:16:05]   Loaded.
+[17:16:05]  Loaded 3 plugins.
+
+[17:16:05] 
+[17:16:05] Filter Scripts
+[17:16:05] ---------------
+[17:16:05]   Loaded 0 filter scripts.
+
+[17:16:05]  
+[17:16:05]  ======================================= 
+[17:16:05]  |                                     | 
+[17:16:05]  |        YSI version 1.03.0011        | 
+[17:16:05]  |        By Alex "Y_Less" Cole        | 
+[17:16:05]  |                                     | 
+[17:16:05]  |  Checking the latest YSI version..  | 
+[17:16:05]  |                                     | 
+[17:16:05]  ======================================= 
+[17:16:05]  
+[17:16:05] BUD v1.0.3 BETA loaded.
+[17:16:05] 
+----------------------------------
+[17:16:05]  Andreas Everything 
+[17:16:05]  Script Lines: ~1000 
+[17:16:05]  Coded by: SA-MP Community 
+[17:16:05] ----------------------------------
+
+[17:16:05] Number of vehicle models: 0
+[17:16:26]  
+[17:16:26]  ======================================= 
+[17:16:26]  |                                     | 
+[17:16:26]  |   Error: Could not connect to YSI   | 
+[17:16:26]  |  update server (response was 003).  | 
+[17:16:26]  |                                     | 
+[17:16:26]  ======================================= 
+[17:16:26]  
+[17:18:56] Incoming connection: 127.0.0.1:54900
+[17:18:56] [join] dowster has joined the server (0:127.0.0.1)
+[17:18:56] Executed OnPlayerConnect
+[17:19:08] Executed OnDialogResponse
+[17:19:08] Executed OnPlayerRequestClass
+[17:19:08] Executed OnPlayerStateChange
+[17:19:08] Executed OnPlayerSpawn
+[17:19:08] Executed OnPlayerStateChange
+[17:19:10] Executed Lobby()
+[17:19:10] Executed OnDialogResponse
+[17:19:10] Executed OnPlayerInteriorChange
+[17:19:14] Executed OnPlayerKeyStateChange
+[17:20:08] --- Server Shutting Down.
+[17:20:08] Executed OnGameModeExit
+[17:20:08] [part] dowster has left the server (0:0)
+[17:20:08] 
+
+[17:20:08]  ===============================
+
+[17:20:08]      sscanf plugin unloaded.    
+
+[17:20:08]  ===============================
+
+[17:20:08] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[17:20:08] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[19:08:50] filterscripts = ""  (string)
+[19:08:50] weburl = "www.sa-mp.com"  (string)
+[19:08:50] 
+[19:08:50] Server Plugins
+[19:08:50] --------------
+[19:08:50]  Loading plugin: sscanf
+[19:08:50] 
+
+[19:08:50]  ===============================
+
+[19:08:50]       sscanf plugin loaded.     
+
+[19:08:50]    (c) 2009 Alex "Y_Less" Cole
+
+[19:08:50]  ===============================
+
+[19:08:50]   Loaded.
+[19:08:50]  Loading plugin: streamer
+[19:08:50] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[19:08:50]   Loaded.
+[19:08:50]  Loading plugin: mysql
+[19:08:50] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[19:08:50]   Loaded.
+[19:08:50]  Loaded 3 plugins.
+
+[19:08:50] 
+[19:08:50] Filter Scripts
+[19:08:50] ---------------
+[19:08:50]   Loaded 0 filter scripts.
+
+[19:08:50]  
+[19:08:50]  ======================================= 
+[19:08:50]  |                                     | 
+[19:08:50]  |        YSI version 1.03.0011        | 
+[19:08:50]  |        By Alex "Y_Less" Cole        | 
+[19:08:50]  |                                     | 
+[19:08:50]  |  Checking the latest YSI version..  | 
+[19:08:50]  |                                     | 
+[19:08:50]  ======================================= 
+[19:08:50]  
+[19:08:50] BUD v1.0.3 BETA loaded.
+[19:08:50] 
+----------------------------------
+[19:08:50]  Andreas Everything 
+[19:08:50]  Script Lines: ~1000 
+[19:08:50]  Coded by: SA-MP Community 
+[19:08:50] ----------------------------------
+
+[19:08:50] Number of vehicle models: 0
+[19:09:11]  
+[19:09:11]  ======================================= 
+[19:09:11]  |                                     | 
+[19:09:11]  |   Error: Could not connect to YSI   | 
+[19:09:11]  |  update server (response was 003).  | 
+[19:09:11]  |                                     | 
+[19:09:11]  ======================================= 
+[19:09:11]  
+[19:09:41] Incoming connection: 127.0.0.1:58915
+[19:09:41] [join] dowster has joined the server (0:127.0.0.1)
+[19:09:41] Executed OnPlayerConnect
+[19:09:45] Executed OnDialogResponse
+[19:09:45] Executed OnPlayerRequestClass
+[19:09:45] Executed OnPlayerStateChange
+[19:09:45] Executed OnPlayerSpawn
+[19:09:45] Executed OnPlayerStateChange
+[19:09:47] Executed Lobby()
+[19:09:47] Executed OnDialogResponse
+[19:09:47] Executed OnPlayerInteriorChange
+[19:09:53] Executed SaveAccount
+[19:09:53] Executed OnPlayerDisconnect
+[19:09:53] [part] dowster has left the server (0:1)
+[19:10:36] --- Server Shutting Down.
+[19:10:36] Executed OnGameModeExit
+[19:10:36] 
+
+[19:10:36]  ===============================
+
+[19:10:36]      sscanf plugin unloaded.    
+
+[19:10:36]  ===============================
+
+[19:10:36] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[19:10:36] 
+
+  > MySQL plugin unloaded.
+

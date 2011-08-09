@@ -15,3 +15,5 @@
 [August 7, 2011] - [18:03:39] User: dowster disconnected from 127.0.0.1
 [August 7, 2011] - [18:18:08] User: dowster disconnected from 127.0.0.1
 [August 7, 2011] - [20:03:40] User: dowster disconnected from 127.0.0.1
+[August 8, 2011] - [16:20:09] User: dowster disconnected from 127.0.0.1
+[August 8, 2011] - [19:09:53] User: dowster disconnected from 127.0.0.1

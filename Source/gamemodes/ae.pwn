@@ -409,11 +409,11 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 		SendClientMessage(playerid, COLOR_RED, "Going to ping the mysql server");
 		if(mysql_ping(mysql) != 1) mysql_reconnect(mysql);
 		SendClientMessage(playerid, COLOR_RED, "Ping done, creating variable");
-		new query[400];
+		new stuff[400];
 		SendClientMessage(playerid, COLOR_RED, "Variable Created, formatting Variable");
-		mysql_format( mysql, query, "INSERT INTO `bugs` (description, posx, posy, posz, angle, interior, world, reporter, logged, vehicleid, modelid, modelname) VALUES ('%e', %f, %f, %f, %f, %i, %i, '%s', '%s', %i, %i, '%s')", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, vID, model, GetVehicleName(vID));
+		mysql_format( mysql, stuff, "INSERT INTO bugs (description, posx, posy, posz, angle, interior, world, reporter, logged, vehicleid, modelid, modelname) VALUES ('%e', %f, %f, %f, %f, %i, %i, '%s', '%s', %i, %i, '%s')", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, vID, model, GetVehicleName(vID));
 		SendClientMessage(playerid, COLOR_RED, "Variable formatted, sending query");
-		mysql_query(query);
+		mysql_query(stuff, -1, -1, mysql);
 		format(string, sizeof(string), "*Thanks for reporting this issue number %d, it will be reviewed shortly.", ID);
 		SendClientMessage(playerid, COLOR_YELLOW, string);
 		format(string, sizeof(string), "%s[%d] has reported issue number %d", GetPlayerNameEx(playerid), playerid, ID);

@@ -17,3 +17,4 @@
 [August 7, 2011] - [20:03:40] User: dowster disconnected from 127.0.0.1
 [August 8, 2011] - [16:20:09] User: dowster disconnected from 127.0.0.1
 [August 8, 2011] - [19:09:53] User: dowster disconnected from 127.0.0.1
+[August 10, 2011] - [15:03:57] User: Brady_Clouser disconnected from 127.0.0.1

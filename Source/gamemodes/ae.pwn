@@ -364,7 +364,7 @@ CMD:vw(playerid)
 #if BETA_BUILD == 1
 CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an in-game dialog... in theory XD
 {
-    new FoundID = 0, ID, string[128], model, Float:Angle, pInterior, name[128], pWorld, Float:X, Float:Y, Float:Z, vID, logged[4];
+    new ID, string[128], Float:Angle, pInterior, name[128], pWorld, Float:X, Float:Y, Float:Z, vID, logged[4], query[512];
 	if(!sscanf(params, "s[128]", name))
 	{
 		// Get some player stuff
@@ -372,32 +372,15 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 		GetPlayerPos(playerid, X, Y, Z);
 		pInterior = GetPlayerInterior(playerid);
 		pWorld = GetPlayerVirtualWorld(playerid);
-		new vn[50];
-		for ( new i = 1; FoundID == 0 ; i++)
-		{
-		    format(string,sizeof(string),"Bugs/%i.ini",i);
-		    if(!fexist(string))
-		    {
-	 	   		ID = i;
-	   	   		FoundID = 1;
-		    }
-		}
 		if(LoggedIn[playerid]) format(logged, sizeof(logged), "yes");
 		else format(logged, sizeof(logged), "no");
-		if(IsPlayerInAnyVehicle(playerid))
-		{
-		    vID = GetPlayerVehicleID(playerid);
-		    model = GetVehicleModel(vID);
-			mysql_format(mysql, query, "INSERT INTO bugs (description, posx, posy, posz, angle, interior, world, reporter, logged, vehicleid, modelid, modelname) VALUES ('%e', %f, %f, %f, %f, %i, %i, '%s', '%s', %i, %i, '%s')", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, vID, model, GetVehicleName(vID));
-		}
+		mysql_format(mysql, query, "INSERT INTO bugs (description, posx, posy, posz, angle, interior, world, reporter, logged, vehicleid, modelid, modelname) VALUES ('%e', %f, %f, %f, %f, %i, %i, '%s', '%s', %i, %i, '%s')", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, GetPlayerVehicleID(playerid), GetVehicleModel(vID), GetVehicleName(vID));
 		if(mysql_ping(mysql) != 1) mysql_reconnect(mysql);
-		new stuff[400];
-		mysql_query(stuff, -1, -1, mysql);
-		format(string, sizeof(string), "*Thanks for reporting this issue number %d, it will be reviewed shortly.", ID);
+		mysql_query(query, -1, -1, mysql);
+		format(string, sizeof(string), "*Thanks for reporting this issue, it will be reviewed shortly.", ID);
 		SendClientMessage(playerid, COLOR_YELLOW, string);
-		format(string, sizeof(string), "%s[%d] has reported issue number %d", GetPlayerNameEx(playerid), playerid, ID);
+		format(string, sizeof(string), "%s[%d] has reported a bug", GetPlayerNameEx(playerid), playerid, ID);
 		MessageToAdminsEx( COLOR_WHITE, string); // Created in the admin stock area, currently at the bottom of the script
-		INI_Close(iniFile);
 	}
 	else
 	{
@@ -989,7 +972,8 @@ stock LoginPlayer(playerid)
 stock GetVehicleName(vehicleid)
 {
 	new vn[50];
-	format(vn,sizeof(vn),"%s",VehicleNames[GetVehicleModel(vehicleid)-400]);
+	if(GetVehicleModel(vehicleid) == 0) format(vn, sizeof(vn), "Invalid VehicleID");
+	else format(vn,sizeof(vn),"%s",VehicleNames[GetVehicleModel(vehicleid)-400]);
 	return vn;
 }
 

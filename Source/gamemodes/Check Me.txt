@@ -1,2 +1,2 @@
-dowster is editing the game mode
+nobody is editing the game mode
 Note from dowster: i've accidently bugged the /bug command, go figure. The bug is when formatting the sql query, i dont know if the query is too long for the string or what

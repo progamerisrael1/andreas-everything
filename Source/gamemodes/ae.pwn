@@ -129,7 +129,7 @@ main()
 
 public OnGameModeInit()
 {
-	mysql = mysql_connect("localhost", "root", "andreas_everything", "");
+	mysql = mysql_connect("5.76.78.169", "samp", "andreas_everything", "6Hd42avLQBcE4dA9");
 	SetGameModeText(SCRIPT_MODE);
 	SendRconCommand(SCRIPT_WEB);
 	DisableInteriorEnterExits();

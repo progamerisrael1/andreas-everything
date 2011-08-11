@@ -406,12 +406,14 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 		    INI_WriteInt(iniFile, "Model ID:", model);
 	        INI_WriteString(iniFile, "Model Name:", GetVehicleName(vID));
 		}
+		new pname[MAX_PLAYER_NAME];
+		GetPlayerName(playerid, pname, sizeof(pname));
 		SendClientMessage(playerid, COLOR_RED, "Going to ping the mysql server");
 		if(mysql_ping(mysql) != 1) mysql_reconnect(mysql);
 		SendClientMessage(playerid, COLOR_RED, "Ping done, creating variable");
 		new stuff[400];
 		SendClientMessage(playerid, COLOR_RED, "Variable Created, formatting Variable");
-		mysql_format( mysql, stuff, "INSERT INTO bugs (description, posx, posy, posz, angle, interior, world, reporter, logged, vehicleid, modelid, modelname) VALUES ('%e', %f, %f, %f, %f, %i, %i, '%s', '%s', %i, %i, '%s')", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, vID, model, GetVehicleName(vID));
+		format(stuff, sizeof(stuff), "INSERT INTO bugs (description, posx, posy, posz, angle, interior, world, reporter, logged, vehicleid, modelid, modelname) VALUES ('%s', %f, %f, %f, %f, %i, %i, '%s', '%s', %i, %i, '%s')", name, X, Y, Z, Angle, pInterior, pWorld, pname, logged, vID, model, GetVehicleName(vID));
 		SendClientMessage(playerid, COLOR_RED, "Variable formatted, sending query");
 		mysql_query(stuff, -1, -1, mysql);
 		format(string, sizeof(string), "*Thanks for reporting this issue number %d, it will be reviewed shortly.", ID);

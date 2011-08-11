@@ -372,12 +372,7 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 		GetPlayerPos(playerid, X, Y, Z);
 		pInterior = GetPlayerInterior(playerid);
 		pWorld = GetPlayerVirtualWorld(playerid);
-		if(IsPlayerInAnyVehicle(playerid))
-		{
-		    vID = GetPlayerVehicleID(playerid);
-		    model = GetVehicleModel(vID);
-		}
-
+		new vn[50];
 		for ( new i = 1; FoundID == 0 ; i++)
 		{
 		    format(string,sizeof(string),"Bugs/%i.ini",i);
@@ -387,34 +382,16 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 	   	   		FoundID = 1;
 		    }
 		}
-		format(string,sizeof(string),"Bugs/%i.ini",ID);
-	 	new INI:iniFile = INI_Open(string);
-		INI_WriteString(iniFile, "Description:", name);
-		INI_WriteFloat(iniFile, "X:", X, 3);
-		INI_WriteFloat(iniFile, "Y:", Y, 3);
-		INI_WriteFloat(iniFile, "Z:", Z, 3);
-		INI_WriteFloat(iniFile, "Angle:", Angle, 3);
-		INI_WriteInt(iniFile, "Interior:", pInterior);
-		INI_WriteInt(iniFile, "World:", pWorld);
-		INI_WriteString(iniFile, "Reported by:", GetPlayerNameEx(playerid));
 		if(LoggedIn[playerid]) format(logged, sizeof(logged), "yes");
 		else format(logged, sizeof(logged), "no");
-		INI_WriteString(iniFile, "Logged in?:", logged);
 		if(IsPlayerInAnyVehicle(playerid))
 		{
-		    INI_WriteInt(iniFile, "Vehicle ID:", vID);
-		    INI_WriteInt(iniFile, "Model ID:", model);
-	        INI_WriteString(iniFile, "Model Name:", GetVehicleName(vID));
+		    vID = GetPlayerVehicleID(playerid);
+		    model = GetVehicleModel(vID);
+			mysql_format(mysql, query, "INSERT INTO bugs (description, posx, posy, posz, angle, interior, world, reporter, logged, vehicleid, modelid, modelname) VALUES ('%e', %f, %f, %f, %f, %i, %i, '%s', '%s', %i, %i, '%s')", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, vID, model, GetVehicleName(vID));
 		}
-		new pname[MAX_PLAYER_NAME];
-		GetPlayerName(playerid, pname, sizeof(pname));
-		SendClientMessage(playerid, COLOR_RED, "Going to ping the mysql server");
 		if(mysql_ping(mysql) != 1) mysql_reconnect(mysql);
-		SendClientMessage(playerid, COLOR_RED, "Ping done, creating variable");
 		new stuff[400];
-		SendClientMessage(playerid, COLOR_RED, "Variable Created, formatting Variable");
-		format(stuff, sizeof(stuff), "INSERT INTO bugs (description, posx, posy, posz, angle, interior, world, reporter, logged, vehicleid, modelid, modelname) VALUES ('%s', %f, %f, %f, %f, %i, %i, '%s', '%s', %i, %i, '%s')", name, X, Y, Z, Angle, pInterior, pWorld, pname, logged, vID, model, GetVehicleName(vID));
-		SendClientMessage(playerid, COLOR_RED, "Variable formatted, sending query");
 		mysql_query(stuff, -1, -1, mysql);
 		format(string, sizeof(string), "*Thanks for reporting this issue number %d, it will be reviewed shortly.", ID);
 		SendClientMessage(playerid, COLOR_YELLOW, string);

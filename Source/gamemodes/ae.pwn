@@ -109,13 +109,13 @@ new CnRSkins[2][5] =
 	{122, 247, 254, 111, 124}
 };
 
-new MODES[MAX_MODES][3][17] =
+new MODES[MAX_MODES][2][17] =
 {
-	{"Deathmatch", 0, 0},
-	{"Free Roam", 0, 0},
-	{"Cops n' Robbers", 0, 0},
-	{"Lobby", 1, 0},
-	{"Admin Lounge", 1, 0}
+	{"Deathmatch", 0},
+	{"Free Roam", 0},
+	{"Cops n' Robbers", 0},
+	{"Lobby", 1},
+	{"Admin Lounge", 1}
 };
 //============================================================================//
 main()
@@ -215,7 +215,6 @@ public OnPlayerDisconnect(playerid, reason)
 	new File:disconnectlog = fopen( "Logs/Disconnects.txt", io_append);
 	fwrite( disconnectlog, string);
 	fclose(disconnectlog);
-	if(MODES[PlayerData[playerid][MODE]][2][0] != 0) MODES[PlayerData[playerid][MODE]][2][0] = (MODES[PlayerData[playerid][MODE]][2][0] - 1);
 
     #if DEBUG == 1
     print("Executed OnPlayerDisconnect");
@@ -314,10 +313,16 @@ CMD:modeselect(playerid) // Untested -dowster
 	for(new i = 0; i < MAX_MODES; i++)
 	{
 		if(MODES[i][1][0] == 0) format(string, sizeof(string), "%s %s: {FF0000} Inactive\r\n", string, MODES[i][0]);
-		else format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], MODES[i][2]);
+		else
+		{
+			new players = 0;
+			foreach(Player, p)
+			{
+				if(PlayerData[p][MODE] == i) players++;
+			}
+			format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], players);
+		}
 	}
-	format(string, sizeof(string), "%s Leave\r\n", string);
-	ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "Please select a mode to play", string, "Enter", "Refresh");
 	return 1;
 }
 new LobbyCommands[][2][40] = {
@@ -762,14 +767,20 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		if(BUD::CheckAuth(GetPlayerNameEx(playerid), inputtext))
 		{
 		    LoginPlayer(playerid);
-			SetSpawnInfo(playerid, 0, 0, 1958.3783, 1343.1572, 15.3746, 269.1425, 0, 0, 0, 0, 0, 0);
-			SpawnPlayer(playerid);
 			new
 				string[512];
 			for(new i = 0; i < MAX_MODES; i++)
 			{
 				if(MODES[i][1][0] == 0) format(string, sizeof(string), "%s %s: {FF0000} Inactive\r\n", string, MODES[i][0]);
-				else format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], MODES[i][2]);
+				else
+				{
+					new players = 0;
+					foreach(Player, p)
+					{
+						if(PlayerData[p][MODE] == i) players++;
+					}
+					format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], players);
+				}
 			}
 			format(string, sizeof(string), "%s Leave\r\n", string);
 			ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "Please select a mode to play", string, "Enter", "Refresh");
@@ -875,7 +886,15 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			for(new i = 0; i < MAX_MODES; i++)
 			{
 				if(MODES[i][1][0] == 0) format(string, sizeof(string), "%s %s: {FF0000} Inactive\r\n", string, MODES[i][0]);
-				else format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], MODES[i][2]);
+				else
+				{
+					new players = 0;
+					foreach(Player, p)
+					{
+						if(PlayerData[p][MODE] == i) players++;
+					}
+					format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], players);
+				}
 			}
 			format(string, sizeof(string), "%s Leave\r\n", string);
 			ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "Please select a mode to play", string, "Enter", "Refresh");
@@ -886,27 +905,22 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 				case MODE_DEATHMATCH: //Deathmatch
 				{
-					MODES[MODE_DEATHMATCH][2][0]++;
 					DeathMatch(playerid);
 				}
 				case MODE_FREE_ROAM: //Free Roam
 				{
-					MODES[MODE_FREE_ROAM][2][0]++;
 					FreeRoam(playerid);
 				}
 				case MODE_CNR: //CNR
 				{
-					MODES[MODE_CNR][2][0]++;
 					CNR(playerid);
 				}
 				case MODE_LOBBY:
 				{
-					MODES[MODE_LOBBY][2][0]++;
 					Lobby(playerid);
 				}
 				case MODE_ADMIN_LOUNGE:
 				{
-					MODES[MODE_ADMIN_LOUNGE][2][0]++;
 					ALounge(playerid);
 				}
 				case MAX_MODES:

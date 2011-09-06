@@ -80,8 +80,7 @@
 #define CLASS_ROBBER 1
 // Variables
 new
-	LoggedIn[MAX_PLAYERS],
-	mysql;
+	LoggedIn[MAX_PLAYERS];
 // Menu Variables
 new
 	Menu:CnRselect,
@@ -129,7 +128,6 @@ main()
 
 public OnGameModeInit()
 {
-	mysql = mysql_connect("5.76.78.169", "samp", "andreas_everything", "6Hd42avLQBcE4dA9");
 	SetGameModeText(SCRIPT_MODE);
 	SendRconCommand(SCRIPT_WEB);
 	DisableInteriorEnterExits();
@@ -372,6 +370,7 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
     new ID, string[128], Float:Angle, pInterior, name[128], pWorld, Float:X, Float:Y, Float:Z, vID, logged[4], query[512];
 	if(!sscanf(params, "s[128]", name))
 	{
+	    new DB:bugdb = db_open("bugs.db");
 		// Get some player stuff
 		GetPlayerFacingAngle(playerid, Angle);
 		GetPlayerPos(playerid, X, Y, Z);
@@ -379,13 +378,13 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 		pWorld = GetPlayerVirtualWorld(playerid);
 		if(LoggedIn[playerid]) format(logged, sizeof(logged), "yes");
 		else format(logged, sizeof(logged), "no");
-		mysql_format(mysql, query, "INSERT INTO bugs (description, posx, posy, posz, angle, interior, world, reporter, logged, vehicleid, modelid, modelname) VALUES ('%e', %f, %f, %f, %f, %i, %i, '%s', '%s', %i, %i, '%s')", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, GetPlayerVehicleID(playerid), GetVehicleModel(vID), GetVehicleName(vID));
-		if(mysql_ping(mysql) != 1) mysql_reconnect(mysql);
-		mysql_query(query, -1, -1, mysql);
+		format(query, sizeof(query), "INSERT INTO bugs (description, posx, posy, posz, angle, interior, world, reporter, logged, vehicleid, modelid, modelname) VALUES ('%e', %f, %f, %f, %f, %i, %i, '%s', '%s', %i, %i, '%s')", name, X, Y, Z, Angle, pInterior, pWorld, GetPlayerNameEx(playerid), logged, GetPlayerVehicleID(playerid), GetVehicleModel(vID), GetVehicleName(vID));
+		db_query(bugdb, query);
 		format(string, sizeof(string), "*Thanks for reporting this issue, it will be reviewed shortly.", ID);
 		SendClientMessage(playerid, COLOR_YELLOW, string);
 		format(string, sizeof(string), "%s[%d] has reported a bug", GetPlayerNameEx(playerid), playerid, ID);
 		MessageToAdminsEx( COLOR_WHITE, string); // Created in the admin stock area, currently at the bottom of the script
+		db_close(bugdb);
 	}
 	else
 	{

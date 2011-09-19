@@ -27,6 +27,7 @@
 #define MAX_SKINS 300
 // Macros
 #define INI_Exist(%0) fexist(%0)
+#define DISTANCE(%1,%2,%3,%4,%5,%6) floatsqroot((%1-%4)*(%1-%4) + (%2-%5)*(%2-%5) + (%3-%6)*(%3-%6))
 //Virtual World Defines
 #define LOBBY_VW 0
 #define DEATHMATCH_VW 5
@@ -60,6 +61,7 @@
 #define COLOR_PURPLE 0xC2A2DAAA
 #define COLOR_DBLUE 0x2641FEAA
 #define COLOR_ALLDEPT 0xFF8282AA
+#define COLOR_BETA_MESSAGE 0xFF6600FF
 // Dialog Defines
 #define DIALOG_BLANK 100
 #define DIALOG_REGISTER 101
@@ -101,7 +103,9 @@ enum pData
 //Arrays
 new
 	PlayerData[MAX_PLAYERS][pData],
-	IPADDRESSES[MAX_PLAYERS][18];
+	IPADDRESSES[MAX_PLAYERS][18],
+	Float:old_veh_pos[MAX_VEHICLES + 1][3],
+	Float:vehicle_odometers[MAX_VEHICLES + 1];
 
 new CnRSkins[2][5] =
 {	{280, 281, 282, 283, 288},
@@ -699,6 +703,19 @@ public OnRconLoginAttempt(ip[], password[], success)
 public OnPlayerUpdate(playerid)
 {
 	// I guess it's not a good idea to add a debug option here as it will be spammed every 30ms or something - Famalam
+	if(IsPlayerInAnyVehicle(playerid)) {
+        if(GetPlayerVehicleSeat(playerid) == 0) {
+            new Float:veh_pos[3], vehid = GetPlayerVehicleID(playerid);
+            GetVehiclePos( vehid, veh_pos[0], veh_pos[1], veh_pos[2]);
+            vehicle_odometers[vehid] = (vehicle_odometers[vehid] + DISTANCE( veh_pos[0], veh_pos[1], veh_pos[2], old_veh_pos[vehid][0], old_veh_pos[vehid][1], old_veh_pos[vehid][2]));
+            old_veh_pos[vehid][0] = veh_pos[0];
+            old_veh_pos[vehid][1] = veh_pos[1];
+            old_veh_pos[vehid][2] = veh_pos[2];
+        }
+		#if BETA_BUILD == 1
+		new string[32], vehid2 = GetPlayerVehicleID(playerid); format(string, sizeof(string), "Vehicle Odometer: %.1f", vehicle_odometers[vehid2]); SendClientMessage(playerid, COLOR_BETA_MESSAGE, string);
+		#endif
+    }
 	return 1;
 }
 

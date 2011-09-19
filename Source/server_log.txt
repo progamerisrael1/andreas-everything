@@ -4855,3 +4855,103 @@ v0.3c R5, (C)2005-2011 SA-MP Team
 
   > MySQL plugin unloaded.
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[16:33:07] filterscripts = ""  (string)
+[16:33:07] weburl = "www.sa-mp.com"  (string)
+[16:33:07] 
+[16:33:07] Server Plugins
+[16:33:07] --------------
+[16:33:07]  Loading plugin: sscanf
+[16:33:07] 
+
+[16:33:07]  ===============================
+
+[16:33:07]       sscanf plugin loaded.     
+
+[16:33:07]    (c) 2009 Alex "Y_Less" Cole
+
+[16:33:07]  ===============================
+
+[16:33:07]   Loaded.
+[16:33:07]  Loading plugin: streamer
+[16:33:07] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[16:33:07]   Loaded.
+[16:33:07]  Loading plugin: mysql
+[16:33:08] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[16:33:08]   Loaded.
+[16:33:08]  Loaded 3 plugins.
+
+[16:33:08] 
+[16:33:08] Filter Scripts
+[16:33:08] ---------------
+[16:33:08]   Loaded 0 filter scripts.
+
+[16:33:08]  
+[16:33:08]  ======================================= 
+[16:33:08]  |                                     | 
+[16:33:08]  |        YSI version 1.03.0011        | 
+[16:33:08]  |        By Alex "Y_Less" Cole        | 
+[16:33:08]  |                                     | 
+[16:33:08]  |  Checking the latest YSI version..  | 
+[16:33:08]  |                                     | 
+[16:33:08]  ======================================= 
+[16:33:08]  
+[16:33:08] BUD v1.0.3 BETA loaded.
+[16:33:08] 
+----------------------------------
+[16:33:08]  Andreas Everything 
+[16:33:08]  Script Lines: ~1000 
+[16:33:08]  Coded by: SA-MP Community 
+[16:33:08] ----------------------------------
+
+[16:33:08] Number of vehicle models: 0
+[16:33:09]  
+[16:33:09]  ======================================= 
+[16:33:09]  |                                     | 
+[16:33:09]  |   Error: Could not connect to YSI   | 
+[16:33:09]  |  update server (response was 006).  | 
+[16:33:09]  |                                     | 
+[16:33:09]  ======================================= 
+[16:33:09]  
+[16:35:23] Incoming connection: 127.0.0.1:13029
+[16:35:28] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[16:35:28] Executed OnPlayerConnect
+[16:35:35] Executed OnDialogResponse
+[16:35:35] Executed OnPlayerRequestClass
+[16:35:40] Executed FreeRoam()
+[16:35:40] Executed OnDialogResponse
+[16:35:52] Executed SaveAccount
+[16:35:52] Executed OnPlayerDisconnect
+[16:35:52] [part] Brady_Clouser has left the server (0:1)
+[16:36:08] --- Server Shutting Down.
+[16:36:08] Executed OnGameModeExit
+[16:36:08] 
+
+[16:36:08]  ===============================
+
+[16:36:08]      sscanf plugin unloaded.    
+
+[16:36:08]  ===============================
+
+[16:36:08] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[16:36:08] 
+
+  > MySQL plugin unloaded.
+

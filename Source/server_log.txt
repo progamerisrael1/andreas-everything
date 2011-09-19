@@ -4955,3 +4955,1606 @@ v0.3c R5, (C)2005-2011 SA-MP Team
 
   > MySQL plugin unloaded.
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[16:47:58] filterscripts = ""  (string)
+[16:47:58] weburl = "www.sa-mp.com"  (string)
+[16:47:58] 
+[16:47:58] Server Plugins
+[16:47:58] --------------
+[16:47:58]  Loading plugin: sscanf
+[16:47:58] 
+
+[16:47:58]  ===============================
+
+[16:47:58]       sscanf plugin loaded.     
+
+[16:47:58]    (c) 2009 Alex "Y_Less" Cole
+
+[16:47:58]  ===============================
+
+[16:47:58]   Loaded.
+[16:47:58]  Loading plugin: streamer
+[16:47:58] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[16:47:58]   Loaded.
+[16:47:58]  Loading plugin: mysql
+[16:47:59] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[16:47:59]   Loaded.
+[16:47:59]  Loaded 3 plugins.
+
+[16:47:59] 
+[16:47:59] Filter Scripts
+[16:47:59] ---------------
+[16:47:59]   Loaded 0 filter scripts.
+
+[16:47:59]  
+[16:47:59]  ======================================= 
+[16:47:59]  |                                     | 
+[16:47:59]  |        YSI version 1.03.0011        | 
+[16:47:59]  |        By Alex "Y_Less" Cole        | 
+[16:47:59]  |                                     | 
+[16:47:59]  |  Checking the latest YSI version..  | 
+[16:47:59]  |                                     | 
+[16:47:59]  ======================================= 
+[16:47:59]  
+[16:47:59] BUD v1.0.3 BETA loaded.
+[16:47:59] 
+----------------------------------
+[16:47:59]  Andreas Everything 
+[16:47:59]  Script Lines: ~1000 
+[16:47:59]  Coded by: SA-MP Community 
+[16:47:59] ----------------------------------
+
+[16:47:59] Number of vehicle models: 0
+[16:48:00]  
+[16:48:00]  ======================================= 
+[16:48:00]  |                                     | 
+[16:48:00]  |   Error: Could not connect to YSI   | 
+[16:48:00]  |  update server (response was 006).  | 
+[16:48:00]  |                                     | 
+[16:48:00]  ======================================= 
+[16:48:00]  
+[16:48:28] Incoming connection: 127.0.0.1:13069
+[16:48:28] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[16:48:28] Executed OnPlayerConnect
+[16:48:41] Executed OnDialogResponse
+[16:48:41] Executed OnPlayerRequestClass
+[16:48:44] Executed CNR()
+[16:48:44] Executed OnDialogResponse
+[16:48:49] Executed OnPlayerRequestClass
+[16:48:49] Executed OnPlayerRequestClass
+[16:48:49] Executed OnPlayerRequestClass
+[16:48:50] Executed OnPlayerRequestClass
+[16:48:50] Executed OnPlayerRequestClass
+[16:48:50] Executed OnPlayerRequestClass
+[16:48:50] Executed OnPlayerRequestClass
+[16:48:51] Executed OnPlayerRequestClass
+[16:48:54] Executed OnPlayerRequestSpawn
+[16:48:54] Executed OnPlayerStateChange
+[16:48:54] Executed OnPlayerSpawn
+[16:48:54] Executed OnPlayerStateChange
+[16:48:57] Executed OnPlayerKeyStateChange
+[16:48:57] Executed OnPlayerSelectedMenuRow
+[16:48:57] Executed OnPlayerKeyStateChange
+[16:49:01] Executed OnPlayerKeyStateChange
+[16:49:01] Executed OnPlayerSelectedMenuRow
+[16:49:01] Executed OnPlayerKeyStateChange
+[16:49:02] Executed OnPlayerKeyStateChange
+[16:49:02] Executed OnPlayerSelectedMenuRow
+[16:49:02] Executed OnPlayerStateChange
+[16:49:02] Executed OnPlayerSpawn
+[16:49:02] Executed OnPlayerStateChange
+[16:49:02] Executed OnPlayerKeyStateChange
+[16:49:07] sscanf warning: Format specifier does not match parameter count.
+[16:49:12] sscanf warning: Format specifier does not match parameter count.
+[16:49:19] Executed OnPlayerKeyStateChange
+[16:49:20] Executed OnPlayerKeyStateChange
+[16:49:20] Executed OnPlayerKeyStateChange
+[16:49:20] Executed OnPlayerKeyStateChange
+[16:49:20] Executed OnPlayerKeyStateChange
+[16:49:20] Executed OnPlayerKeyStateChange
+[16:49:20] Executed OnPlayerKeyStateChange
+[16:49:20] Executed OnPlayerKeyStateChange
+[16:49:20] Executed OnPlayerKeyStateChange
+[16:49:20] Executed OnPlayerKeyStateChange
+[16:49:20] Executed OnPlayerKeyStateChange
+[16:49:20] Executed OnPlayerKeyStateChange
+[16:49:21] Executed OnPlayerKeyStateChange
+[16:49:21] Executed OnPlayerKeyStateChange
+[16:49:21] Executed OnPlayerKeyStateChange
+[16:49:23] Executed SaveAccount
+[16:49:23] Executed OnPlayerDisconnect
+[16:49:23] [part] Brady_Clouser has left the server (0:1)
+[17:29:11] --- Server Shutting Down.
+[17:29:11] Executed OnGameModeExit
+[17:29:11] 
+
+[17:29:11]  ===============================
+
+[17:29:11]      sscanf plugin unloaded.    
+
+[17:29:11]  ===============================
+
+[17:29:11] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[17:29:11] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[17:29:15] filterscripts = ""  (string)
+[17:29:15] weburl = "www.sa-mp.com"  (string)
+[17:29:15] 
+[17:29:15] Server Plugins
+[17:29:15] --------------
+[17:29:15]  Loading plugin: sscanf
+[17:29:15] 
+
+[17:29:15]  ===============================
+
+[17:29:15]       sscanf plugin loaded.     
+
+[17:29:15]    (c) 2009 Alex "Y_Less" Cole
+
+[17:29:15]  ===============================
+
+[17:29:15]   Loaded.
+[17:29:15]  Loading plugin: streamer
+[17:29:15] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[17:29:15]   Loaded.
+[17:29:15]  Loading plugin: mysql
+[17:29:15] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[17:29:15]   Loaded.
+[17:29:15]  Loaded 3 plugins.
+
+[17:29:15] 
+[17:29:15] Filter Scripts
+[17:29:15] ---------------
+[17:29:15]   Loaded 0 filter scripts.
+
+[17:29:15]  
+[17:29:15]  ======================================= 
+[17:29:15]  |                                     | 
+[17:29:15]  |        YSI version 1.03.0011        | 
+[17:29:15]  |        By Alex "Y_Less" Cole        | 
+[17:29:15]  |                                     | 
+[17:29:15]  |  Checking the latest YSI version..  | 
+[17:29:15]  |                                     | 
+[17:29:15]  ======================================= 
+[17:29:15]  
+[17:29:15] BUD v1.0.3 BETA loaded.
+[17:29:15] 
+----------------------------------
+[17:29:15]  Andreas Everything 
+[17:29:15]  Script Lines: ~1000 
+[17:29:15]  Coded by: SA-MP Community 
+[17:29:15] ----------------------------------
+
+[17:29:15] Number of vehicle models: 0
+[17:29:18]  
+[17:29:18]  ======================================= 
+[17:29:18]  |                                     | 
+[17:29:18]  |   Error: Could not connect to YSI   | 
+[17:29:18]  |  update server (response was 006).  | 
+[17:29:18]  |                                     | 
+[17:29:18]  ======================================= 
+[17:29:18]  
+[17:29:47] Incoming connection: 127.0.0.1:13382
+[17:29:47] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[17:29:47] Executed OnPlayerConnect
+[17:29:51] Executed OnDialogResponse
+[17:29:51] Executed OnPlayerRequestClass
+[17:29:58] Executed OnDialogResponse
+[17:30:01] Executed CNR()
+[17:30:01] Executed OnDialogResponse
+[17:30:04] Executed OnPlayerRequestSpawn
+[17:30:04] Executed OnPlayerStateChange
+[17:30:04] Executed OnPlayerSpawn
+[17:30:04] Executed OnPlayerStateChange
+[17:30:05] Executed OnPlayerKeyStateChange
+[17:30:05] Executed OnPlayerSelectedMenuRow
+[17:30:05] Executed OnPlayerKeyStateChange
+[17:30:06] Executed OnPlayerKeyStateChange
+[17:30:06] Executed OnPlayerSelectedMenuRow
+[17:30:06] Executed OnPlayerStateChange
+[17:30:06] Executed OnPlayerSpawn
+[17:30:06] Executed OnPlayerStateChange
+[17:30:06] Executed OnPlayerKeyStateChange
+[17:30:12] sscanf warning: Format specifier does not match parameter count.
+[17:30:15] sscanf warning: Format specifier does not match parameter count.
+[17:30:25] Executed OnPlayerKeyStateChange
+[17:30:25] Executed OnPlayerKeyStateChange
+[17:30:26] Executed OnPlayerKeyStateChange
+[17:30:26] Executed OnPlayerKeyStateChange
+[17:30:26] Executed OnPlayerKeyStateChange
+[17:30:26] Executed OnPlayerKeyStateChange
+[17:30:26] Executed OnPlayerKeyStateChange
+[17:30:26] Executed OnPlayerKeyStateChange
+[17:30:26] Executed OnPlayerKeyStateChange
+[17:30:26] Executed OnPlayerKeyStateChange
+[17:30:26] Executed OnPlayerKeyStateChange
+[17:30:26] Executed OnPlayerKeyStateChange
+[17:30:26] Executed OnPlayerKeyStateChange
+[17:30:26] Executed OnPlayerKeyStateChange
+[17:30:26] Executed OnPlayerKeyStateChange
+[17:30:27] Executed OnPlayerKeyStateChange
+[17:30:27] Executed OnPlayerKeyStateChange
+[17:30:29] Executed SaveAccount
+[17:30:29] Executed OnPlayerDisconnect
+[17:30:29] [part] Brady_Clouser has left the server (0:1)
+[17:30:34] --- Server Shutting Down.
+[17:30:34] Executed OnGameModeExit
+[17:30:34] 
+
+[17:30:34]  ===============================
+
+[17:30:34]      sscanf plugin unloaded.    
+
+[17:30:34]  ===============================
+
+[17:30:34] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[17:30:34] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[17:33:48] filterscripts = ""  (string)
+[17:33:48] weburl = "www.sa-mp.com"  (string)
+[17:33:48] 
+[17:33:48] Server Plugins
+[17:33:48] --------------
+[17:33:48]  Loading plugin: sscanf
+[17:33:48] 
+
+[17:33:48]  ===============================
+
+[17:33:48]       sscanf plugin loaded.     
+
+[17:33:48]    (c) 2009 Alex "Y_Less" Cole
+
+[17:33:48]  ===============================
+
+[17:33:48]   Loaded.
+[17:33:48]  Loading plugin: streamer
+[17:33:48] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[17:33:48]   Loaded.
+[17:33:48]  Loading plugin: mysql
+[17:33:48] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[17:33:48]   Loaded.
+[17:33:48]  Loaded 3 plugins.
+
+[17:33:48] 
+[17:33:48] Filter Scripts
+[17:33:48] ---------------
+[17:33:48]   Loaded 0 filter scripts.
+
+[17:33:48]  
+[17:33:48]  ======================================= 
+[17:33:48]  |                                     | 
+[17:33:48]  |        YSI version 1.03.0011        | 
+[17:33:48]  |        By Alex "Y_Less" Cole        | 
+[17:33:48]  |                                     | 
+[17:33:48]  |  Checking the latest YSI version..  | 
+[17:33:48]  |                                     | 
+[17:33:48]  ======================================= 
+[17:33:48]  
+[17:33:48] BUD v1.0.3 BETA loaded.
+[17:33:48] 
+----------------------------------
+[17:33:48]  Andreas Everything 
+[17:33:48]  Script Lines: ~1000 
+[17:33:48]  Coded by: SA-MP Community 
+[17:33:48] ----------------------------------
+
+[17:33:48] Number of vehicle models: 0
+[17:33:48]  
+[17:33:48]  ======================================= 
+[17:33:48]  |                                     | 
+[17:33:48]  |   Error: Could not connect to YSI   | 
+[17:33:48]  |  update server (response was 006).  | 
+[17:33:48]  |                                     | 
+[17:33:48]  ======================================= 
+[17:33:48]  
+[17:34:20] Incoming connection: 127.0.0.1:13617
+[17:34:20] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[17:34:20] Executed OnPlayerConnect
+[17:34:37] Executed OnDialogResponse
+[17:34:37] Executed OnPlayerRequestClass
+[17:34:39] Executed CNR()
+[17:34:39] Executed OnDialogResponse
+[17:34:41] Executed OnPlayerRequestSpawn
+[17:34:41] Executed OnPlayerStateChange
+[17:34:41] Executed OnPlayerSpawn
+[17:34:41] Executed OnPlayerStateChange
+[17:34:41] Executed OnPlayerKeyStateChange
+[17:34:41] Executed OnPlayerSelectedMenuRow
+[17:34:41] Executed OnPlayerKeyStateChange
+[17:34:43] Executed OnPlayerKeyStateChange
+[17:34:43] Executed OnPlayerSelectedMenuRow
+[17:34:43] Executed OnPlayerStateChange
+[17:34:43] Executed OnPlayerSpawn
+[17:34:43] Executed OnPlayerStateChange
+[17:34:43] Executed OnPlayerKeyStateChange
+[17:34:45] Executed OnPlayerKeyStateChange
+[17:34:46] Executed OnPlayerKeyStateChange
+[17:34:46] Executed OnPlayerKeyStateChange
+[17:34:46] Executed OnPlayerKeyStateChange
+[17:34:46] Executed OnPlayerKeyStateChange
+[17:34:46] Executed OnPlayerKeyStateChange
+[17:34:46] Executed OnPlayerKeyStateChange
+[17:34:46] Executed OnPlayerKeyStateChange
+[17:34:46] Executed OnPlayerKeyStateChange
+[17:34:46] Executed OnPlayerKeyStateChange
+[17:34:46] Executed OnPlayerKeyStateChange
+[17:34:46] Executed OnPlayerKeyStateChange
+[17:34:47] sscanf warning: Format specifier does not match parameter count.
+[17:34:50] sscanf warning: Format specifier does not match parameter count.
+[17:34:52] sscanf warning: Format specifier does not match parameter count.
+[17:34:57] sscanf warning: Format specifier does not match parameter count.
+[17:35:01] Executed OnPlayerKeyStateChange
+[17:35:01] Executed OnPlayerKeyStateChange
+[17:35:01] Executed OnPlayerKeyStateChange
+[17:35:01] Executed OnPlayerKeyStateChange
+[17:35:01] Executed OnPlayerKeyStateChange
+[17:35:01] Executed OnPlayerKeyStateChange
+[17:35:01] Executed OnPlayerKeyStateChange
+[17:35:01] Executed OnPlayerKeyStateChange
+[17:35:01] Executed OnPlayerKeyStateChange
+[17:35:01] Executed OnPlayerKeyStateChange
+[17:35:02] Executed OnPlayerKeyStateChange
+[17:35:02] Executed OnPlayerKeyStateChange
+[17:35:05] Executed OnPlayerKeyStateChange
+[17:35:05] Executed OnPlayerKeyStateChange
+[17:35:05] Executed OnPlayerKeyStateChange
+[17:35:05] Executed OnPlayerKeyStateChange
+[17:35:05] Executed OnPlayerKeyStateChange
+[17:35:05] Executed OnPlayerKeyStateChange
+[17:35:05] Executed OnPlayerKeyStateChange
+[17:35:05] Executed OnPlayerKeyStateChange
+[17:35:05] Executed OnPlayerKeyStateChange
+[17:35:05] Executed OnPlayerKeyStateChange
+[17:35:05] Executed OnPlayerKeyStateChange
+[17:35:06] Executed OnPlayerKeyStateChange
+[17:35:08] Executed OnPlayerKeyStateChange
+[17:35:08] Executed OnPlayerKeyStateChange
+[17:35:09] Executed OnPlayerKeyStateChange
+[17:35:09] Executed OnPlayerKeyStateChange
+[17:35:09] Executed OnPlayerKeyStateChange
+[17:35:09] Executed OnPlayerKeyStateChange
+[17:35:10] Executed OnPlayerKeyStateChange
+[17:35:10] Executed OnPlayerKeyStateChange
+[17:35:10] Executed OnPlayerKeyStateChange
+[17:35:10] Executed OnPlayerKeyStateChange
+[17:35:10] Executed OnPlayerKeyStateChange
+[17:35:10] Executed OnPlayerKeyStateChange
+[17:35:10] Executed OnPlayerKeyStateChange
+[17:35:10] Executed OnPlayerKeyStateChange
+[17:35:10] Executed OnPlayerKeyStateChange
+[17:35:10] Executed OnPlayerKeyStateChange
+[17:35:11] Executed OnPlayerKeyStateChange
+[17:35:11] Executed OnPlayerKeyStateChange
+[17:35:11] Executed OnPlayerKeyStateChange
+[17:35:11] Executed OnPlayerKeyStateChange
+[17:35:15] sscanf warning: Format specifier does not match parameter count.
+[17:35:19] sscanf warning: Format specifier does not match parameter count.
+[17:35:23] Executed SaveAccount
+[17:35:23] Executed OnPlayerDisconnect
+[17:35:23] [part] Brady_Clouser has left the server (0:1)
+[17:35:27] --- Server Shutting Down.
+[17:35:27] Executed OnGameModeExit
+[17:35:27] 
+
+[17:35:27]  ===============================
+
+[17:35:27]      sscanf plugin unloaded.    
+
+[17:35:27]  ===============================
+
+[17:35:27] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[17:35:27] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[17:37:36] filterscripts = ""  (string)
+[17:37:36] weburl = "www.sa-mp.com"  (string)
+[17:37:36] 
+[17:37:36] Server Plugins
+[17:37:36] --------------
+[17:37:36]  Loading plugin: sscanf
+[17:37:36] 
+
+[17:37:36]  ===============================
+
+[17:37:36]       sscanf plugin loaded.     
+
+[17:37:36]    (c) 2009 Alex "Y_Less" Cole
+
+[17:37:36]  ===============================
+
+[17:37:36]   Loaded.
+[17:37:36]  Loading plugin: streamer
+[17:37:36] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[17:37:36]   Loaded.
+[17:37:36]  Loading plugin: mysql
+[17:37:36] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[17:37:36]   Loaded.
+[17:37:36]  Loaded 3 plugins.
+
+[17:37:36] 
+[17:37:36] Filter Scripts
+[17:37:36] ---------------
+[17:37:36]   Loaded 0 filter scripts.
+
+[17:37:36]  
+[17:37:36]  ======================================= 
+[17:37:36]  |                                     | 
+[17:37:36]  |        YSI version 1.03.0011        | 
+[17:37:36]  |        By Alex "Y_Less" Cole        | 
+[17:37:36]  |                                     | 
+[17:37:36]  |  Checking the latest YSI version..  | 
+[17:37:36]  |                                     | 
+[17:37:36]  ======================================= 
+[17:37:36]  
+[17:37:36] BUD v1.0.3 BETA loaded.
+[17:37:36] 
+----------------------------------
+[17:37:36]  Andreas Everything 
+[17:37:36]  Script Lines: ~1000 
+[17:37:36]  Coded by: SA-MP Community 
+[17:37:36] ----------------------------------
+
+[17:37:36] Number of vehicle models: 0
+[17:37:37]  
+[17:37:37]  ======================================= 
+[17:37:37]  |                                     | 
+[17:37:37]  |   Error: Could not connect to YSI   | 
+[17:37:37]  |  update server (response was 006).  | 
+[17:37:37]  |                                     | 
+[17:37:37]  ======================================= 
+[17:37:37]  
+[17:38:07] Incoming connection: 127.0.0.1:13650
+[17:38:07] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[17:38:07] Executed OnPlayerConnect
+[17:43:31] Executed OnDialogResponse
+[17:43:31] Executed OnPlayerRequestClass
+[17:43:32] Executed OnDialogResponse
+[17:43:38] Executed OnDialogResponse
+[17:43:41] Executed OnDialogResponse
+[17:43:43] Executed CNR()
+[17:43:43] Executed OnDialogResponse
+[17:43:49] Executed OnPlayerRequestSpawn
+[17:43:49] Executed OnPlayerStateChange
+[17:43:49] Executed OnPlayerSpawn
+[17:43:49] Executed OnPlayerStateChange
+[17:43:50] Executed OnPlayerKeyStateChange
+[17:43:50] Executed OnPlayerSelectedMenuRow
+[17:43:50] Executed OnPlayerKeyStateChange
+[17:43:56] Executed OnPlayerKeyStateChange
+[17:43:56] Executed OnPlayerKeyStateChange
+[17:43:56] Executed OnPlayerKeyStateChange
+[17:43:56] Executed OnPlayerKeyStateChange
+[17:43:56] Executed OnPlayerKeyStateChange
+[17:43:56] Executed OnPlayerKeyStateChange
+[17:43:56] Executed OnPlayerKeyStateChange
+[17:43:56] Executed OnPlayerKeyStateChange
+[17:43:56] Executed OnPlayerKeyStateChange
+[17:43:57] Executed OnPlayerKeyStateChange
+[17:43:59] Executed OnPlayerKeyStateChange
+[17:43:59] Executed OnPlayerSelectedMenuRow
+[17:44:00] Executed OnPlayerKeyStateChange
+[17:44:01] Executed OnPlayerKeyStateChange
+[17:44:01] Executed OnPlayerSelectedMenuRow
+[17:44:01] Executed OnPlayerKeyStateChange
+[17:44:02] Executed OnPlayerKeyStateChange
+[17:44:02] Executed OnPlayerSelectedMenuRow
+[17:44:02] Executed OnPlayerKeyStateChange
+[17:44:05] Executed OnPlayerKeyStateChange
+[17:44:05] Executed OnPlayerKeyStateChange
+[17:44:08] Executed OnPlayerKeyStateChange
+[17:44:08] Executed OnPlayerSelectedMenuRow
+[17:44:08] Executed OnPlayerStateChange
+[17:44:08] Executed OnPlayerSpawn
+[17:44:08] Executed OnPlayerStateChange
+[17:44:08] Executed OnPlayerKeyStateChange
+[17:44:10] Executed OnPlayerKeyStateChange
+[17:44:10] Executed OnPlayerKeyStateChange
+[17:44:11] Executed OnPlayerKeyStateChange
+[17:44:12] sscanf warning: Format specifier does not match parameter count.
+[17:44:14] sscanf warning: Format specifier does not match parameter count.
+[17:44:23] Executed SaveAccount
+[17:44:23] Executed OnPlayerDisconnect
+[17:44:23] [part] Brady_Clouser has left the server (0:1)
+[17:55:24] --- Server Shutting Down.
+[17:55:24] Executed OnGameModeExit
+[17:55:24] 
+
+[17:55:24]  ===============================
+
+[17:55:24]      sscanf plugin unloaded.    
+
+[17:55:24]  ===============================
+
+[17:55:24] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[17:55:24] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[17:58:26] filterscripts = ""  (string)
+[17:58:26] weburl = "www.sa-mp.com"  (string)
+[17:58:26] 
+[17:58:26] Server Plugins
+[17:58:26] --------------
+[17:58:26]  Loading plugin: sscanf
+[17:58:26] 
+
+[17:58:26]  ===============================
+
+[17:58:26]       sscanf plugin loaded.     
+
+[17:58:26]    (c) 2009 Alex "Y_Less" Cole
+
+[17:58:26]  ===============================
+
+[17:58:26]   Loaded.
+[17:58:26]  Loading plugin: streamer
+[17:58:26] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[17:58:26]   Loaded.
+[17:58:26]  Loading plugin: mysql
+[17:58:26] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[17:58:26]   Loaded.
+[17:58:26]  Loaded 3 plugins.
+
+[17:58:26] 
+[17:58:26] Filter Scripts
+[17:58:26] ---------------
+[17:58:26]   Loaded 0 filter scripts.
+
+[17:58:26]  
+[17:58:26]  ======================================= 
+[17:58:26]  |                                     | 
+[17:58:26]  |        YSI version 1.03.0011        | 
+[17:58:26]  |        By Alex "Y_Less" Cole        | 
+[17:58:26]  |                                     | 
+[17:58:26]  |  Checking the latest YSI version..  | 
+[17:58:26]  |                                     | 
+[17:58:26]  ======================================= 
+[17:58:26]  
+[17:58:26] BUD v1.0.3 BETA loaded.
+[17:58:26] 
+----------------------------------
+[17:58:26]  Andreas Everything 
+[17:58:26]  Script Lines: ~1000 
+[17:58:26]  Coded by: SA-MP Community 
+[17:58:26] ----------------------------------
+
+[17:58:26] Number of vehicle models: 0
+[17:58:27]  
+[17:58:27]  ======================================= 
+[17:58:27]  |                                     | 
+[17:58:27]  |   Error: Could not connect to YSI   | 
+[17:58:27]  |  update server (response was 006).  | 
+[17:58:27]  |                                     | 
+[17:58:27]  ======================================= 
+[17:58:27]  
+[17:59:07] Incoming connection: 127.0.0.1:13964
+[17:59:08] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[17:59:08] Executed OnPlayerConnect
+[17:59:15] Executed OnDialogResponse
+[17:59:15] Executed OnPlayerRequestClass
+[17:59:23] Executed CNR()
+[17:59:23] Executed OnDialogResponse
+[17:59:27] Executed OnPlayerRequestSpawn
+[17:59:27] Executed OnPlayerStateChange
+[17:59:27] Executed OnPlayerSpawn
+[17:59:27] Executed OnPlayerStateChange
+[17:59:29] Executed OnPlayerKeyStateChange
+[17:59:29] Executed OnPlayerSelectedMenuRow
+[17:59:29] Executed OnPlayerKeyStateChange
+[17:59:33] Executed OnPlayerKeyStateChange
+[17:59:33] Executed OnPlayerSelectedMenuRow
+[17:59:34] Executed OnPlayerStateChange
+[17:59:34] Executed OnPlayerSpawn
+[17:59:34] Executed OnPlayerStateChange
+[17:59:34] Executed OnPlayerKeyStateChange
+[17:59:39] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[17:59:40] Executed OnPlayerKeyStateChange
+[17:59:40] Executed OnPlayerKeyStateChange
+[17:59:40] Executed OnPlayerKeyStateChange
+[17:59:40] Executed OnPlayerKeyStateChange
+[17:59:43] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[17:59:47] Executed OnPlayerKeyStateChange
+[17:59:47] Executed OnPlayerKeyStateChange
+[17:59:47] Executed OnPlayerKeyStateChange
+[17:59:47] Executed OnPlayerKeyStateChange
+[17:59:47] Executed OnPlayerKeyStateChange
+[17:59:47] Executed OnPlayerKeyStateChange
+[17:59:47] Executed OnPlayerKeyStateChange
+[17:59:47] Executed OnPlayerKeyStateChange
+[17:59:47] Executed OnPlayerKeyStateChange
+[17:59:47] Executed OnPlayerKeyStateChange
+[17:59:48] Executed OnPlayerKeyStateChange
+[17:59:48] Executed OnPlayerKeyStateChange
+[17:59:48] Executed OnPlayerKeyStateChange
+[17:59:48] Executed OnPlayerKeyStateChange
+[17:59:48] Executed OnPlayerKeyStateChange
+[17:59:48] Executed OnPlayerKeyStateChange
+[17:59:49] Executed OnPlayerKeyStateChange
+[17:59:49] Executed OnPlayerKeyStateChange
+[17:59:49] Executed OnPlayerKeyStateChange
+[17:59:49] Executed OnPlayerKeyStateChange
+[17:59:51] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[17:59:53] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[17:59:55] Executed SaveAccount
+[17:59:55] Executed OnPlayerDisconnect
+[17:59:55] [part] Brady_Clouser has left the server (0:1)
+[18:00:01] --- Server Shutting Down.
+[18:00:02] Executed OnGameModeExit
+[18:00:02] 
+
+[18:00:02]  ===============================
+
+[18:00:02]      sscanf plugin unloaded.    
+
+[18:00:02]  ===============================
+
+[18:00:02] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[18:00:02] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[18:02:22] filterscripts = ""  (string)
+[18:02:22] weburl = "www.sa-mp.com"  (string)
+[18:02:22] 
+[18:02:22] Server Plugins
+[18:02:22] --------------
+[18:02:22]  Loading plugin: sscanf
+[18:02:22] 
+
+[18:02:22]  ===============================
+
+[18:02:22]       sscanf plugin loaded.     
+
+[18:02:22]    (c) 2009 Alex "Y_Less" Cole
+
+[18:02:22]  ===============================
+
+[18:02:22]   Loaded.
+[18:02:22]  Loading plugin: streamer
+[18:02:22] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[18:02:22]   Loaded.
+[18:02:22]  Loading plugin: mysql
+[18:02:22] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[18:02:22]   Loaded.
+[18:02:22]  Loaded 3 plugins.
+
+[18:02:23] 
+[18:02:23] Filter Scripts
+[18:02:23] ---------------
+[18:02:23]   Loaded 0 filter scripts.
+
+[18:02:23]  
+[18:02:23]  ======================================= 
+[18:02:23]  |                                     | 
+[18:02:23]  |        YSI version 1.03.0011        | 
+[18:02:23]  |        By Alex "Y_Less" Cole        | 
+[18:02:23]  |                                     | 
+[18:02:23]  |  Checking the latest YSI version..  | 
+[18:02:23]  |                                     | 
+[18:02:23]  ======================================= 
+[18:02:23]  
+[18:02:23] BUD v1.0.3 BETA loaded.
+[18:02:23] 
+----------------------------------
+[18:02:23]  Andreas Everything 
+[18:02:23]  Script Lines: ~1000 
+[18:02:23]  Coded by: SA-MP Community 
+[18:02:23] ----------------------------------
+
+[18:02:23] Number of vehicle models: 0
+[18:02:23]  
+[18:02:23]  ======================================= 
+[18:02:23]  |                                     | 
+[18:02:23]  |   Error: Could not connect to YSI   | 
+[18:02:23]  |  update server (response was 006).  | 
+[18:02:23]  |                                     | 
+[18:02:23]  ======================================= 
+[18:02:23]  
+[18:02:54] Incoming connection: 127.0.0.1:14050
+[18:02:54] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[18:02:54] Executed OnPlayerConnect
+[18:04:37] Executed OnDialogResponse
+[18:04:37] Executed OnPlayerRequestClass
+[18:04:41] Executed CNR()
+[18:04:41] Executed OnDialogResponse
+[18:04:47] Executed OnPlayerRequestSpawn
+[18:04:47] Executed OnPlayerStateChange
+[18:04:47] Executed OnPlayerSpawn
+[18:04:47] Executed OnPlayerStateChange
+[18:04:47] Executed OnPlayerKeyStateChange
+[18:04:47] Executed OnPlayerSelectedMenuRow
+[18:04:47] Executed OnPlayerKeyStateChange
+[18:04:48] Executed OnPlayerKeyStateChange
+[18:04:48] Executed OnPlayerSelectedMenuRow
+[18:04:48] Executed OnPlayerStateChange
+[18:04:48] Executed OnPlayerSpawn
+[18:04:48] Executed OnPlayerStateChange
+[18:04:48] Executed OnPlayerKeyStateChange
+[18:04:57] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[18:04:59] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[18:05:01] Executed SaveAccount
+[18:05:01] Executed OnPlayerDisconnect
+[18:05:01] [part] Brady_Clouser has left the server (0:1)
+[18:07:08] --- Server Shutting Down.
+[18:07:08] Executed OnGameModeExit
+[18:07:08] 
+
+[18:07:08]  ===============================
+
+[18:07:08]      sscanf plugin unloaded.    
+
+[18:07:08]  ===============================
+
+[18:07:08] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[18:07:08] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[18:07:12] filterscripts = ""  (string)
+[18:07:12] weburl = "www.sa-mp.com"  (string)
+[18:07:12] 
+[18:07:12] Server Plugins
+[18:07:12] --------------
+[18:07:12]  Loading plugin: sscanf
+[18:07:12] 
+
+[18:07:12]  ===============================
+
+[18:07:12]       sscanf plugin loaded.     
+
+[18:07:12]    (c) 2009 Alex "Y_Less" Cole
+
+[18:07:12]  ===============================
+
+[18:07:12]   Loaded.
+[18:07:12]  Loading plugin: streamer
+[18:07:12] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[18:07:12]   Loaded.
+[18:07:12]  Loading plugin: mysql
+[18:07:12] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[18:07:12]   Loaded.
+[18:07:12]  Loaded 3 plugins.
+
+[18:07:12] 
+[18:07:12] Filter Scripts
+[18:07:12] ---------------
+[18:07:12]   Loaded 0 filter scripts.
+
+[18:07:12]  
+[18:07:12]  ======================================= 
+[18:07:12]  |                                     | 
+[18:07:12]  |        YSI version 1.03.0011        | 
+[18:07:12]  |        By Alex "Y_Less" Cole        | 
+[18:07:12]  |                                     | 
+[18:07:12]  |  Checking the latest YSI version..  | 
+[18:07:12]  |                                     | 
+[18:07:12]  ======================================= 
+[18:07:12]  
+[18:07:12] BUD v1.0.3 BETA loaded.
+[18:07:12] 
+----------------------------------
+[18:07:12]  Andreas Everything 
+[18:07:12]  Script Lines: ~1000 
+[18:07:12]  Coded by: SA-MP Community 
+[18:07:12] ----------------------------------
+
+[18:07:12] Number of vehicle models: 0
+[18:07:13]  
+[18:07:13]  ======================================= 
+[18:07:13]  |                                     | 
+[18:07:13]  |   Error: Could not connect to YSI   | 
+[18:07:13]  |  update server (response was 006).  | 
+[18:07:13]  |                                     | 
+[18:07:13]  ======================================= 
+[18:07:13]  
+[18:07:49] Incoming connection: 127.0.0.1:14088
+[18:07:50] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[18:07:50] Executed OnPlayerConnect
+[18:07:55] Executed OnDialogResponse
+[18:07:55] Executed OnPlayerRequestClass
+[18:07:58] Executed CNR()
+[18:07:58] Executed OnDialogResponse
+[18:08:00] Executed OnPlayerRequestSpawn
+[18:08:01] Executed OnPlayerStateChange
+[18:08:01] Executed OnPlayerSpawn
+[18:08:01] Executed OnPlayerStateChange
+[18:08:01] Executed OnPlayerKeyStateChange
+[18:08:01] Executed OnPlayerSelectedMenuRow
+[18:08:02] Executed OnPlayerKeyStateChange
+[18:08:02] Executed OnPlayerKeyStateChange
+[18:08:02] Executed OnPlayerSelectedMenuRow
+[18:08:03] Executed OnPlayerStateChange
+[18:08:03] Executed OnPlayerSpawn
+[18:08:03] Executed OnPlayerStateChange
+[18:08:03] Executed OnPlayerKeyStateChange
+[18:08:08] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[18:08:11] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[18:08:12] Executed OnVehicleStreamIn
+[18:08:15] Executed OnPlayerEnterVehicle
+[18:08:15] Executed OnPlayerKeyStateChange
+[18:08:15] Executed OnPlayerKeyStateChange
+[18:08:19] Executed OnPlayerStateChange
+[18:08:19] Executed OnPlayerKeyStateChange
+[18:08:21] Executed OnPlayerKeyStateChange
+[18:08:22] Executed OnPlayerExitVehicle
+[18:08:23] Executed OnPlayerStateChange
+[18:08:25] Executed OnPlayerKeyStateChange
+[18:08:25] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:26] Executed OnPlayerKeyStateChange
+[18:08:27] Executed OnPlayerKeyStateChange
+[18:08:27] Executed OnPlayerKeyStateChange
+[18:08:27] Executed OnPlayerKeyStateChange
+[18:08:27] Executed OnPlayerKeyStateChange
+[18:08:27] Executed OnPlayerKeyStateChange
+[18:08:27] Executed OnPlayerKeyStateChange
+[18:08:27] Executed OnPlayerKeyStateChange
+[18:08:27] Executed OnPlayerKeyStateChange
+[18:08:27] Executed OnPlayerKeyStateChange
+[18:08:27] Executed OnPlayerKeyStateChange
+[18:08:27] Executed OnPlayerKeyStateChange
+[18:08:27] Executed OnPlayerKeyStateChange
+[18:08:27] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:28] Executed OnPlayerKeyStateChange
+[18:08:29] Executed OnPlayerKeyStateChange
+[18:08:29] Executed OnPlayerKeyStateChange
+[18:08:33] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[18:08:33] Executed OnVehicleStreamIn
+[18:08:36] Executed OnPlayerEnterVehicle
+[18:08:36] Executed OnPlayerKeyStateChange
+[18:08:36] Executed OnPlayerKeyStateChange
+[18:08:39] Executed OnPlayerStateChange
+[18:08:40] Executed OnPlayerKeyStateChange
+[18:08:40] Executed OnPlayerKeyStateChange
+[18:08:42] Executed OnPlayerKeyStateChange
+[18:08:43] Executed OnPlayerKeyStateChange
+[18:08:43] Executed OnPlayerKeyStateChange
+[18:08:43] Executed OnPlayerKeyStateChange
+[18:08:44] Executed OnPlayerKeyStateChange
+[18:08:52] Executed OnPlayerKeyStateChange
+[18:08:52] Executed OnPlayerKeyStateChange
+[18:08:53] Executed OnPlayerKeyStateChange
+[18:08:53] Executed OnPlayerKeyStateChange
+[18:08:55] Executed OnPlayerKeyStateChange
+[18:08:55] Executed OnPlayerKeyStateChange
+[18:08:57] Executed OnPlayerKeyStateChange
+[18:08:58] Executed OnPlayerKeyStateChange
+[18:08:58] Executed OnPlayerKeyStateChange
+[18:08:59] Executed OnPlayerKeyStateChange
+[18:09:00] Executed OnPlayerKeyStateChange
+[18:09:00] Executed OnPlayerKeyStateChange
+[18:09:03] Executed OnPlayerKeyStateChange
+[18:09:04] Executed OnPlayerKeyStateChange
+[18:09:09] Executed OnPlayerKeyStateChange
+[18:09:09] Executed OnPlayerKeyStateChange
+[18:09:10] Executed OnPlayerKeyStateChange
+[18:09:11] Executed OnPlayerKeyStateChange
+[18:09:13] Executed OnPlayerKeyStateChange
+[18:09:13] Executed OnPlayerKeyStateChange
+[18:09:13] Executed OnPlayerKeyStateChange
+[18:09:14] Executed OnPlayerKeyStateChange
+[18:09:15] Executed OnPlayerKeyStateChange
+[18:09:16] Executed OnPlayerKeyStateChange
+[18:09:17] Executed OnPlayerKeyStateChange
+[18:09:17] Executed OnPlayerKeyStateChange
+[18:09:25] Executed OnPlayerKeyStateChange
+[18:09:26] Executed OnPlayerKeyStateChange
+[18:09:26] Executed OnPlayerKeyStateChange
+[18:09:26] Executed OnVehicleStreamOut
+[18:09:26] Executed OnPlayerKeyStateChange
+[18:09:27] Executed OnPlayerKeyStateChange
+[18:09:27] Executed OnPlayerKeyStateChange
+[18:09:29] Executed OnVehicleStreamIn
+[18:09:29] Executed OnPlayerKeyStateChange
+[18:09:31] Executed OnPlayerKeyStateChange
+[18:09:31] Executed OnPlayerKeyStateChange
+[18:09:32] Executed OnPlayerKeyStateChange
+[18:09:34] Executed OnPlayerKeyStateChange
+[18:09:34] Executed OnPlayerKeyStateChange
+[18:09:37] Executed OnPlayerKeyStateChange
+[18:09:37] Executed OnPlayerKeyStateChange
+[18:09:37] Executed OnPlayerKeyStateChange
+[18:09:38] Executed OnPlayerKeyStateChange
+[18:09:39] Executed OnPlayerKeyStateChange
+[18:09:40] Executed OnPlayerKeyStateChange
+[18:09:41] Executed OnPlayerKeyStateChange
+[18:09:41] Executed OnPlayerKeyStateChange
+[18:09:41] Executed OnPlayerKeyStateChange
+[18:09:42] Executed OnPlayerKeyStateChange
+[18:09:44] Executed OnPlayerKeyStateChange
+[18:09:44] Executed OnPlayerKeyStateChange
+[18:09:44] Executed OnPlayerKeyStateChange
+[18:09:45] Executed OnPlayerKeyStateChange
+[18:09:45] Executed OnPlayerKeyStateChange
+[18:09:45] Executed OnPlayerKeyStateChange
+[18:09:46] Executed OnPlayerKeyStateChange
+[18:09:46] Executed OnPlayerKeyStateChange
+[18:09:48] Executed OnPlayerKeyStateChange
+[18:09:48] Executed OnPlayerKeyStateChange
+[18:09:49] Executed OnPlayerKeyStateChange
+[18:09:49] Executed OnPlayerKeyStateChange
+[18:09:49] Executed OnPlayerKeyStateChange
+[18:09:50] Executed OnPlayerKeyStateChange
+[18:09:50] Executed OnPlayerKeyStateChange
+[18:09:51] Executed OnPlayerKeyStateChange
+[18:09:52] Executed OnPlayerKeyStateChange
+[18:09:52] Executed OnPlayerKeyStateChange
+[18:09:53] Executed OnPlayerKeyStateChange
+[18:09:53] Executed OnPlayerKeyStateChange
+[18:09:56] Executed OnPlayerKeyStateChange
+[18:09:56] Executed OnPlayerKeyStateChange
+[18:09:56] Executed OnPlayerKeyStateChange
+[18:09:57] Executed OnPlayerKeyStateChange
+[18:09:57] Executed OnPlayerKeyStateChange
+[18:09:59] Executed OnPlayerKeyStateChange
+[18:10:00] Executed OnPlayerKeyStateChange
+[18:10:01] Executed OnPlayerKeyStateChange
+[18:10:01] Executed OnPlayerKeyStateChange
+[18:10:01] Executed OnPlayerKeyStateChange
+[18:10:01] Executed OnPlayerKeyStateChange
+[18:10:02] Executed OnPlayerKeyStateChange
+[18:10:04] Executed OnPlayerKeyStateChange
+[18:10:04] Executed OnPlayerKeyStateChange
+[18:10:04] Executed OnPlayerKeyStateChange
+[18:10:05] Executed OnPlayerKeyStateChange
+[18:10:06] Executed OnPlayerKeyStateChange
+[18:10:06] Executed OnPlayerKeyStateChange
+[18:10:07] Executed OnPlayerKeyStateChange
+[18:10:07] Executed OnPlayerKeyStateChange
+[18:10:08] Executed OnPlayerKeyStateChange
+[18:10:08] Executed OnPlayerKeyStateChange
+[18:10:10] Executed OnPlayerKeyStateChange
+[18:10:11] Executed OnPlayerKeyStateChange
+[18:10:11] Executed OnPlayerKeyStateChange
+[18:10:12] Executed OnPlayerKeyStateChange
+[18:10:15] Executed OnPlayerKeyStateChange
+[18:10:15] Executed OnPlayerKeyStateChange
+[18:10:15] Executed OnPlayerKeyStateChange
+[18:10:16] Executed OnPlayerKeyStateChange
+[18:10:16] Executed OnPlayerKeyStateChange
+[18:10:17] Executed OnPlayerKeyStateChange
+[18:10:17] Executed OnPlayerKeyStateChange
+[18:10:18] Executed OnPlayerKeyStateChange
+[18:10:19] Executed OnPlayerKeyStateChange
+[18:10:19] Executed OnPlayerKeyStateChange
+[18:10:20] Executed OnPlayerKeyStateChange
+[18:10:21] Executed OnPlayerKeyStateChange
+[18:10:24] Executed OnPlayerKeyStateChange
+[18:10:24] Executed OnPlayerKeyStateChange
+[18:10:24] Executed OnPlayerKeyStateChange
+[18:10:24] Executed OnPlayerKeyStateChange
+[18:10:24] Executed OnPlayerKeyStateChange
+[18:10:25] Executed OnPlayerKeyStateChange
+[18:10:25] Executed OnPlayerKeyStateChange
+[18:10:26] Executed OnPlayerKeyStateChange
+[18:10:26] Executed OnPlayerKeyStateChange
+[18:10:27] Executed OnPlayerKeyStateChange
+[18:10:27] Executed OnPlayerKeyStateChange
+[18:10:27] Executed OnPlayerKeyStateChange
+[18:10:29] Executed OnPlayerKeyStateChange
+[18:10:30] Executed OnPlayerKeyStateChange
+[18:10:30] Executed OnPlayerKeyStateChange
+[18:10:30] Executed OnPlayerKeyStateChange
+[18:10:31] Executed OnPlayerKeyStateChange
+[18:10:32] Executed OnPlayerKeyStateChange
+[18:10:33] Executed OnPlayerKeyStateChange
+[18:10:33] Executed OnPlayerKeyStateChange
+[18:10:34] Executed OnPlayerKeyStateChange
+[18:10:34] Executed OnPlayerKeyStateChange
+[18:10:34] Executed OnPlayerKeyStateChange
+[18:10:37] Executed OnPlayerKeyStateChange
+[18:10:37] Executed OnPlayerKeyStateChange
+[18:10:37] Executed OnPlayerKeyStateChange
+[18:10:38] Executed OnPlayerKeyStateChange
+[18:10:38] Executed OnPlayerKeyStateChange
+[18:10:38] Executed OnPlayerKeyStateChange
+[18:10:40] Executed OnPlayerKeyStateChange
+[18:10:40] Executed OnPlayerKeyStateChange
+[18:10:41] Executed OnPlayerKeyStateChange
+[18:10:41] Executed OnPlayerKeyStateChange
+[18:10:41] Executed OnPlayerKeyStateChange
+[18:10:41] Executed OnPlayerKeyStateChange
+[18:10:42] Executed OnPlayerKeyStateChange
+[18:10:44] Executed OnPlayerKeyStateChange
+[18:10:44] Executed OnPlayerKeyStateChange
+[18:10:44] Executed OnPlayerKeyStateChange
+[18:10:45] Executed OnPlayerKeyStateChange
+[18:10:45] Executed OnPlayerKeyStateChange
+[18:10:47] Executed OnPlayerKeyStateChange
+[18:10:48] Executed OnPlayerKeyStateChange
+[18:10:48] Executed OnPlayerKeyStateChange
+[18:10:49] Executed OnPlayerKeyStateChange
+[18:10:49] Executed OnPlayerKeyStateChange
+[18:10:50] Executed OnPlayerKeyStateChange
+[18:10:50] Executed OnPlayerKeyStateChange
+[18:10:50] Executed OnPlayerKeyStateChange
+[18:10:51] Executed OnPlayerKeyStateChange
+[18:10:52] Executed OnPlayerKeyStateChange
+[18:10:52] Executed OnPlayerKeyStateChange
+[18:10:52] Executed OnPlayerKeyStateChange
+[18:10:55] Executed OnPlayerKeyStateChange
+[18:10:55] Executed OnPlayerKeyStateChange
+[18:10:56] Executed OnPlayerKeyStateChange
+[18:10:57] Executed OnPlayerKeyStateChange
+[18:10:57] Executed OnPlayerKeyStateChange
+[18:10:58] Executed OnPlayerKeyStateChange
+[18:10:58] Executed OnPlayerKeyStateChange
+[18:11:01] Executed OnPlayerKeyStateChange
+[18:11:01] Executed OnPlayerKeyStateChange
+[18:11:02] Executed OnPlayerKeyStateChange
+[18:11:02] Executed OnPlayerKeyStateChange
+[18:11:04] Executed OnPlayerKeyStateChange
+[18:11:05] Executed OnPlayerKeyStateChange
+[18:11:08] Executed OnPlayerKeyStateChange
+[18:11:08] Executed OnPlayerKeyStateChange
+[18:11:12] Executed OnPlayerKeyStateChange
+[18:11:14] Executed OnVehicleStreamOut
+[18:11:15] Executed OnPlayerKeyStateChange
+[18:11:16] Executed OnPlayerKeyStateChange
+[18:11:16] Executed OnPlayerKeyStateChange
+[18:11:18] Executed OnPlayerKeyStateChange
+[18:11:18] Executed OnVehicleStreamIn
+[18:11:18] Executed OnPlayerKeyStateChange
+[18:11:25] Executed OnPlayerKeyStateChange
+[18:11:25] Executed OnPlayerKeyStateChange
+[18:11:30] Executed OnPlayerKeyStateChange
+[18:11:30] Executed OnPlayerExitVehicle
+[18:11:30] Executed OnPlayerKeyStateChange
+[18:11:32] Executed OnPlayerKeyStateChange
+[18:11:32] Executed OnPlayerStateChange
+[18:11:32] Executed OnPlayerKeyStateChange
+[18:11:32] Executed OnPlayerKeyStateChange
+[18:11:32] Executed OnPlayerKeyStateChange
+[18:11:33] Executed OnPlayerKeyStateChange
+[18:11:33] Executed OnPlayerKeyStateChange
+[18:11:33] Executed OnPlayerKeyStateChange
+[18:11:33] Executed OnPlayerKeyStateChange
+[18:11:33] Executed OnPlayerKeyStateChange
+[18:11:33] Executed OnPlayerKeyStateChange
+[18:11:33] Executed OnPlayerKeyStateChange
+[18:11:33] Executed OnPlayerKeyStateChange
+[18:11:33] Executed OnPlayerKeyStateChange
+[18:11:33] Executed OnPlayerKeyStateChange
+[18:11:33] Executed OnPlayerKeyStateChange
+[18:11:34] Executed OnPlayerKeyStateChange
+[18:11:34] Executed OnPlayerKeyStateChange
+[18:11:34] Executed OnPlayerKeyStateChange
+[18:11:34] Executed OnPlayerKeyStateChange
+[18:11:34] Executed OnPlayerKeyStateChange
+[18:11:34] Executed OnPlayerKeyStateChange
+[18:11:34] Executed OnPlayerKeyStateChange
+[18:11:34] Executed OnPlayerKeyStateChange
+[18:11:34] Executed OnPlayerKeyStateChange
+[18:11:34] Executed OnPlayerKeyStateChange
+[18:11:34] Executed OnPlayerKeyStateChange
+[18:11:34] Executed OnPlayerKeyStateChange
+[18:11:35] Executed OnPlayerKeyStateChange
+[18:11:35] Executed OnVehicleDeath
+[18:11:35] Executed OnPlayerKeyStateChange
+[18:11:35] Executed OnPlayerKeyStateChange
+[18:11:35] Executed OnPlayerKeyStateChange
+[18:11:35] Executed OnPlayerKeyStateChange
+[18:11:35] Executed OnPlayerKeyStateChange
+[18:11:35] Executed OnPlayerKeyStateChange
+[18:11:35] Executed OnPlayerKeyStateChange
+[18:11:35] Executed OnPlayerKeyStateChange
+[18:11:35] Executed OnPlayerKeyStateChange
+[18:11:35] Executed OnPlayerKeyStateChange
+[18:11:35] Executed OnPlayerKeyStateChange
+[18:11:36] Executed OnPlayerKeyStateChange
+[18:11:36] Executed OnPlayerKeyStateChange
+[18:11:36] Executed OnPlayerKeyStateChange
+[18:11:36] Executed OnPlayerKeyStateChange
+[18:11:36] Executed OnPlayerKeyStateChange
+[18:11:36] Executed OnPlayerKeyStateChange
+[18:11:36] Executed OnPlayerKeyStateChange
+[18:11:36] Executed OnPlayerKeyStateChange
+[18:11:36] Executed OnPlayerKeyStateChange
+[18:11:36] Executed OnPlayerKeyStateChange
+[18:11:36] Executed OnPlayerKeyStateChange
+[18:11:37] Executed OnPlayerKeyStateChange
+[18:11:37] Executed OnPlayerKeyStateChange
+[18:11:37] Executed OnPlayerKeyStateChange
+[18:11:37] Executed OnPlayerKeyStateChange
+[18:11:37] Executed OnPlayerKeyStateChange
+[18:11:37] Executed OnPlayerKeyStateChange
+[18:11:37] Executed OnPlayerKeyStateChange
+[18:11:37] Executed OnPlayerKeyStateChange
+[18:11:37] Executed OnPlayerKeyStateChange
+[18:11:37] Executed OnPlayerKeyStateChange
+[18:11:37] Executed OnPlayerKeyStateChange
+[18:11:38] Executed OnPlayerKeyStateChange
+[18:11:38] Executed OnPlayerKeyStateChange
+[18:11:38] Executed OnPlayerKeyStateChange
+[18:11:38] Executed OnPlayerKeyStateChange
+[18:11:38] Executed OnPlayerKeyStateChange
+[18:11:38] Executed OnPlayerKeyStateChange
+[18:11:38] Executed OnPlayerKeyStateChange
+[18:11:38] Executed OnPlayerKeyStateChange
+[18:11:38] Executed OnPlayerKeyStateChange
+[18:11:38] Executed OnPlayerKeyStateChange
+[18:11:38] Executed OnPlayerKeyStateChange
+[18:11:38] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:45] Executed OnPlayerKeyStateChange
+[18:11:46] Executed OnPlayerKeyStateChange
+[18:11:46] Executed OnPlayerKeyStateChange
+[18:11:46] Executed OnVehicleStreamOut
+[18:11:46] Executed OnVehicleSpawn
+[18:11:46] Executed OnPlayerKeyStateChange
+[18:11:46] Executed OnPlayerKeyStateChange
+[18:11:46] Executed OnPlayerKeyStateChange
+[18:11:46] Executed OnPlayerKeyStateChange
+[18:11:46] Executed OnVehicleStreamIn
+[18:11:46] Executed OnPlayerKeyStateChange
+[18:11:46] Executed OnPlayerKeyStateChange
+[18:11:46] Executed OnPlayerKeyStateChange
+[18:11:46] Executed OnPlayerKeyStateChange
+[18:11:46] Executed OnPlayerKeyStateChange
+[18:11:47] Executed OnPlayerKeyStateChange
+[18:11:47] Executed OnPlayerKeyStateChange
+[18:11:47] Executed OnPlayerKeyStateChange
+[18:11:47] Executed OnPlayerKeyStateChange
+[18:11:47] Executed OnPlayerKeyStateChange
+[18:11:47] Executed OnPlayerKeyStateChange
+[18:11:47] Executed OnPlayerKeyStateChange
+[18:11:47] Executed OnPlayerKeyStateChange
+[18:11:47] Executed OnPlayerKeyStateChange
+[18:11:47] Executed OnPlayerKeyStateChange
+[18:11:47] Executed OnPlayerKeyStateChange
+[18:11:48] Executed OnPlayerKeyStateChange
+[18:11:48] Executed OnPlayerKeyStateChange
+[18:11:48] Executed OnPlayerKeyStateChange
+[18:11:48] Executed OnPlayerKeyStateChange
+[18:11:48] Executed OnPlayerKeyStateChange
+[18:11:48] Executed OnPlayerKeyStateChange
+[18:11:48] Executed OnPlayerKeyStateChange
+[18:11:48] Executed OnPlayerKeyStateChange
+[18:11:48] Executed OnPlayerKeyStateChange
+[18:11:48] Executed OnPlayerKeyStateChange
+[18:11:49] Executed OnPlayerKeyStateChange
+[18:11:49] Executed OnPlayerKeyStateChange
+[18:11:49] Executed OnPlayerKeyStateChange
+[18:11:49] Executed OnPlayerKeyStateChange
+[18:11:49] Executed OnPlayerKeyStateChange
+[18:11:49] Executed OnPlayerKeyStateChange
+[18:11:49] Executed OnPlayerKeyStateChange
+[18:11:49] Executed OnPlayerKeyStateChange
+[18:11:49] Executed OnPlayerKeyStateChange
+[18:11:49] Executed OnPlayerKeyStateChange
+[18:11:49] Executed OnPlayerKeyStateChange
+[18:11:50] Executed OnPlayerKeyStateChange
+[18:11:50] Executed OnPlayerKeyStateChange
+[18:11:50] Executed OnPlayerKeyStateChange
+[18:11:50] Executed OnPlayerKeyStateChange
+[18:11:50] Executed OnPlayerKeyStateChange
+[18:11:50] Executed OnPlayerKeyStateChange
+[18:11:50] Executed OnPlayerKeyStateChange
+[18:11:50] Executed OnPlayerKeyStateChange
+[18:11:50] Executed OnPlayerKeyStateChange
+[18:11:50] Executed OnPlayerKeyStateChange
+[18:11:51] Executed OnPlayerKeyStateChange
+[18:11:51] Executed OnPlayerKeyStateChange
+[18:11:51] Executed OnPlayerKeyStateChange
+[18:11:51] Executed OnPlayerKeyStateChange
+[18:11:51] Executed OnPlayerKeyStateChange
+[18:11:51] Executed OnPlayerKeyStateChange
+[18:11:51] Executed OnPlayerKeyStateChange
+[18:11:51] Executed OnPlayerKeyStateChange
+[18:11:51] Executed OnPlayerKeyStateChange
+[18:11:51] Executed OnPlayerKeyStateChange
+[18:11:51] Executed OnPlayerKeyStateChange
+[18:11:52] Executed OnPlayerKeyStateChange
+[18:11:52] Executed OnPlayerKeyStateChange
+[18:11:52] Executed OnPlayerKeyStateChange
+[18:11:52] Executed OnPlayerKeyStateChange
+[18:11:52] Executed OnPlayerKeyStateChange
+[18:11:52] Executed OnPlayerKeyStateChange
+[18:11:53] Executed OnPlayerKeyStateChange
+[18:11:53] Executed OnPlayerKeyStateChange
+[18:11:53] Executed OnPlayerKeyStateChange
+[18:11:53] Executed OnPlayerKeyStateChange
+[18:11:54] Executed OnPlayerKeyStateChange
+[18:11:54] Executed OnPlayerKeyStateChange
+[18:11:54] Executed OnPlayerKeyStateChange
+[18:11:54] Executed OnPlayerKeyStateChange
+[18:11:55] Executed OnPlayerKeyStateChange
+[18:11:55] Executed OnPlayerKeyStateChange
+[18:11:55] Executed OnPlayerKeyStateChange
+[18:11:55] Executed OnPlayerKeyStateChange
+[18:11:55] Executed OnPlayerKeyStateChange
+[18:11:55] Executed OnPlayerKeyStateChange
+[18:11:55] Executed OnPlayerKeyStateChange
+[18:11:55] Executed OnPlayerKeyStateChange
+[18:11:55] Executed OnPlayerKeyStateChange
+[18:11:56] Executed OnPlayerKeyStateChange
+[18:11:56] Executed OnPlayerKeyStateChange
+[18:11:57] Executed OnPlayerKeyStateChange
+[18:11:57] Executed OnPlayerKeyStateChange
+[18:11:57] Executed OnPlayerKeyStateChange
+[18:11:57] Executed OnPlayerKeyStateChange
+[18:11:57] Executed OnPlayerKeyStateChange
+[18:11:57] Executed OnPlayerKeyStateChange
+[18:11:57] Executed OnPlayerKeyStateChange
+[18:11:57] Executed OnPlayerKeyStateChange
+[18:11:57] Executed OnPlayerKeyStateChange
+[18:12:02] Executed OnPlayerEnterVehicle
+[18:12:02] Executed OnPlayerKeyStateChange
+[18:12:02] Executed OnPlayerKeyStateChange
+[18:12:05] Executed OnPlayerStateChange
+[18:12:07] Executed OnPlayerKeyStateChange
+[18:12:08] Executed OnPlayerKeyStateChange
+[18:12:08] Executed OnPlayerKeyStateChange
+[18:12:12] Executed OnPlayerKeyStateChange
+[18:12:12] Executed OnPlayerKeyStateChange
+[18:12:13] Executed OnPlayerKeyStateChange
+[18:12:14] Executed OnPlayerKeyStateChange
+[18:12:15] Executed OnPlayerKeyStateChange
+[18:12:16] Executed OnPlayerKeyStateChange
+[18:12:16] Executed OnPlayerKeyStateChange
+[18:12:18] Executed OnPlayerKeyStateChange
+[18:12:19] Executed OnPlayerKeyStateChange
+[18:12:20] Executed OnPlayerKeyStateChange
+[18:12:21] Executed OnPlayerKeyStateChange
+[18:12:29] Executed OnVehicleStreamOut
+[18:12:43] Executed OnPlayerKeyStateChange
+[18:12:48] Executed OnPlayerKeyStateChange
+[18:12:48] Executed OnPlayerKeyStateChange
+[18:12:49] Executed OnPlayerKeyStateChange
+[18:12:52] Executed OnPlayerKeyStateChange
+[18:12:54] Executed OnPlayerKeyStateChange
+[18:13:09] Executed OnPlayerKeyStateChange
+[18:13:09] Executed OnPlayerKeyStateChange
+[18:13:10] Executed OnPlayerKeyStateChange
+[18:13:11] Executed OnPlayerKeyStateChange
+[18:13:15] Executed OnPlayerKeyStateChange
+[18:13:16] Executed OnPlayerKeyStateChange
+[18:13:22] Executed OnPlayerKeyStateChange
+[18:13:24] Executed OnPlayerKeyStateChange
+[18:13:27] Executed OnPlayerKeyStateChange
+[18:13:27] Executed OnPlayerKeyStateChange
+[18:13:27] Executed OnPlayerKeyStateChange
+[18:13:28] Executed OnPlayerKeyStateChange
+[18:13:35] Executed OnPlayerKeyStateChange
+[18:13:37] Executed OnPlayerKeyStateChange
+[18:13:58] Executed OnPlayerKeyStateChange
+[18:13:59] Executed OnPlayerKeyStateChange
+[18:13:59] Executed OnPlayerKeyStateChange
+[18:14:01] Executed OnPlayerKeyStateChange
+[18:14:04] Executed OnPlayerKeyStateChange
+[18:14:05] Executed OnPlayerKeyStateChange
+[18:14:43] Executed OnPlayerKeyStateChange
+[18:14:43] Executed OnPlayerKeyStateChange
+[18:14:44] Executed OnPlayerKeyStateChange
+[18:14:45] Executed OnPlayerKeyStateChange
+[18:15:04] Executed OnPlayerKeyStateChange
+[18:15:05] Executed OnPlayerKeyStateChange
+[18:15:18] Executed OnPlayerKeyStateChange
+[18:15:18] Executed OnPlayerKeyStateChange
+[18:15:18] Executed OnPlayerKeyStateChange
+[18:15:19] Executed OnPlayerKeyStateChange
+[18:15:19] Executed OnPlayerKeyStateChange
+[18:15:20] Executed OnPlayerKeyStateChange
+[18:15:31] Executed OnPlayerKeyStateChange
+[18:15:31] Executed OnPlayerKeyStateChange
+[18:15:32] Executed OnPlayerKeyStateChange
+[18:15:32] Executed OnPlayerKeyStateChange
+[18:15:54] Executed OnPlayerKeyStateChange
+[18:15:54] Executed OnPlayerKeyStateChange
+[18:16:52] Executed OnPlayerKeyStateChange
+[18:16:53] Executed OnPlayerKeyStateChange
+[18:16:54] Executed OnPlayerKeyStateChange
+[18:16:54] Executed OnPlayerKeyStateChange
+[18:16:59] Executed OnPlayerKeyStateChange
+[18:17:00] Executed OnPlayerKeyStateChange
+[18:18:18] Executed OnPlayerKeyStateChange
+[18:18:18] Executed OnPlayerKeyStateChange
+[18:18:19] Executed OnPlayerKeyStateChange
+[18:18:24] Executed OnPlayerKeyStateChange
+[18:18:24] Executed OnPlayerKeyStateChange
+[18:18:25] Executed OnPlayerKeyStateChange
+[18:18:25] Executed OnPlayerKeyStateChange
+[18:18:25] Executed OnPlayerKeyStateChange
+[18:18:27] Executed OnPlayerKeyStateChange
+[18:18:28] Executed OnPlayerKeyStateChange
+[18:18:49] Executed OnPlayerKeyStateChange
+[18:18:56] Executed OnPlayerKeyStateChange
+[18:18:57] Executed OnPlayerKeyStateChange
+[18:18:57] Executed OnPlayerKeyStateChange
+[18:19:02] Executed OnPlayerKeyStateChange
+[18:19:02] Executed OnPlayerKeyStateChange
+[18:19:02] Executed OnPlayerKeyStateChange
+[18:19:02] Executed OnPlayerKeyStateChange
+[18:19:05] Executed OnPlayerKeyStateChange
+[18:19:08] Executed OnPlayerKeyStateChange
+[18:19:10] Executed OnPlayerKeyStateChange
+[18:19:10] Executed OnPlayerKeyStateChange
+[18:19:10] Executed OnPlayerKeyStateChange
+[18:19:10] Executed OnPlayerKeyStateChange
+[18:19:11] Executed OnPlayerKeyStateChange
+[18:19:11] Executed OnPlayerKeyStateChange
+[18:19:12] Executed OnPlayerKeyStateChange
+[18:19:12] Executed OnPlayerKeyStateChange
+[18:19:13] Executed OnPlayerKeyStateChange
+[18:19:13] Executed OnPlayerKeyStateChange
+[18:19:14] Executed OnPlayerKeyStateChange
+[18:19:15] Executed OnPlayerKeyStateChange
+[18:19:16] Executed OnPlayerKeyStateChange
+[18:19:16] Executed OnPlayerKeyStateChange
+[18:19:17] Executed OnPlayerKeyStateChange
+[18:19:17] Executed OnPlayerKeyStateChange
+[18:19:17] Executed OnPlayerKeyStateChange
+[18:19:18] Executed OnPlayerKeyStateChange
+[18:19:18] Executed OnPlayerKeyStateChange
+[18:19:19] Executed OnPlayerKeyStateChange
+[18:19:19] Executed OnPlayerKeyStateChange
+[18:19:21] Executed OnPlayerKeyStateChange
+[18:19:21] Executed OnPlayerKeyStateChange
+[18:19:22] Executed OnPlayerKeyStateChange
+[18:19:22] Executed OnPlayerKeyStateChange
+[18:19:22] Executed OnPlayerKeyStateChange
+[18:19:23] Executed OnPlayerKeyStateChange
+[18:19:26] Executed OnPlayerKeyStateChange
+[18:19:27] Executed OnPlayerKeyStateChange
+[18:19:28] Executed OnPlayerKeyStateChange
+[18:19:31] Executed OnPlayerKeyStateChange
+[18:19:31] Executed OnPlayerKeyStateChange
+[18:19:32] Executed OnPlayerKeyStateChange
+[18:19:33] Executed OnPlayerKeyStateChange
+[18:19:48] Executed OnPlayerKeyStateChange
+[18:19:49] Executed OnPlayerKeyStateChange
+[18:19:49] Executed OnPlayerKeyStateChange
+[18:19:49] Executed OnPlayerKeyStateChange
+[18:20:03] Executed OnPlayerKeyStateChange
+[18:20:06] Executed OnPlayerKeyStateChange
+[18:20:06] Executed OnPlayerKeyStateChange
+[18:20:06] Executed OnPlayerKeyStateChange
+[18:20:06] Executed OnPlayerKeyStateChange
+[18:20:12] Executed OnPlayerKeyStateChange
+[18:20:17] Executed SaveAccount
+[18:20:17] Executed OnPlayerDisconnect
+[18:20:17] [part] Brady_Clouser has left the server (0:1)
+[18:20:25] --- Server Shutting Down.
+[18:20:25] Executed OnGameModeExit
+[18:20:25] 
+
+[18:20:25]  ===============================
+
+[18:20:25]      sscanf plugin unloaded.    
+
+[18:20:25]  ===============================
+
+[18:20:25] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[18:20:25] 
+
+  > MySQL plugin unloaded.
+

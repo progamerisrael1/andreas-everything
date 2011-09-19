@@ -61,6 +61,7 @@
 #define COLOR_PURPLE 0xC2A2DAAA
 #define COLOR_DBLUE 0x2641FEAA
 #define COLOR_ALLDEPT 0xFF8282AA
+#define COLOR_COMMAND_SYNTAX 0x33AA33AA
 #define COLOR_BETA_MESSAGE 0xFF6600FF
 // Dialog Defines
 #define DIALOG_BLANK 100
@@ -80,6 +81,8 @@
 //CnR Class Defines
 #define CLASS_COP 0
 #define CLASS_ROBBER 1
+// Vehicle Defines
+#define VEHICLE_RESPAWN_DELAY ((24)*(60)*(60)) // One Day, Real Time
 // Variables
 new
 	LoggedIn[MAX_PLAYERS];
@@ -116,7 +119,7 @@ new MODES[MAX_MODES][2][17] =
 {
 	{"Deathmatch", 0},
 	{"Free Roam", 0},
-	{"Cops n' Robbers", 0},
+	{"Cops n' Robbers", 1},
 	{"Lobby", 1},
 	{"Admin Lounge", 1}
 };
@@ -416,7 +419,21 @@ CMD:mute(playerid, params[])
 	}
 	return 1;
 }
-
+CMD:veh(playerid, params[])
+{
+	new vehid, string[9];
+	if(!sscanf(params, "si", string, vehid) & (strcmp(string, "create", false, 6) == 0)) {
+		new pint = GetPlayerInterior(playerid), pvw = GetPlayerVirtualWorld(playerid);
+		new Float:ppx, Float:ppy, Float:ppz;
+		GetPlayerPos( playerid, ppx, ppy, ppz);
+		new veh = CreateVehicle( vehid, ppx+2, ppy+2, ppz+2, 0, -1, -1, VEHICLE_RESPAWN_DELAY);
+		SetVehicleVirtualWorld(veh, pvw), LinkVehicleToInterior(veh, pint); }
+	else if((strcmp(params, "create", true, 6) == 0)) SendClientMessage(playerid, COLOR_GRAD1, "Syntax: /veh [create] [Vehicle ID]");
+	else if(strcmp(params, "menu", true, 4) == 0) {
+		SendClientMessage(playerid, COLOR_RED, "Menu not implemented yet"); }
+	else return SendClientMessage( playerid, COLOR_GRAD1, "Syntax:  /veh [create/menu]");
+	return 1;
+}
 CMD:unmute(playerid, params[])
 {
     new targetid, string[128];
@@ -784,7 +801,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		{
 		    LoginPlayer(playerid);
 			new
-				string[512];
+				string[512],
+				firstActiveMode;
 			for(new i = 0; i < MAX_MODES; i++)
 			{
 				if(MODES[i][1][0] == 0) format(string, sizeof(string), "%s %s: {FF0000} Inactive\r\n", string, MODES[i][0]);
@@ -795,7 +813,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					{
 						if(PlayerData[p][MODE] == i) players++;
 					}
-					format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], players);
+					if(firstActiveMode == 0) format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], players), firstActiveMode = 1;
+					else format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], players);
 				}
 			}
 			format(string, sizeof(string), "%s Leave\r\n", string);

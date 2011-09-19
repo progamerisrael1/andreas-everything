@@ -19,3 +19,4 @@
 [August 8, 2011] - [19:09:53] User: dowster disconnected from 127.0.0.1
 [August 10, 2011] - [15:03:57] User: Brady_Clouser disconnected from 127.0.0.1
 [August 21, 2011] - [19:06:23] User: Brady disconnected from 192.168.1.151
+[September 19, 2011] - [18:05:01] User: Brady_Clouser disconnected from 127.0.0.1

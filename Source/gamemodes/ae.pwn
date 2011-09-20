@@ -1086,6 +1086,7 @@ stock CNR(playerid)
 {
 	SetPlayerVirtualWorld(playerid, CNR_VW);
 	TogglePlayerControllable(playerid, 0);
+	SpawnPlayer(playerid);
     ShowMenuForPlayer(CnRClassSelect, playerid);
 	PlayerData[playerid][MODE] = MODE_CNR;
 

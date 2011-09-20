@@ -71,6 +71,10 @@
 #define DIALOG_MODE_SELECT 104
 #define DIALOG_COMMANDS 105
 #define DIALOG_COMMAND_DESCRIPTION 106
+#define ADMIN_VEHICLE_MENU 107
+#define ADD_VEHICLE_DIALOG 108
+#define DELETE_VEHICLE_DIALOG 109
+#define VEHICLE_COLOR_CHANGE_DIALOG 110
 //Mode Defines
 #define MAX_MODES 5
 #define MODE_DEATHMATCH 0
@@ -419,8 +423,9 @@ CMD:mute(playerid, params[])
 	}
 	return 1;
 }
-CMD:veh(playerid, params[])
+CMD:veh(playerid, params[]) //In-Progress - dowster
 {
+	if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
 	new vehid, string[9];
 	if(!sscanf(params, "si", string, vehid) & (strcmp(string, "create", false, 6) == 0)) {
 		new pint = GetPlayerInterior(playerid), pvw = GetPlayerVirtualWorld(playerid);
@@ -428,8 +433,9 @@ CMD:veh(playerid, params[])
 		GetPlayerPos( playerid, ppx, ppy, ppz);
 		new veh = CreateVehicle( vehid, ppx+2, ppy+2, ppz+2, 0, -1, -1, VEHICLE_RESPAWN_DELAY);
 		SetVehicleVirtualWorld(veh, pvw), LinkVehicleToInterior(veh, pint); }
-	else if((strcmp(params, "create", true, 6) == 0)) SendClientMessage(playerid, COLOR_GRAD1, "Syntax: /veh [create] [Vehicle ID]");
-	else if(strcmp(params, "menu", true, 4) == 0) {
+	else if((strcmp(params, "create", false, 6) == 0)) SendClientMessage(playerid, COLOR_GRAD1, "Syntax: /veh [create] [Vehicle ID]");
+	else if(strcmp(params, "menu", false, 4) == 0) {
+		ShowPlayerDialog(playerid, ADMIN_VEHICLE_MENU, DIALOG_STYLE_LIST, "**Admin Vehicle Menu**", "Add Vehicle\r\nDelete Vehicle\r\nChange Vehicle Colors\r\nSave All Vehicles\r\nReload All Vehicles\r\nSave Vehicles In Current Mode\r\nReload Vehicles In Current Mode",  "Accept", "Cancel");
 		SendClientMessage(playerid, COLOR_RED, "Menu not implemented yet"); }
 	else return SendClientMessage( playerid, COLOR_GRAD1, "Syntax:  /veh [create/menu]");
 	return 1;
@@ -966,7 +972,36 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			}
 		}
 	}
-
+	if(dialogid == ADMIN_VEHICLE_MENU) {
+		switch(listitem) {
+			case 0: return ShowPlayerDialog( playerid, ADD_VEHICLE_DIALOG, DIALOG_STYLE_INPUT, "**Add A Vehicle**", "Enter the vehicle model to create", "Create", "Cancel");
+			case 1: return ShowPlayerDialog( playerid, DELETE_VEHICLE_DIALOG, DIALOG_STYLE_INPUT, "**Delete A Vehicle**", "Enter the vehicle ID to delete", "Delete", "Cancel");
+			case 2: return ShowPlayerDialog( playerid, VEHICLE_COLOR_CHANGE_DIALOG, DIALOG_STYLE_INPUT, "**Change A Vehicle's Color**", "Enter the desired vehicle ID followed by the color codes\r\nExample: 4, 3, 3", "Apply", "Cancel");
+			case 3: return SaveVehicles(playerid, MAX_MODES);
+			case 4: return ReloadVehicles(playerid, MAX_MODES);
+			case 5: return SaveVehicles(playerid, PlayerData[playerid][MODE]);
+			case 6: return ReloadVehicles(playerid, PlayerData[playerid][MODE]); }}
+	if(dialogid == ADD_VEHICLE_DIALOG) {
+		new vehid;
+		if(sscanf(inputtext, "i", vehid)) return ShowPlayerDialog( playerid, ADD_VEHICLE_DIALOG, DIALOG_STYLE_INPUT, "**Add A Vehicle**", "Enter the vehicle {FF0000}model{FFFFFF} to create", "Create", "Cancel");
+		else {
+			new pint = GetPlayerInterior(playerid), pvw = GetPlayerVirtualWorld(playerid);
+			new Float:ppx, Float:ppy, Float:ppz;
+			GetPlayerPos( playerid, ppx, ppy, ppz);
+			new veh = CreateVehicle( vehid, ppx+2, ppy+2, ppz+2, 0, -1, -1, VEHICLE_RESPAWN_DELAY);
+			SetVehicleVirtualWorld(veh, pvw), LinkVehicleToInterior(veh, pint); }}
+	if(dialogid == DELETE_VEHICLE_DIALOG) {
+		new vehid;
+		if(sscanf(inputtext, "i", vehid)) return ShowPlayerDialog( playerid, ADD_VEHICLE_DIALOG, DIALOG_STYLE_INPUT, "**Add A Vehicle**", "Enter the vehicle {FF0000}ID{FFFFFF} to delete", "Delete", "Cancel");
+		else if(GetVehicleModel(vehid) == 0) return ShowPlayerDialog( playerid, ADD_VEHICLE_DIALOG, DIALOG_STYLE_INPUT, "**Add A Vehicle**", "{FF0000}VEHICLE DOES NOT EXIST!{FFFFFF}\r\nEnter the vehicle {FF0000}ID{FFFFFF} to delete", "Delete", "Cancel");
+		else if(GetVehicleVirtualWorld(vehid) != GetPlayerVirtualWorld(playerid)) return ShowPlayerDialog( playerid, ADD_VEHICLE_DIALOG, DIALOG_STYLE_INPUT, "**Add A Vehicle**", "{FF0000}YOU ARE NOT IN THE SAME VIRTUAL WORLD AS THIS VEHICLE!{FFFFFF}\r\nEnter the vehicle {FF0000}ID{FFFFFF} to delete", "Delete", "Cancel");
+		else return DestroyVehicle(vehid); }
+	if(dialogid == VEHICLE_COLOR_CHANGE_DIALOG) {
+		new vehid, col1, col2;
+		if(sscanf(inputtext, "p<,>iii", vehid, col1, col2)) return ShowPlayerDialog( playerid, VEHICLE_COLOR_CHANGE_DIALOG, DIALOG_STYLE_INPUT, "**Change A Vehicle's Color**", "Enter the desired vehicle ID followed by the color codes\r\n{FF0000}Example: 4, 3, 3", "Apply", "Cancel");
+		else if(GetVehicleModel(vehid) == 0) return ShowPlayerDialog( playerid, VEHICLE_COLOR_CHANGE_DIALOG, DIALOG_STYLE_INPUT, "**Change A Vehicle's Color**", "{FF0000}VEHICLE DOES NOT EXIST!{FFFFFF}\r\nEnter the desired vehicle ID followed by the color codes\r\nExample: 4, 3, 3", "Apply", "Cancel");
+		else if(GetVehicleVirtualWorld(vehid) != GetPlayerVirtualWorld(playerid)) return ShowPlayerDialog( playerid, VEHICLE_COLOR_CHANGE_DIALOG, DIALOG_STYLE_INPUT, "**Change A Vehicle's Color**", "{FF0000}YOU ARE NOT IN THE SAME VIRTUAL WORLD AS THIS VEHICLE!{FFFFFF}\r\nEnter the desired vehicle ID followed by the color codes\r\nExample: 4, 3, 3", "Apply", "Cancel");
+		else return ChangeVehicleColor(vehid, col1, col2); }
 	#if DEBUG == 1
     print("Executed OnDialogResponse");
     #endif
@@ -1129,5 +1164,17 @@ stock MessageToAdminsEx( color, string[])
 	{
 		if(PlayerData[i][Adminlevel] > 0) SendClientMessage( i, color, string);
 	}
+	return 1;
+}
+stock SaveVehicles(playerid, mode)
+{
+	#pragma unused playerid
+	#pragma unused mode
+	return 1;
+}
+stock ReloadVehicles(playerid, mode)
+{
+	#pragma unused playerid
+	#pragma unused mode
 	return 1;
 }

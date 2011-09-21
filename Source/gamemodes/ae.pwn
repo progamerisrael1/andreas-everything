@@ -21,7 +21,7 @@
 #include <a_mysql>
 // Server/Script Defines
 #define BETA_BUILD 1                    // Set to 1 to activate beta features.
-#define DEBUG 1                         // Set to 1 to enable debugging in console
+#define DEBUG 0                         // Set to 1 to enable debugging in console
 #define SCRIPT_MODE "AE v1.0"
 #define SCRIPT_WEB "forum.sa-mp.com"
 #define MAX_SKINS 300
@@ -93,9 +93,7 @@ new
 // Menu Variables
 new
 	Menu:CnRselect,
-	Menu:CnRClassSelect
-	Float:old_veh_pos[MAX_VEHICLES + 1][3],
-	Float:vehicle_odometers[MAX_VEHICLES + 1];
+	Menu:CnRClassSelect;
 // Enums
 enum pData
 {
@@ -112,7 +110,9 @@ enum pData
 //Arrays
 new
 	PlayerData[MAX_PLAYERS][pData],
-	IPADDRESSES[MAX_PLAYERS][18];
+	IPADDRESSES[MAX_PLAYERS][18],
+	Float:old_veh_pos[MAX_VEHICLES + 1][3],
+	Float:vehicle_odometers[MAX_VEHICLES + 1];
 
 new CnRSkins[2][5] =
 {	{280, 281, 282, 283, 288},
@@ -730,8 +730,8 @@ public OnPlayerUpdate(playerid)
 	if(IsPlayerInAnyVehicle(playerid)) {
         if(GetPlayerVehicleSeat(playerid) == 0) {
 			new vehid = GetPlayerVehicleID(playerid);
-            vehicle_odometers[vehid] += GetPlayerDistanceFromPoint(playerid, old_veh_pos[0], old_veh_pos[1], old_veh_pos[2]);
-			GetVehiclePos( vehid, old_veh_pos[0], old_veh_pos[1], old_veh_pos[2]);
+            vehicle_odometers[vehid] += GetPlayerDistanceFromPoint(playerid, old_veh_pos[vehid][0], old_veh_pos[vehid][1], old_veh_pos[vehid][2]);
+			GetVehiclePos( vehid, old_veh_pos[vehid][0], old_veh_pos[vehid][1], old_veh_pos[vehid][2]);
         }
 		#if BETA_BUILD == 1
 		new string[32], vehid2 = GetPlayerVehicleID(playerid); format(string, sizeof(string), "Vehicle Odometer: %.1f", vehicle_odometers[vehid2]); SendClientMessage(playerid, COLOR_BETA_MESSAGE, string);

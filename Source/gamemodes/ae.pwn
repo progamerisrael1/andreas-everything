@@ -8,6 +8,22 @@
 	Thanks to Slice - BUD(Blazing User Database)
 	Thanks to G-sTyLeZzZ - MySQL Plugin
 ------------------------------------------------------------------------------*/
+// MySQL Stuff (For people other than the coders) -- Uncomment to use
+/*
+#define mysql
+#define DB_PASSWORD ""
+#define DB_USERNAME ""
+#define DATA_BASE ""
+*/
+
+// MySQL Stuff (For the coders) -- Again, Uncomment to use
+/*
+#if !defined mysql
+#tryinclude <mysql_info>
+#endif
+*/
+
+// The above code trys to include the database info for the coders)
 #include <a_samp>
 #define BUD_MAX_COLUMNS 50
 #define BUD_USE_WHIRLPOOL false
@@ -137,6 +153,7 @@ main()
 	print("----------------------------------\n");
 }
 
+#if !defined mysql
 public OnGameModeInit()
 {
 	SetGameModeText(SCRIPT_MODE);
@@ -169,8 +186,10 @@ public OnGameModeInit()
 	AddMenuItem(CnRClassSelect, 0, "Robbers");
 	return 1;
 }
+#endif
 
-public OnGameModeExit()
+#if !defined mysql
+public OnGameModeExit() 
 {
     BUD::Exit();
 	mysql_close();
@@ -179,6 +198,7 @@ public OnGameModeExit()
     #endif
 	return 1;
 }
+#endif
 
 public OnPlayerRequestClass(playerid, classid)
 {
@@ -188,6 +208,7 @@ public OnPlayerRequestClass(playerid, classid)
 	return 1;
 }
 
+#if !defined mysql
 public OnPlayerConnect(playerid)
 {
 	// User Account System
@@ -208,7 +229,9 @@ public OnPlayerConnect(playerid)
     #endif
 	return 1;
 }
+#endif
 
+#if !defined mysql
 public OnPlayerDisconnect(playerid, reason)
 {
 	// User Account System
@@ -230,8 +253,10 @@ public OnPlayerDisconnect(playerid, reason)
     #endif
 	return 1;
 }
+#endif
 
-public OnPlayerSpawn(playerid)
+#if !defined mysql
+public OnPlayerSpawn(playerid) 
 {
 	// User Account System
 	if(LoggedIn[playerid] == 1) {}
@@ -255,6 +280,7 @@ public OnPlayerSpawn(playerid)
     #endif
 	return 1;
 }
+#endif
 
 public OnPlayerDeath(playerid, killerid, reason)
 {

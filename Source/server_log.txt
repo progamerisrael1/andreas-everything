@@ -7791,3 +7791,94 @@ v0.3c R5, (C)2005-2011 SA-MP Team
 
   > MySQL plugin unloaded.
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3c R5, (C)2005-2011 SA-MP Team
+
+[15:12:49] filterscripts = ""  (string)
+[15:12:49] weburl = "www.sa-mp.com"  (string)
+[15:12:49] 
+[15:12:49] Server Plugins
+[15:12:49] --------------
+[15:12:49]  Loading plugin: sscanf
+[15:12:49] 
+
+[15:12:49]  ===============================
+
+[15:12:49]       sscanf plugin loaded.     
+
+[15:12:49]    (c) 2009 Alex "Y_Less" Cole
+
+[15:12:49]  ===============================
+
+[15:12:49]   Loaded.
+[15:12:49]  Loading plugin: streamer
+[15:12:49] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[15:12:49]   Loaded.
+[15:12:49]  Loading plugin: mysql
+[15:12:50] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[15:12:50]   Loaded.
+[15:12:50]  Loaded 3 plugins.
+
+[15:12:50] 
+[15:12:50] Filter Scripts
+[15:12:50] ---------------
+[15:12:50]   Loaded 0 filter scripts.
+
+[15:12:50]  
+[15:12:50]  ======================================= 
+[15:12:50]  |                                     | 
+[15:12:50]  |        YSI version 1.03.0011        | 
+[15:12:50]  |        By Alex "Y_Less" Cole        | 
+[15:12:50]  |                                     | 
+[15:12:50]  |  Checking the latest YSI version..  | 
+[15:12:50]  |                                     | 
+[15:12:50]  ======================================= 
+[15:12:50]  
+[15:12:50] BUD v1.0.3 BETA loaded.
+[15:12:50] 
+----------------------------------
+[15:12:50]  Andreas Everything 
+[15:12:50]  Script Lines: ~1000 
+[15:12:50]  Coded by: SA-MP Community 
+[15:12:50] ----------------------------------
+
+[15:12:50] Number of vehicle models: 0
+[15:12:51]  
+[15:12:51]  ======================================= 
+[15:12:51]  |                                     | 
+[15:12:51]  |   Error: Could not connect to YSI   | 
+[15:12:51]  |  update server (response was 006).  | 
+[15:12:51]  |                                     | 
+[15:12:51]  ======================================= 
+[15:12:51]  
+[15:12:52] BUD - Notice: There is a new update available.
+Console input: exit
+[15:25:59] --- Server Shutting Down.
+[15:25:59] 
+
+[15:25:59]  ===============================
+
+[15:25:59]      sscanf plugin unloaded.    
+
+[15:25:59]  ===============================
+
+[15:25:59] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[15:25:59] 
+
+  > MySQL plugin unloaded.
+

@@ -1,3 +1,2 @@
-nobody is editing the game mode
-adfsa
+dowster is editing the game mode
 Note from dowster: /bug fixed, and odometer code is being tested

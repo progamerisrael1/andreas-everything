@@ -1,2 +1,3 @@
-nobody is editing the game mode
-Note from dowster: /bug fixed, and odometer code is being tested, odometer needs some fixes
+Robin is editing the game mode
+Note from dowster: /bug fixed, and odometer code is being tested
+Note from Robin: I've added camera and some fixes in the update. Will upload it tomorrow. (6-11-2011)

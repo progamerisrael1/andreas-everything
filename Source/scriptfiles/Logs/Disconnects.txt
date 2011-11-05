@@ -24,3 +24,6 @@
 [September 19, 2011] - [19:03:08] User: dowster disconnected from 127.0.0.1
 [September 19, 2011] - [20:06:06] User: dowster disconnected from 127.0.0.1
 [September 19, 2011] - [20:09:47] User: dowster disconnected from 127.0.0.1
+[November  5, 2011] - [16:16: 8] User: Brady_Clouser disconnected from 127.0.0.1
+[November  5, 2011] - [16:21:17] User: Brady_Clouser disconnected from 127.0.0.1
+[November  5, 2011] - [16:27:25] User: Brady_Clouser disconnected from 127.0.0.1

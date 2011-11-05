@@ -241,9 +241,7 @@ public OnPlayerDisconnect(playerid, reason)
 	GetPlayerName(playerid, name, MAX_PLAYER_NAME);
 	gettime(hour, minute, second);
 	getdate(year, month, day);
-	if(minute < 10 && second < 10) format(string, sizeof(string), "[%s %i, %i] - [%i:0%i:0%i] User: %s disconnected from %s\r\n", Months[month], day, year, hour, minute, second, name, IPADDRESSES[playerid]);
-	if(minute < 10 && second >= 10) format(string, sizeof(string), "[%s %i, %i] - [%i:0%i:%i] User: %s disconnected from %s\r\n", Months[month], day, year, hour, minute, second, name, IPADDRESSES[playerid]);
-	if(minute >= 10 && second < 10) format(string, sizeof(string), "[%s %i, %i] - [%i:%i:0%i] User: %s disconnected from %s\r\n", Months[month], day, year, hour, minute, second, name, IPADDRESSES[playerid]);
+	format(string, sizeof(string), "[%s %2i, %2i] - [%2i:%2i:%2i] User: %s disconnected from %s\r\n", Months[month], day, year, hour, minute, second, name, IPADDRESSES[playerid]);
 	new File:disconnectlog = fopen( "Logs/Disconnects.txt", io_append);
 	fwrite( disconnectlog, string);
 	fclose(disconnectlog);
@@ -459,6 +457,7 @@ CMD:veh(playerid, params[]) //In-Progress - dowster
 		new Float:ppx, Float:ppy, Float:ppz;
 		GetPlayerPos( playerid, ppx, ppy, ppz);
 		new veh = CreateVehicle( vehid, ppx+2, ppy+2, ppz+2, 0, -1, -1, VEHICLE_RESPAWN_DELAY);
+		GetVehiclePos(veh, old_veh_pos[veh][0], old_veh_pos[veh][1], old_veh_pos[veh][2]);
 		SetVehicleVirtualWorld(veh, pvw), LinkVehicleToInterior(veh, pint); }
 	else if((strcmp(params, "create", false, 6) == 0)) SendClientMessage(playerid, COLOR_GRAD1, "Syntax: /veh [create] [Vehicle ID]");
 	else if(strcmp(params, "menu", false, 4) == 0) {
@@ -1013,6 +1012,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			new Float:ppx, Float:ppy, Float:ppz;
 			GetPlayerPos( playerid, ppx, ppy, ppz);
 			new veh = CreateVehicle( vehid, ppx+2, ppy+2, ppz+2, 0, -1, -1, VEHICLE_RESPAWN_DELAY);
+			GetVehiclePos(veh, old_veh_pos[veh][0], old_veh_pos[veh][1], old_veh_pos[veh][2]);
 			SetVehicleVirtualWorld(veh, pvw), LinkVehicleToInterior(veh, pint); }}
 	if(dialogid == DELETE_VEHICLE_DIALOG) {
 		new vehid;

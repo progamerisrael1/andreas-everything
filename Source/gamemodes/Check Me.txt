@@ -1,2 +1,2 @@
-dowster is editing the game mode
-Note from dowster: /bug fixed, and odometer code is being tested
+nobody is editing the game mode
+Note from dowster: /bug fixed, and odometer code is being tested, odometer needs some fixes

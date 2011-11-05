@@ -7882,3 +7882,197 @@ Console input: exit
 
   > MySQL plugin unloaded.
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3d RC7, (C)2005-2011 SA-MP Team
+
+[16:14:10] filterscripts = ""  (string)
+[16:14:10] weburl = "www.sa-mp.com"  (string)
+[16:14:10] 
+[16:14:10] Server Plugins
+[16:14:10] --------------
+[16:14:10]  Loading plugin: sscanf
+[16:14:10] 
+
+[16:14:10]  ===============================
+
+[16:14:10]       sscanf plugin loaded.     
+
+[16:14:10]    (c) 2009 Alex "Y_Less" Cole
+
+[16:14:10]  ===============================
+
+[16:14:10]   Loaded.
+[16:14:10]  Loading plugin: streamer
+[16:14:10] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[16:14:10]   Loaded.
+[16:14:10]  Loading plugin: mysql
+[16:14:10] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[16:14:10]   Loaded.
+[16:14:10]  Loaded 3 plugins.
+
+[16:14:10] 
+[16:14:10] Filterscripts
+[16:14:10] ---------------
+[16:14:10]   Loaded 0 filterscripts.
+
+[16:14:10]  
+[16:14:10]  ======================================= 
+[16:14:10]  |                                     | 
+[16:14:10]  |        YSI version 1.03.0011        | 
+[16:14:10]  |        By Alex "Y_Less" Cole        | 
+[16:14:10]  |                                     | 
+[16:14:10]  |  Checking the latest YSI version..  | 
+[16:14:10]  |                                     | 
+[16:14:10]  ======================================= 
+[16:14:10]  
+[16:14:10] BUD v1.0.3 BETA loaded.
+[16:14:10] 
+----------------------------------
+[16:14:10]  Andreas Everything 
+[16:14:10]  Script Lines: ~1000 
+[16:14:10]  Coded by: SA-MP Community 
+[16:14:10] ----------------------------------
+
+[16:14:10] Number of vehicle models: 0
+[16:14:11]  
+[16:14:11]  ======================================= 
+[16:14:11]  |                                     | 
+[16:14:11]  |   Error: Could not connect to YSI   | 
+[16:14:11]  |  update server (response was 006).  | 
+[16:14:11]  |                                     | 
+[16:14:11]  ======================================= 
+[16:14:11]  
+[16:14:11] BUD - Notice: There is a new update available.
+[16:15:28] Incoming connection: 127.0.0.1:36886
+[16:15:29] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[16:16:08] [part] Brady_Clouser has left the server (0:1)
+[16:18:35] Incoming connection: 127.0.0.1:36895
+[16:18:35] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[16:18:57] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[16:19:11] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[16:19:20] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[16:20:51] [death] Brady_Clouser died 255
+[16:21:17] [part] Brady_Clouser has left the server (0:1)
+[16:23:19] --- Server Shutting Down.
+[16:23:19] 
+
+[16:23:19]  ===============================
+
+[16:23:19]      sscanf plugin unloaded.    
+
+[16:23:19]  ===============================
+
+[16:23:19] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[16:23:19] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3d RC7, (C)2005-2011 SA-MP Team
+
+[16:26:04] filterscripts = ""  (string)
+[16:26:04] weburl = "www.sa-mp.com"  (string)
+[16:26:04] 
+[16:26:04] Server Plugins
+[16:26:04] --------------
+[16:26:04]  Loading plugin: sscanf
+[16:26:04] 
+
+[16:26:04]  ===============================
+
+[16:26:04]       sscanf plugin loaded.     
+
+[16:26:04]    (c) 2009 Alex "Y_Less" Cole
+
+[16:26:04]  ===============================
+
+[16:26:04]   Loaded.
+[16:26:04]  Loading plugin: streamer
+[16:26:04] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[16:26:04]   Loaded.
+[16:26:04]  Loading plugin: mysql
+[16:26:04] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[16:26:04]   Loaded.
+[16:26:04]  Loaded 3 plugins.
+
+[16:26:04] 
+[16:26:04] Filterscripts
+[16:26:04] ---------------
+[16:26:04]   Loaded 0 filterscripts.
+
+[16:26:04]  
+[16:26:04]  ======================================= 
+[16:26:04]  |                                     | 
+[16:26:04]  |        YSI version 1.03.0011        | 
+[16:26:04]  |        By Alex "Y_Less" Cole        | 
+[16:26:04]  |                                     | 
+[16:26:04]  |  Checking the latest YSI version..  | 
+[16:26:04]  |                                     | 
+[16:26:04]  ======================================= 
+[16:26:04]  
+[16:26:04] BUD v1.0.3 BETA loaded.
+[16:26:04] 
+----------------------------------
+[16:26:04]  Andreas Everything 
+[16:26:04]  Script Lines: ~1000 
+[16:26:04]  Coded by: SA-MP Community 
+[16:26:04] ----------------------------------
+
+[16:26:04] Number of vehicle models: 0
+[16:26:04] BUD - Notice: There is a new update available.
+[16:26:04]  
+[16:26:04]  ======================================= 
+[16:26:04]  |                                     | 
+[16:26:04]  |   Error: Could not connect to YSI   | 
+[16:26:04]  |  update server (response was 006).  | 
+[16:26:04]  |                                     | 
+[16:26:04]  ======================================= 
+[16:26:04]  
+[16:26:29] Incoming connection: 127.0.0.1:36907
+[16:26:29] [join] Brady_Clouser has joined the server (0:127.0.0.1)
+[16:26:47] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[16:27:25] [part] Brady_Clouser has left the server (0:1)
+[16:27:45] --- Server Shutting Down.
+[16:27:45] 
+
+[16:27:45]  ===============================
+
+[16:27:45]      sscanf plugin unloaded.    
+
+[16:27:45]  ===============================
+
+[16:27:45] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[16:27:45] 
+
+  > MySQL plugin unloaded.
+

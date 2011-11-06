@@ -1,3 +1,3 @@
 dowster is editing the game mode
 Note from dowster: /bug fixed, and odometer code is being tested
-Note from Robin: I am uploading the unfinished code. You can edit this .pwn, but it will need some small fixes.
+Note from Robin: Updated to 0.3D R7. You can download updates and the client from http://forum.sa-mp.com/showthread.php?t=282775.

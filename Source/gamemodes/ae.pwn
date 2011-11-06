@@ -47,7 +47,7 @@ The 'odometer' code lags the gameplay MUCH. I recommend you to fix it.
 #define SCRIPT_MODE "AE v1.0"
 #define SCRIPT_WEB "forum.sa-mp.com"
 #define MAX_SKINS 300
-#pragma tabsize 0
+#pragma tabsize 0 // No more 'loose indentation'
 #define GetName GetPlayerNameEx // I am used to GetName in my GM, so I use this it's much easier
 // Macros
 #define INI_Exist(%0) fexist(%0)
@@ -69,6 +69,7 @@ The 'odometer' code lags the gameplay MUCH. I recommend you to fix it.
 #define COLOR_GRAD6 0xF0F0F0FF
 #define COLOR_GREY 0xAFAFAFAA
 #define COLOR_GREEN 0x33AA33AA
+
 #define COLOR_RED 0xAA3333AA
 #define COLOR_LIGHTRED 0xFF6347AA
 #define COLOR_LIGHTBLUE 0x33CCFFAA
@@ -156,7 +157,7 @@ main()
 {
 	print("\n----------------------------------");
 	print(" Andreas Everything ");
-	print(" Script Lines: ~1000 ");
+	print(" Script Lines: 1226 ");
 	print(" Coded by: SA-MP Community ");
 	print("----------------------------------\n");
 }
@@ -251,12 +252,24 @@ public OnPlayerRequestClass(playerid, classid)
 public OnPlayerConnect(playerid)
 {
 	// User Account System
-	if(BUD::IsNameRegistered(GetPlayerNameEx(playerid)))
-        ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "Welcome back to Andreas Everything!",
-		"Please enter your desired password below, and click 'Login'.\nIf you wish to leave, click 'Leave'.", "Login", "Leave");
-    else
-        ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_INPUT, "Welcome to Andreas Everything!",
-		"Please enter your password below, and click 'Register'.\nIf you wish to leave, click 'Leave'.", "Register", "Leave");
+	if(BUD::IsNameRegistered(GetPlayerNameEx(playerid))) {
+		SetPlayerColor(playerid, COLOR_GREY);
+		SpawnPlayer(playerid);
+		SetPlayerPos(playerid, 0, 0, 0);
+		TogglePlayerControllable(playerid, 0);
+		SetPlayerCameraPos(playerid, 2358.5310,1028.9342,114.8779);
+		SetPlayerCameraLookAt(playerid, 2281.2681,1069.3523,96.7904);
+        ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "Welcome back to Andreas Everything!","Please enter your desired password below, and click 'Login'.\nIf you wish to leave, click 'Leave'.", "Login", "Leave");
+	}
+    else {
+		SetPlayerColor(playerid, COLOR_GREY);
+		SpawnPlayer(playerid);
+		SetPlayerPos(playerid, 0, 0, 0);
+		TogglePlayerControllable(playerid, 0);
+		SetPlayerCameraPos(playerid, 2358.5310,1028.9342,114.8779);
+		SetPlayerCameraLookAt(playerid, 2281.2681,1069.3523,96.7904);
+        ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_INPUT, "Welcome to Andreas Everything!","Please enter your password below, and click 'Register'.\nIf you wish to leave, click 'Leave'.", "Register", "Leave");
+		}
 	// Misc
 	TogglePlayerClock(playerid, 0);
 	SetPlayerScore(playerid, 0);
@@ -301,11 +314,23 @@ public OnPlayerSpawn(playerid)
 	{
 	    if(BUD::IsNameRegistered(GetPlayerNameEx(playerid)))
     	{
+		SetPlayerColor(playerid, COLOR_GREY);
+		SpawnPlayer(playerid);
+		SetPlayerPos(playerid, 0, 0, 0);
+		TogglePlayerControllable(playerid, 0);
+		SetPlayerCameraPos(playerid, 2358.5310,1028.9342,114.8779);
+		SetPlayerCameraLookAt(playerid, 2281.2681,1069.3523,96.7904);
         	ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "Welcome back to Andreas Everything!",
 			"Please enter your desired password below, and click 'Login'.\nIf you wish to leave, click 'Leave'.", "Login", "Leave");
     	}
     	else
     	{
+		SetPlayerColor(playerid, COLOR_GREY);
+		SpawnPlayer(playerid);
+		SetPlayerPos(playerid, 0, 0, 0);
+		TogglePlayerControllable(playerid, 0);
+		SetPlayerCameraPos(playerid, 2358.5310,1028.9342,114.8779);
+		SetPlayerCameraLookAt(playerid, 2281.2681,1069.3523,96.7904);
         	ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_INPUT, "Welcome to Andreas Everything!",
 			"Please enter your password below, and click 'Register'.\nIf you wish to leave, click 'Leave'.", "Register", "Leave");
 		}
@@ -364,7 +389,7 @@ public OnVehicleDeath(vehicleid, killerid)
 public OnPlayerText(playerid, text[])
 {
     #if DEBUG == 1
-    print("Executed OnPlayerText"); // This could become spammy, we'll see..
+    printf("Executed OnPlayerText, %s: %s",GetName(playerid),text); // This could become spammy, we'll see..
     #endif
 	return 1;
 }
@@ -381,21 +406,7 @@ CMD:help(playerid, params[])
 CMD:modeselect(playerid) // Untested -dowster
 {
 	if(PlayerData[playerid][MODE] != MODE_LOBBY) return SendClientMessage(playerid, COLOR_RED, "This command only availible in lobby mode");
-	new
-		string[512];
-	for(new i = 0; i < MAX_MODES; i++)
-	{
-		if(MODES[i][1][0] == 0) format(string, sizeof(string), "%s %s: {FF0000} Inactive\r\n", string, MODES[i][0]);
-		else
-		{
-			new players = 0;
-			foreach(Player, p)
-			{
-				if(PlayerData[p][MODE] == i) players++;
-			}
-			format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], players);
-		}
-	}
+	SetTimerEx("SkipClassSelection",1,0,"d",playerid);
 	return 1;
 }
 new LobbyCommands[][2][40] = {
@@ -480,7 +491,7 @@ CMD:mute(playerid, params[])
 		{
 		    format(string, sizeof(string), "Adm: You have muted %s(%d).", GetPlayerNameEx(targetid), targetid);
 			SendClientMessage(playerid, COLOR_YELLOW, string);
-			format(string, sizeof(string), "Adm: You have been muted  by %s(%d).", GetPlayerNameEx(playerid), playerid);
+			format(string, sizeof(string), "Adm: You have been muted by %s(%d).", GetPlayerNameEx(playerid), playerid);
 			SendClientMessage(targetid, COLOR_YELLOW, string);
 			PlayerData[targetid][Muted] = 1;
 		}
@@ -721,7 +732,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
 			}
 			case 2: // Select
 			{
-				SendClientMessage(playerid, COLOR_YELLOW, "You have pressed select.");
+				//SendClientMessage(playerid, COLOR_YELLOW, "You have pressed select."); Why?
 				TogglePlayerControllable( playerid, 1);
 				if(PlayerData[playerid][CLASS] == CLASS_COP) SetSpawnInfo( playerid, 0, CnRSkins[PlayerData[playerid][CLASS]][PlayerData[playerid][SKIN]],2339.9080,2456.2988,14.9688,179.5063,0,0,0,0,0,0);
 				SpawnPlayer(playerid);
@@ -734,6 +745,8 @@ public OnPlayerSelectedMenuRow(playerid, row)
 		{
 			case 0: //Cop
 			{
+				SetPlayerColor(playerid, COLOR_DBLUE);
+				SetCameraBehindPlayer(playerid);
 				ShowMenuForPlayer(CnRselect, playerid);
 				PlayerData[playerid][CLASS] = CLASS_COP;
 				SetPlayerSkin(playerid, CnRSkins[PlayerData[playerid][CLASS]][PlayerData[playerid][SKIN]]);
@@ -742,6 +755,8 @@ public OnPlayerSelectedMenuRow(playerid, row)
 			}
 			case 1: //Robber
 			{
+				SetPlayerColor(playerid, COLOR_RED);
+				SetCameraBehindPlayer(playerid);
 				ShowMenuForPlayer( CnRselect, playerid);
 				PlayerData[playerid][CLASS] = CLASS_ROBBER;
 				SetPlayerSkin(playerid, CnRSkins[PlayerData[playerid][CLASS]][PlayerData[playerid][SKIN]]);
@@ -859,6 +874,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
         "health", 100.0,
         "armour", 0.0
     	);
+		SetPlayerColor(playerid, COLOR_GREY);
     	ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "Welcome back to Andreas Everything!",
 		"Please enter your desired password below, and click 'Login'.\nIf you wish to leave, click 'Leave'.", "Login", "Leave");
 
@@ -873,6 +889,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		    LoginPlayer(playerid);
 		}
 		else
+		SetPlayerColor(playerid, COLOR_GREY);
 		    ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "Welcome back to Andreas Everything!",
 			"Please enter your desired password below, and click 'Login'.\nIf you wish to leave, click 'Leave'.", "Login", "Leave");
   	}
@@ -1140,10 +1157,11 @@ stock IsCopSkin(playerid)
 stock CNR(playerid)
 {
 	SetPlayerVirtualWorld(playerid, CNR_VW);
-	TogglePlayerControllable(playerid, 0);
 	SpawnPlayer(playerid);
+	SetCameraBehindPlayer(playerid);
     ShowMenuForPlayer(CnRClassSelect, playerid);
 	PlayerData[playerid][MODE] = MODE_CNR;
+	TogglePlayerControllable(playerid, 0);
 
 	#if DEBUG == 1
     print("Executed CNR()");
@@ -1153,6 +1171,7 @@ stock CNR(playerid)
 
 stock DeathMatch(playerid)
 {
+	SetPlayerColor(playerid, COLOR_PURPLE);
 	TogglePlayerControllable(playerid, 1);
 	SetCameraBehindPlayer(playerid);
     #if DEBUG == 1
@@ -1163,6 +1182,7 @@ stock DeathMatch(playerid)
 
 stock FreeRoam(playerid)
 {
+	SetPlayerColor(playerid, COLOR_WHITE);
 	TogglePlayerControllable(playerid, 1);
 	SetCameraBehindPlayer(playerid);
 	#if DEBUG == 1
@@ -1172,6 +1192,7 @@ stock FreeRoam(playerid)
 }
 stock Lobby(playerid)
 {
+	SetPlayerColor(playerid, COLOR_GREEN);
 	TogglePlayerControllable(playerid, 1);
 	SetCameraBehindPlayer(playerid);
 	SetPlayerVirtualWorld( playerid, LOBBY_VW);
@@ -1185,6 +1206,7 @@ stock Lobby(playerid)
 }
 stock ALounge(playerid)
 {
+	SetPlayerColor(playerid, COLOR_LIGHTRED);
 	TogglePlayerControllable(playerid, 1);
 	SetCameraBehindPlayer(playerid);
 	SetPlayerPos( playerid, -2157.6730957031, 642.63775634766, 1052.375);

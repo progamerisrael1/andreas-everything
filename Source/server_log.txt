@@ -8076,3 +8076,378 @@ v0.3d RC7, (C)2005-2011 SA-MP Team
 
   > MySQL plugin unloaded.
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3d RC7, (C)2005-2011 SA-MP Team
+
+[12:02:17] filterscripts = ""  (string)
+[12:02:17] weburl = "www.sa-mp.com"  (string)
+[12:02:17] 
+[12:02:17] Server Plugins
+[12:02:17] --------------
+[12:02:17]  Loading plugin: sscanf
+[12:02:17] 
+
+[12:02:17]  ===============================
+
+[12:02:17]       sscanf plugin loaded.     
+
+[12:02:17]    (c) 2009 Alex "Y_Less" Cole
+
+[12:02:17]  ===============================
+
+[12:02:17]   Loaded.
+[12:02:17]  Loading plugin: streamer
+[12:02:17] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[12:02:17]   Loaded.
+[12:02:17]  Loading plugin: mysql
+[12:02:17] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[12:02:17]   Loaded.
+[12:02:17]  Loaded 3 plugins.
+
+[12:02:18] 
+[12:02:18] Filterscripts
+[12:02:18] ---------------
+[12:02:18]   Loaded 0 filterscripts.
+
+[12:02:18]  
+[12:02:18]  ======================================= 
+[12:02:18]  |                                     | 
+[12:02:18]  |        YSI version 1.04.0000        | 
+[12:02:18]  |        By Alex "Y_Less" Cole        | 
+[12:02:18]  |                                     | 
+[12:02:18]  |  Checking the latest YSI version..  | 
+[12:02:18]  |                                     | 
+[12:02:18]  ======================================= 
+[12:02:18]  
+[12:02:18] BUD v1.0.3 BETA loaded.
+[12:02:18] 
+----------------------------------
+[12:02:18]  Andreas Everything 
+[12:02:18]  Script Lines: ~1000 
+[12:02:18]  Coded by: SA-MP Community 
+[12:02:18] ----------------------------------
+
+[12:02:18] Number of vehicle models: 0
+[12:02:18]  
+[12:02:18]  ====================================== 
+[12:02:18]  |                                    | 
+[12:02:18]  |  Congratulations! You are running  | 
+[12:02:18]  |     the latest version of YSI!     | 
+[12:02:18]  |                                    | 
+[12:02:18]  ====================================== 
+[12:02:18]  
+[12:02:18] BUD - Notice: There is a new update available.
+[12:02:55] Incoming connection: 127.0.0.1:1780
+[12:02:56] [join] Robin_Kingston has joined the server (0:127.0.0.1)
+[12:03:56] --- Server Shutting Down.
+[12:03:56] [part] Robin_Kingston has left the server (0:0)
+[12:03:56] 
+
+[12:03:56]  ===============================
+
+[12:03:56]      sscanf plugin unloaded.    
+
+[12:03:56]  ===============================
+
+[12:03:56] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[12:03:56] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3d RC7, (C)2005-2011 SA-MP Team
+
+[12:15:28] filterscripts = ""  (string)
+[12:15:28] weburl = "www.sa-mp.com"  (string)
+[12:15:28] 
+[12:15:28] Server Plugins
+[12:15:28] --------------
+[12:15:28]  Loading plugin: sscanf
+[12:15:28] 
+
+[12:15:28]  ===============================
+
+[12:15:28]       sscanf plugin loaded.     
+
+[12:15:28]    (c) 2009 Alex "Y_Less" Cole
+
+[12:15:28]  ===============================
+
+[12:15:28]   Loaded.
+[12:15:28]  Loading plugin: streamer
+[12:15:29] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[12:15:29]   Loaded.
+[12:15:29]  Loading plugin: mysql
+[12:15:29] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[12:15:29]   Loaded.
+[12:15:29]  Loaded 3 plugins.
+
+[12:15:29] 
+[12:15:29] Filterscripts
+[12:15:29] ---------------
+[12:15:29]   Loaded 0 filterscripts.
+
+[12:15:29]  
+[12:15:29]  ======================================= 
+[12:15:29]  |                                     | 
+[12:15:29]  |        YSI version 1.04.0000        | 
+[12:15:29]  |        By Alex "Y_Less" Cole        | 
+[12:15:29]  |                                     | 
+[12:15:29]  |  Checking the latest YSI version..  | 
+[12:15:29]  |                                     | 
+[12:15:29]  ======================================= 
+[12:15:29]  
+[12:15:29] BUD v1.0.3 BETA loaded.
+[12:15:29] 
+----------------------------------
+[12:15:29]  Andreas Everything 
+[12:15:29]  Script Lines: 1226 
+[12:15:29]  Coded by: SA-MP Community 
+[12:15:29] ----------------------------------
+
+[12:15:29] Number of vehicle models: 0
+[12:15:29]  
+[12:15:29]  ====================================== 
+[12:15:29]  |                                    | 
+[12:15:29]  |  Congratulations! You are running  | 
+[12:15:29]  |     the latest version of YSI!     | 
+[12:15:29]  |                                    | 
+[12:15:29]  ====================================== 
+[12:15:29]  
+[12:15:29] BUD - Notice: There is a new update available.
+[12:16:13] Incoming connection: 127.0.0.1:1967
+[12:16:13] [join] Robin_Kingston has joined the server (0:127.0.0.1)
+[12:16:25] [part] Robin_Kingston has left the server (0:1)
+[12:18:56] Incoming connection: 127.0.0.1:1971
+[12:18:57] [join] Robin_Kingston has joined the server (0:127.0.0.1)
+[12:20:04] --- Server Shutting Down.
+[12:20:04] [part] Robin_Kingston has left the server (0:0)
+[12:20:04] 
+
+[12:20:04]  ===============================
+
+[12:20:04]      sscanf plugin unloaded.    
+
+[12:20:04]  ===============================
+
+[12:20:04] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[12:20:04] 
+
+  > MySQL plugin unloaded.
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3d RC7, (C)2005-2011 SA-MP Team
+
+[12:33:24] filterscripts = ""  (string)
+[12:33:24] weburl = "www.sa-mp.com"  (string)
+[12:33:24] 
+[12:33:24] Server Plugins
+[12:33:24] --------------
+[12:33:24]  Loading plugin: sscanf
+[12:33:24] 
+
+[12:33:25]  ===============================
+
+[12:33:25]       sscanf plugin loaded.     
+
+[12:33:25]    (c) 2009 Alex "Y_Less" Cole
+
+[12:33:25]  ===============================
+
+[12:33:25]   Loaded.
+[12:33:25]  Loading plugin: streamer
+[12:33:25] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[12:33:25]   Loaded.
+[12:33:25]  Loading plugin: mysql
+[12:33:25] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[12:33:25]   Loaded.
+[12:33:25]  Loaded 3 plugins.
+
+[12:33:25] 
+[12:33:25] Filterscripts
+[12:33:25] ---------------
+[12:33:25]   Loaded 0 filterscripts.
+
+[12:33:25]  
+[12:33:25]  ======================================= 
+[12:33:25]  |                                     | 
+[12:33:25]  |        YSI version 1.04.0000        | 
+[12:33:25]  |        By Alex "Y_Less" Cole        | 
+[12:33:25]  |                                     | 
+[12:33:25]  |  Checking the latest YSI version..  | 
+[12:33:25]  |                                     | 
+[12:33:25]  ======================================= 
+[12:33:25]  
+[12:33:25] BUD v1.0.3 BETA loaded.
+[12:33:25] 
+----------------------------------
+[12:33:25]  Andreas Everything 
+[12:33:25]  Script Lines: 1226 
+[12:33:25]  Coded by: SA-MP Community 
+[12:33:25] ----------------------------------
+
+[12:33:25] Number of vehicle models: 0
+[12:33:25] BUD - Notice: There is a new update available.
+[12:33:25]  
+[12:33:25]  ====================================== 
+[12:33:25]  |                                    | 
+[12:33:25]  |  Congratulations! You are running  | 
+[12:33:25]  |     the latest version of YSI!     | 
+[12:33:25]  |                                    | 
+[12:33:25]  ====================================== 
+[12:33:25]  
+[12:33:57] Incoming connection: 127.0.0.1:1980
+[12:33:57] [join] Robin_Kingston has joined the server (0:127.0.0.1)
+[12:38:00] [part] Robin_Kingston has left the server (0:2)
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3d RC7, (C)2005-2011 SA-MP Team
+
+[12:40:53] filterscripts = ""  (string)
+[12:40:53] weburl = "www.sa-mp.com"  (string)
+[12:40:53] 
+[12:40:53] Server Plugins
+[12:40:53] --------------
+[12:40:53]  Loading plugin: sscanf
+[12:40:53] 
+
+[12:40:53]  ===============================
+
+[12:40:53]       sscanf plugin loaded.     
+
+[12:40:53]    (c) 2009 Alex "Y_Less" Cole
+
+[12:40:53]  ===============================
+
+[12:40:53]   Loaded.
+[12:40:53]  Loading plugin: streamer
+[12:40:53] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[12:40:53]   Loaded.
+[12:40:53]  Loading plugin: mysql
+[12:40:54] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[12:40:54]   Loaded.
+[12:40:54]  Loaded 3 plugins.
+
+[12:40:54] 
+[12:40:54] Filterscripts
+[12:40:54] ---------------
+[12:40:54]   Loaded 0 filterscripts.
+
+[12:40:54]  
+[12:40:54]  ======================================= 
+[12:40:54]  |                                     | 
+[12:40:54]  |        YSI version 1.04.0000        | 
+[12:40:54]  |        By Alex "Y_Less" Cole        | 
+[12:40:54]  |                                     | 
+[12:40:54]  |  Checking the latest YSI version..  | 
+[12:40:54]  |                                     | 
+[12:40:54]  ======================================= 
+[12:40:54]  
+[12:40:54] BUD v1.0.3 BETA loaded.
+[12:40:54] 
+----------------------------------
+[12:40:54]  Andreas Everything 
+[12:40:54]  Script Lines: 1226 
+[12:40:54]  Coded by: SA-MP Community 
+[12:40:54] ----------------------------------
+
+[12:40:54] Number of vehicle models: 0
+[12:40:54] BUD - Notice: There is a new update available.
+[12:40:54]  
+[12:40:54]  ====================================== 
+[12:40:54]  |                                    | 
+[12:40:54]  |  Congratulations! You are running  | 
+[12:40:54]  |     the latest version of YSI!     | 
+[12:40:54]  |                                    | 
+[12:40:54]  ====================================== 
+[12:40:54]  
+[12:41:00] --- Server Shutting Down.
+[12:41:00] 
+
+[12:41:00]  ===============================
+
+[12:41:00]      sscanf plugin unloaded.    
+
+[12:41:00]  ===============================
+
+[12:41:00] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[12:41:00] 
+
+  > MySQL plugin unloaded.
+
+[12:41:27] Incoming connection: 127.0.0.1:1984
+[12:41:27] [join] Robin_Kingston has joined the server (0:127.0.0.1)
+[12:42:54] [part] Robin_Kingston has left the server (0:1)
+[12:52:18] --- Server Shutting Down.
+[12:52:18] 
+
+[12:52:18]  ===============================
+
+[12:52:18]      sscanf plugin unloaded.    
+
+[12:52:18]  ===============================
+
+[12:52:18] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[12:52:18] 
+
+  > MySQL plugin unloaded.
+

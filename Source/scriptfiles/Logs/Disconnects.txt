@@ -27,3 +27,6 @@
 [November  5, 2011] - [16:16: 8] User: Brady_Clouser disconnected from 127.0.0.1
 [November  5, 2011] - [16:21:17] User: Brady_Clouser disconnected from 127.0.0.1
 [November  5, 2011] - [16:27:25] User: Brady_Clouser disconnected from 127.0.0.1
+[November  6, 2011] - [12:16:25] User: Robin_Kingston disconnected from 127.0.0.1
+[November  6, 2011] - [12:38: 0] User: Robin_Kingston disconnected from 127.0.0.1
+[November  6, 2011] - [12:42:54] User: Robin_Kingston disconnected from 127.0.0.1

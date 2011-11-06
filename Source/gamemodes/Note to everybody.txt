@@ -1,0 +1,5 @@
+The 'odometer' code is really lagging the gameplay.
+I have around 700 miliseconds lag before a command reaches the server.
+You can better improve this code or use a timer.
+
+~ Robin.

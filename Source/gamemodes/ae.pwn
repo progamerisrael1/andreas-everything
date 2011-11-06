@@ -1,4 +1,10 @@
-/*------------------------------------------------------------------------------
+/*
+
+The 'odometer' code lags the gameplay MUCH. I recommend you to fix it.
+
+~ Robin.
+
+------------------------------------------------------------------------------
 	Andreas Everything
 	coded by:
 	Steven82, Dowster, Famalamalam
@@ -41,6 +47,8 @@
 #define SCRIPT_MODE "AE v1.0"
 #define SCRIPT_WEB "forum.sa-mp.com"
 #define MAX_SKINS 300
+#pragma tabsize 0
+#define GetName GetPlayerNameEx // I am used to GetName in my GM, so I use this it's much easier
 // Macros
 #define INI_Exist(%0) fexist(%0)
 #define DISTANCE(%1,%2,%3,%4,%5,%6) floatsqroot((%1-%4)*(%1-%4) + (%2-%5)*(%2-%5) + (%3-%6)*(%3-%6))
@@ -199,13 +207,44 @@ public OnGameModeExit()
 	return 1;
 }
 #endif
-
+forward SkipClassSelection(playerid);
+public SkipClassSelection(playerid)
+{
+	SpawnPlayer(playerid);
+	SetPlayerPos(playerid, 0, 0, 0);
+	TogglePlayerControllable(playerid, 0);
+	SetPlayerCameraPos(playerid, 2358.5310,1028.9342,114.8779);
+	SetPlayerCameraLookAt(playerid, 2281.2681,1069.3523,96.7904);
+	
+			new
+				string[512],
+				firstActiveMode;
+			for(new i = 0; i < MAX_MODES; i++)
+			{
+				if(MODES[i][1][0] == 0) format(string, sizeof(string), "%s %s: {FF0000} Inactive\r\n", string, MODES[i][0]);
+				else
+				{
+					new players = 0;
+					foreach(Player, p)
+					{
+						if(PlayerData[p][MODE] == i) players++;
+					}
+					if(firstActiveMode == 0) format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], players), firstActiveMode = 1;
+					else format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], players);
+				}
+			}
+			
+			format(string, sizeof(string), "%s Leave\r\n", string);
+			ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "Please select a mode to play", string, "Enter", "Refresh");
+	
+}
 public OnPlayerRequestClass(playerid, classid)
 {
     #if DEBUG == 1
     print("Executed OnPlayerRequestClass");
     #endif
-	return 1;
+	
+	SetTimerEx("SkipClassSelection",1,0,"d",playerid);return 1;
 }
 
 #if !defined mysql
@@ -418,7 +457,7 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 		db_query(bugdb, query);
 		format(string, sizeof(string), "*Thanks for reporting this issue, it will be reviewed shortly.", ID);
 		SendClientMessage(playerid, COLOR_YELLOW, string);
-		format(string, sizeof(string), "%s[%d] has reported a bug", GetPlayerNameEx(playerid), playerid, ID);
+		format(string, sizeof(string), "%s[%d] has reported a bug, please check it out.", GetPlayerNameEx(playerid), playerid, ID);
 		MessageToAdminsEx( COLOR_WHITE, string); // Created in the admin stock area, currently at the bottom of the script
 		db_close(bugdb);
 	}
@@ -491,7 +530,7 @@ CMD:kick(playerid, params[])
     if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
 	else
     {
-  		if(sscanf(params, "us", targetid, reason)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /kick [playerid] [reason]");
+  		if(sscanf(params, "us[128]", targetid, reason)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /kick [playerid] [reason]");
 		else
 		{
 			format(string, sizeof(string), "Adm: You have kicked %s(%d) from the server.", GetPlayerNameEx(targetid), targetid);
@@ -517,11 +556,11 @@ CMD:ban(playerid, params[])
 		if(sscanf(params, "us", targetid, reason)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /ban [playerid] [reason]");
 		else
 		{
-			format(string, sizeof(string), "Adm: You have ban %s(%d) from the server.", GetPlayerNameEx(targetid), targetid);
+			format(string, sizeof(string), "Adm: You have banned %s(%d) from the server.", GetPlayerNameEx(targetid), targetid);
 			SendClientMessage(playerid, COLOR_YELLOW, string);
 			format(string, sizeof(string), "Reason: %s", reason);
 			SendClientMessage(targetid, COLOR_YELLOW, string);
-			format(string, sizeof(string), "Adm: You have been ban from the server by %s(%d)", GetPlayerNameEx(playerid), playerid);
+			format(string, sizeof(string), "Adm: You have been banned from the server by %s(%d).", GetPlayerNameEx(playerid), playerid);
 			SendClientMessage(targetid, COLOR_YELLOW, string);
 			format(string, sizeof(string), "Reason: %s", reason);
 			SendClientMessage(targetid, COLOR_YELLOW, string);
@@ -620,6 +659,7 @@ public OnPlayerObjectMoved(playerid, objectid)
 }
 
 public OnPlayerPickUpPickup(playerid, pickupid) // Should maybe deprecate this, in favour of Incognitos plug-in(?)
+//In response to above, do not delete this, since Incognito's doesn't stream pickups(?) and it might be neccecary later. - Robin
 {
     #if DEBUG == 1
     print("Executed OnPlayerPickUpPickup");
@@ -752,6 +792,8 @@ public OnRconLoginAttempt(ip[], password[], success)
 public OnPlayerUpdate(playerid)
 {
 	// I guess it's not a good idea to add a debug option here as it will be spammed every 30ms or something - Famalam
+	// Correct @ above - Robin
+	
 	if(IsPlayerInAnyVehicle(playerid)) {
         if(GetPlayerVehicleSeat(playerid) == 0) {
 			new vehid = GetPlayerVehicleID(playerid);
@@ -829,25 +871,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		if(BUD::CheckAuth(GetPlayerNameEx(playerid), inputtext))
 		{
 		    LoginPlayer(playerid);
-			new
-				string[512],
-				firstActiveMode;
-			for(new i = 0; i < MAX_MODES; i++)
-			{
-				if(MODES[i][1][0] == 0) format(string, sizeof(string), "%s %s: {FF0000} Inactive\r\n", string, MODES[i][0]);
-				else
-				{
-					new players = 0;
-					foreach(Player, p)
-					{
-						if(PlayerData[p][MODE] == i) players++;
-					}
-					if(firstActiveMode == 0) format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], players), firstActiveMode = 1;
-					else format(string, sizeof(string), "%s %s: {00FF00} Active{FFFFFF} - Players: %i\r\n", string, MODES[i][0], players);
-				}
-			}
-			format(string, sizeof(string), "%s Leave\r\n", string);
-			ShowPlayerDialog(playerid, DIALOG_MODE_SELECT, DIALOG_STYLE_LIST, "Please select a mode to play", string, "Enter", "Refresh");
 		}
 		else
 		    ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "Welcome back to Andreas Everything!",
@@ -863,7 +886,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		    	case 0: // Rules
 		    	{
 		            ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Rules",
-		            "Andreas Everything rules comming soon.", "Ok", "");
+		            "Andreas Everything rules coming soon.", "Ok", "");
 		    	}
 		    	case 1: // Commands
 		    	{
@@ -876,18 +899,24 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							{
 								format(string, sizeof(string), "%s %s\r\n", string, CnRCommands[i][0]);
 							}
-							ShowPlayerDialog(playerid, DIALOG_COMMANDS, DIALOG_STYLE_LIST, "Andreas Everything - Commands",
+							ShowPlayerDialog(playerid, DIALOG_COMMANDS, DIALOG_STYLE_LIST, "Andreas Everything",
 							string, "Ok", "Cancel");
+							TogglePlayerControllable(playerid, 1);
+							SetCameraBehindPlayer(playerid);
 						}
 						case MODE_DEATHMATCH:
 						{
-							ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Commands",
+							ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything",
 							"Deathmatch mode coming soon", "Ok", "");
+							TogglePlayerControllable(playerid, 1);
+							SetCameraBehindPlayer(playerid);
 						}
 						case MODE_FREE_ROAM:
 						{
-							ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Commands",
+							ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything",
 							"Free Roam coming soon", "Ok", "");
+							TogglePlayerControllable(playerid, 1);
+							SetCameraBehindPlayer(playerid);
 						}
 						case MODE_LOBBY:
 						{
@@ -896,15 +925,17 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							{
 								format(string, sizeof(string), "%s %s\r\n", string, LobbyCommands[i][0]);
 							}
-							ShowPlayerDialog(playerid, DIALOG_COMMANDS, DIALOG_STYLE_LIST, "Andreas Everything - Commands",
+							ShowPlayerDialog(playerid, DIALOG_COMMANDS, DIALOG_STYLE_LIST, "Andreas Everything",
 							string, "Ok", "Cancel");
+							TogglePlayerControllable(playerid, 1);
+							SetCameraBehindPlayer(playerid);
 						}
 					}
 		    	}
 				case 2: // Server Info
 				{
 				    ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Server Info",
-		            "Andreas Everything rules comming soon.", "Ok", "");
+		            "Andreas Everything rules coming soon.", "Ok", "");
 				}
 			}
 		}
@@ -924,12 +955,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				}
 				case MODE_DEATHMATCH:
 				{
-					ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Commands",
+					ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything",
 					"Deathmatch mode coming soon", "Ok", "");
 				}
 				case MODE_FREE_ROAM:
 				{
-					ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything - Commands",
+					ShowPlayerDialog(playerid, DIALOG_BLANK, DIALOG_STYLE_MSGBOX, "Andreas Everything",
 					"Free Roam coming soon", "Ok", "");
 				}
 				case MODE_LOBBY:
@@ -1122,8 +1153,8 @@ stock CNR(playerid)
 
 stock DeathMatch(playerid)
 {
-	#pragma unused playerid // Comment out/remove when you need it, this is to supress PAWNO warnings - Famalam
-
+	TogglePlayerControllable(playerid, 1);
+	SetCameraBehindPlayer(playerid);
     #if DEBUG == 1
     print("Executed DeathMatch()");
     #endif
@@ -1132,8 +1163,8 @@ stock DeathMatch(playerid)
 
 stock FreeRoam(playerid)
 {
-    #pragma unused playerid // Comment out/remove when you need it, this is to supress PAWNO warnings - Famalam
-
+	TogglePlayerControllable(playerid, 1);
+	SetCameraBehindPlayer(playerid);
 	#if DEBUG == 1
     print("Executed FreeRoam()");
     #endif
@@ -1141,11 +1172,12 @@ stock FreeRoam(playerid)
 }
 stock Lobby(playerid)
 {
+	TogglePlayerControllable(playerid, 1);
+	SetCameraBehindPlayer(playerid);
 	SetPlayerVirtualWorld( playerid, LOBBY_VW);
 	SetPlayerInterior( playerid, 18);
 	SetPlayerPos( playerid, 1727.328125, -1639.4775390625, 20.223743438721);
 	PlayerData[playerid][MODE] = MODE_LOBBY;
-
 	#if DEBUG == 1
     print("Executed Lobby()");
     #endif
@@ -1153,6 +1185,8 @@ stock Lobby(playerid)
 }
 stock ALounge(playerid)
 {
+	TogglePlayerControllable(playerid, 1);
+	SetCameraBehindPlayer(playerid);
 	SetPlayerPos( playerid, -2157.6730957031, 642.63775634766, 1052.375);
 	SetPlayerInterior(playerid, 1);
 	SetPlayerVirtualWorld(playerid, ADMIN_LOUNGE_VW);

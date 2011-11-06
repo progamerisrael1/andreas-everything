@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
                               =====================
                                YSI - Version Check
                               =====================
@@ -17,17 +17,17 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the SA:MP script information include.
+	The Original Code is the YSI version check include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2008
+	Portions created by the Initial Developer are Copyright (C) 2011
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
-		ZeeX, koolk
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
 	
 	Thanks:
-		Peter, Cam - Support.
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
 		ZeeX - Very productive conversations.
 		koolk - IsPlayerinAreaEx code.
 		TheAlpha - Danish translation.
@@ -42,9 +42,10 @@ Legal:
 		Matite - Pestering me to release it and using it.
 	
 	Very special thanks to:
-		Thiadmer - PAWN.
+		Thiadmer - PAWN, whose limits continue to amaze me!
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
+	
 Version:
 	0.2
 Changelog:
@@ -90,35 +91,71 @@ Operators:
 	-
 Natives:
 	-
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
+
+#if defined _YSI_NO_VERSION_CHECK
+	#endinput
+#endif
 
 #include <a_samp>
-#include <a_http>
+#tryinclude <a_http>
+
+#if MAX_PLAYER_NAME != (24)
+	#error Unknown MAX_PLAYER_NAME size.
+#else
+	// Strip the brackets off.
+	#undef MAX_PLAYER_NAME
+	#define MAX_PLAYER_NAME 24
+#endif
+
+#include <YSI\y_scriptinit>
 
 #define YSI_VERSION_RESPO               2
 
 #define YSI_VERSION_MAJOR               1
-#define YSI_VERSION_MINOR               03
-#define YSI_VERSION_BUILD               0011
+#define YSI_VERSION_MINOR               04
+#define YSI_VERSION_BUILD               0000
 
 #define YSI_VERSION                     #YSI_VERSION_MAJOR "." #YSI_VERSION_MINOR "." #YSI_VERSION_BUILD
 
-forward YVers_Callback(index, code, data[]);
-
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Hook:
 	OnScriptInit
 Notes:
 	Constructor.  Checks to see if there is a new version available.  This code
 	can not use ANY of the rest of YSI as it needs to be included by everything
 	first.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
-#if defined FILTERSCRIPT
-	public OnFilterScriptInit()
-#else
-	public OnGameModeInit()
+#if !defined _inc_a_http
+
+	public OnScriptInit()
+	{
+		print(" ");
+		print(" ======================================= ");
+		print(" |                                     | ");
+		print(" |        YSI version " YSI_VERSION "        | ");
+		print(" |        By Alex \"Y_Less\" Cole        | ");
+		print(" |                                     | ");
+		print(" |   Unable to check the latest YSI    | ");
+		print(" |  version, please watch the forums.  | ");
+		print(" |                                     | ");
+		print(" ======================================= ");
+		print(" ");
+		CallLocalFunction("YVers_OnScriptInit", "");
+		return 1;
+	}
+	
+	#undef OnScriptInit
+	#define OnScriptInit YVers_OnScriptInit
+	forward OnScriptInit();
+	
+	#endinput
 #endif
+
+forward YVers_Callback(index, code, data[]);
+
+public OnScriptInit()
 {
 	print(" ");
 	print(" ======================================= ");
@@ -155,24 +192,11 @@ Notes:
 	return 1;
 }
 
-#if defined FILTERSCRIPT
-	#if defined _ALS_OnFilterScriptInit
-		#undef OnFilterScriptInit
-	#else
-		#define _ALS_OnFilterScriptInit
-	#endif
-	#define OnFilterScriptInit YVers_OnScriptInit
-#else
-	#if defined _ALS_OnGameModeInit
-		#undef OnGameModeInit
-	#else
-		#define _ALS_OnGameModeInit
-	#endif
-	#define OnGameModeInit YVers_OnScriptInit
-#endif
-forward YVers_OnScriptInit();
+#undef OnScriptInit
+#define OnScriptInit YVers_OnScriptInit
+forward OnScriptInit();
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	YVers_Callback
 Params:
@@ -188,7 +212,7 @@ Notes:
 	version is newer - people can't have versions newer than the latest, only
 	older or equal (unless they play with the version numbers, but then that's
 	their own fault).
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 public YVers_Callback(index, code, data[])
 {
@@ -249,12 +273,13 @@ public YVers_Callback(index, code, data[])
 	else
 	{
 		// Didn't get the remote page.
-		print(" ======================================= ");
-		print(" |                                     | ");
-		print(" |   Error: Could not connect to YSI   | ");
-		printf(" |  update server (response was %03d).  | ", code);
-		print(" |                                     | ");
-		print(" ======================================= ");
+		print(" ======================================== ");
+		print(" |                                      | ");
+		print(" |  Could not connect to update server  | ");
+		print(" |    at this time, (your code will     | ");
+		printf(" |   still work (response was %03d)).   | ", code);
+		print(" |                                      | ");
+		print(" ======================================== ");
 	}
 	print(" ");
 }

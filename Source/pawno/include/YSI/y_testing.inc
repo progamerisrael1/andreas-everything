@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 					====================================
 					 y_testing - Run unit tests easilly 
 					====================================
@@ -17,17 +17,17 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the SA:MP script information include.
+	The Original Code is the YSI testing include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2008
+	Portions created by the Initial Developer are Copyright (C) 2011
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
-		ZeeX, koolk
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
 	
 	Thanks:
-		Peter, Cam - Support.
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
 		ZeeX - Very productive conversations.
 		koolk - IsPlayerinAreaEx code.
 		TheAlpha - Danish translation.
@@ -42,9 +42,10 @@ Legal:
 		Matite - Pestering me to release it and using it.
 	
 	Very special thanks to:
-		Thiadmer - PAWN.
+		Thiadmer - PAWN, whose limits continue to amaze me!
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
+	
 Version:
 	1.0
 Changelog:
@@ -52,11 +53,11 @@ Changelog:
 		Integrated in to YSI.
 	06/08/10:
 		First version
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #include <YSI\internal\y_version>
 
-#include <YSI\y_scripting>
+#include <YSI\y_amx>
 #include <YSI\y_debug>
 
 #if !defined RUN_TESTS
@@ -93,6 +94,7 @@ static stock
 
 stock Testing_Test(bool:x, const str[] = "")
 {
+	P:3("Testing_Test called: %i, \"%s\"", x, str);
 	++YSI_g_sTests;
 	if (!x)
 	{
@@ -102,7 +104,7 @@ stock Testing_Test(bool:x, const str[] = "")
 	TC(else printf("*** Test passed: %s", str););
 }
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Testing_Run
 Params:
@@ -116,17 +118,18 @@ Notes:
 
 native Testing_Run(&tests, &fails, buffer[33] = "");
 
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 {
+	P:3("bool:Testing_Run called: %i, %i, \"%s\", %i", tests, fails, lastfail, p);
 	#pragma unused p
 	#if defined RUN_TESTS
-		P:3("Testsing_Run() called");
+		P:2("Testsing_Run() called");
 		new
 			idx,
 			buffer[32];
-		while ((idx = Scripting_GetPublic(idx, buffer, "Test_@")))
+		while ((idx = AMX_GetPublicName(idx, buffer, "Test_@")))
 		{
 			++YSI_g_sTests;
 			// Call the setup function if there is one.
@@ -163,7 +166,7 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 			buffer[3] = 't';
 			CallLocalFunction(buffer, "");
 		}
-		while ((idx = Scripting_GetPublic(idx, buffer, "Tezt_@")))
+		while ((idx = AMX_GetPublicName(idx, buffer, "Tezt_@")))
 		{
 			//++YSI_g_sTests;
 			// Call the setup function if there is one.

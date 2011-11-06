@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 					=======================================
 					 y_groups - Player group abstractions! 
 					=======================================
@@ -18,17 +18,17 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the SA:MP script information include.
+	The Original Code is the YSI group include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2008
+	Portions created by the Initial Developer are Copyright (C) 2011
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
-		ZeeX, koolk
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
 	
 	Thanks:
-		Peter, Cam - Support.
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
 		ZeeX - Very productive conversations.
 		koolk - IsPlayerinAreaEx code.
 		TheAlpha - Danish translation.
@@ -43,31 +43,32 @@ Legal:
 		Matite - Pestering me to release it and using it.
 	
 	Very special thanks to:
-		Thiadmer - PAWN.
+		Thiadmer - PAWN, whose limits continue to amaze me!
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
+	
 Version:
 	1.0
 Changelog:
 	29/11/10:
 		First version
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #include <a_samp>
+//#include <YSI\y_scriptinit>
 
 #include <YSI\y_master>
-#include <YSI\y_bit>
+#include <YSI\y_playerarray>
 
+#include <YSI\y_stringhash>
 #include <YSI\y_debug>
 
 //#include <YSI\y_hooks>
-#include <YSI\y_scripting>
+#include <YSI\y_amx>
 
 #include <YSI\y_iterate>
 
-#define ALS_PREFIX Group
-
-#include <YSI\y_als>
+#include <YSI\y_hooks>
 
 //#define _YSI_HAS_GROUP_SYSTEM
 
@@ -106,7 +107,8 @@ Changelog:
 #define _GROUP_GLOBAL_DEF               _GROUP_MAKE_NAME<Group_SetGlobal...Default>
 #define _GROUP_GROUP_DEF                _GROUP_MAKE_NAME<Group_Set...Default>
 
-#define _GROUP_ON_PLAYER_CONNECT        _GROUP_MAKE_NAME<@yH_PlayerConnect_...@yG>
+//#define _GROUP_ON_PLAYER_CONNECT        _GROUP_MAKE_NAME<@yH_PlayerConnect_...@yG>
+#define _GROUP_ON_PLAYER_CONNECT        _GROUP_MAKE_NAME<@yH_PlayerConnect...@yG>
 
 #define _GROUP_DEFAULTS                 _GROUP_MAKE_NAME<Group_...Defaults>
 
@@ -117,9 +119,17 @@ Changelog:
 //#define _GROUP_ON_PLAYER_CONNECT        _GROUP_MAKE_NAME<@yG_..._PlayerConnect>
 //#define _GROUP_ON_PLAYER_CONNECT        RH:_GROUP_MAKE_NAME<...@yG_OnPlayerConnect>
 
-#define _GROUP_OPC_OTHER_CALLED   _GROUP_MAKE_NAME<_@yGPlayerConnect_...>
+/*#define _GROUP_OPC_OTHER_CALLED   _GROUP_MAKE_NAME<_@yGPlayerConnect_...>
 #define _GROUP_OPC_IS_CALLED   _GROUP_MAKE_NAME<_yG@PlayerConnect_...>
-#define _GROUP_OPC_PUBLIC      _GROUP_MAKE_NAME<@yG_PlayerConnect_...>
+#define _GROUP_OPC_PUBLIC      _GROUP_MAKE_NAME<@yG_PlayerConnect_...>*/
+
+//#define group_hook%0On%1(%2) _GROUP_MAKE_NAME<master_hook On%1...>(%2)
+#define ghook group_hook
+
+#define gforeign%1(%2); _GROUP_MAKE_NAME<foreign%1>(%2);
+#define gglobal%1(%2) _GROUP_MAKE_NAME<global%1>(%2)
+
+//#define master_hook%0On%2(%3) hook On%2(%3)<>return 1;rehook On%2(%3)<_YCM:y>
 
 #if !defined MAX_GROUP_NAME
 	#define MAX_GROUP_NAME              (24)
@@ -142,26 +152,26 @@ enum e_GROUP_FLAGS (<<= 1)
 enum E_GROUP_DATA
 {
 	E_GROUP_DATA_NAME[MAX_GROUP_NAME char],
+	//E_GROUP_DATA_COUNT,
 	E_GROUP_DATA_HASH,
 	e_GROUP_FLAGS:E_GROUP_DATA_FLAGS,
 }
 
 stock
-	BitArray:YSI_gGroupPlayers[MAX_GROUPS]<MAX_PLAYERS>,
+	PlayerArray:YSI_gGroupPlayers[MAX_GROUPS]<MAX_PLAYERS>,
 	YSI_gGroupData[MAX_GROUPS][E_GROUP_DATA];
-
-ALS_DATA<>
 
 #define GROUPS_MAX_LIBRARIES            4
 
 static stock
-	YSI_g_sNextUpdateFunc[32],
-	YSI_g_sNextInitFunc[32],
-	YSI_g_sGroupCount,
-	bool:YSI_g_sHasOPC = false;
+	YSI_g_sNextUpdateFunc,//[32],
+	YSI_g_sNextInitFunc,//[32],
+	YSI_g_sGroupCount/*,
+	bool:YSI_g_sHasOPC = false*/;
 
 #define _Group_HasPlayer(%0,%1) \
-	Bit_Get(YSI_gGroupPlayers[(%0)], (%1), MAX_PLAYERS)
+	PA_Get(YSI_gGroupPlayers[(%0)],(%1))
+	//Bit_Get(YSI_gGroupPlayers[(%0)], (%1), MAX_PLAYERS)
 
 #define _Group_GetColor(%0) \
 	(_:(YSI_gGroupData[(%0)][E_GROUP_DATA_FLAGS] & e_GROUP_FLAGS_COLOR | e_GROUP_FLAGS:0xAA))
@@ -197,126 +207,231 @@ static stock
 //	(YSI_gGroupData[(%0)][E_GROUP_DATA_FLAGS] & e_GROUP_FLAGS_COLOR | 0xAA);
 //	(0 <= GROUP_FIX(%0) < MAX_GROUPS && Group_IsActive(%0))
 
-#if defined FILTERSCRIPT
-	public OnFilterScriptInit()
-#else
-	public OnGameModeInit()
-#endif
+hook OnScriptInit()
 {
 	state YSI_has_groups:y;
-	ALS_DETECT<PlayerDisconnect>
-	ALS_DETECT<PlayerConnect>
-	YSI_g_sHasOPC = funcidx(#_GROUP_OPC_PUBLIC) != -1;
-	P:3(#_GROUP_OPC_PUBLIC " does%s exist", YSI_g_sHasOPC ? ("") : (" not"));
-	P:5("Group_OnScriptInit: OPC = %d", YSI_g_sHasOPC);
+	//YSI_g_sHasOPC = funcidx(#_GROUP_OPC_PUBLIC) != -1;
+	//P:2(#_GROUP_OPC_PUBLIC " does%s exist", YSI_g_sHasOPC ? ("") : (" not"));
+	//P:5("Group_OnScriptInit: OPC = %d", YSI_g_sHasOPC);
 	new
-		a = Scripting_GetPublic(0, YSI_g_sNextUpdateFunc, "@yG_Upd"),
-		idx = Scripting_GetPublic(0, YSI_g_sNextInitFunc, "@yG_Init");
+		a = AMX_GetPublicPointer(0, YSI_g_sNextUpdateFunc, "@yG_Upd"),
+		idx = AMX_GetPublicPointer(0, YSI_g_sNextInitFunc, "@yG_Init");
+	P:5("Group_OnScriptInit: %d, %d", a, idx);
 	if (idx)
 	{
-		CallLocalFunction(YSI_g_sNextInitFunc, "ii", -1, (a << 16) | idx);
+		//CallLocalFunction(YSI_g_sNextInitFunc, "ii", -1, (a << 16) | idx);
+		a = (a << 16) | idx;
+		#emit PUSH.S     a
+		#emit PUSH.C     0xFFFFFFFF
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.pri   YSI_g_sNextInitFunc
+		#emit SCTRL      6
 	}
-	CallLocalFunction("Group_OnScriptInit", "");
 }
 
-#if defined FILTERSCRIPT
-	#if defined _ALS_OnFilterScriptInit
-		#undef OnFilterScriptInit
-	#else
-		#define _ALS_OnFilterScriptInit
-	#endif
-	#define OnFilterScriptInit Group_OnScriptInit
-#else
-	#if defined _ALS_OnGameModeInit
-		#undef OnGameModeInit
-	#else
-		#define _ALS_OnGameModeInit
-	#endif
-	#define OnGameModeInit Group_OnScriptInit
-#endif
-forward Group_OnScriptInit();
-
-// This needs an OnPlayerConnect hook, but an ALS one - I'll sort that later.
-RA:Group_OnPlayerDisconnect(playerid, reason)
+hook OnPlayerDisconnect(playerid, reason)
 {
+	P:2("hook OnPlayerDisconnect called: %d, %d", playerid, reason);
 	new
-		s = Bit_Slot(playerid),
+		s = Bit_Slot(playerid) + 1,
 		Bit:m = ~Bit_Mask(playerid);
 	for (new Group:i; i != MAX_GROUPS; ++i)
 	{
-		// Pre-calculate the slot and mask.
+		// Pre-calculate the slot and mask.  Remove the player from every group
+		// they were in.
 		YSI_gGroupPlayers[i][s] &= m;
 	}
-	//CallLocalFunction("Group_OnPlayerConnect", "i", playerid);
-	ALS_CALL<PlayerDisconnect>
 }
 
-#if defined _ALS_OnPlayerDisconnect
-	#undef OnPlayerDisconnect
-#else
-	#define _ALS_OnPlayerDisconnect
-#endif
-#define OnPlayerDisconnect Group_OnPlayerDisconnect
-
-ALS_FORWARD<PlayerDisconnect>
-
-// This needs an OnPlayerConnect hook, but an ALS one - I'll sort that later.
-public OnPlayerConnect(playerid)
+/*hook OnPlayerConnect(playerid)
 {
-	P:3("Group_OnPlayerConnect called");
+	P:2("Group_OnPlayerConnect called");
 	if (YSI_g_sHasOPC) CallLocalFunction(#_GROUP_OPC_PUBLIC, "i", playerid);
-	//CallLocalFunction("Group_OnPlayerConnect", "i", playerid);
-	ALS_CALL<PlayerConnect>
 }
 
-forward _GROUP_OPC_PUBLIC(playerid);
+forward _GROUP_OPC_PUBLIC(playerid);*/
 
-#if defined _ALS_OnPlayerConnect
-	#undef OnPlayerConnect
-#else
-	#define _ALS_OnPlayerConnect
-#endif
-#define OnPlayerConnect Group_OnPlayerConnect
+foreign Group_SetPlayer(Group:g,p,bool:s);
 
-ALS_FORWARD<PlayerConnect>
-
-RF@vp:Group_SetPlayer[iii](Group:g,p,bool:s)<g,p,s>
+global Group_SetPlayer(Group:g,p,bool:s)
 {
+	P:2("Group_SetPlayer called: %i, %i, %i", _:g, p, s);
 	//g &= ~GROUP_MASK;
 	GROUP_FIX(g);
 	if (_Group_IsValid(g) && 0 <= p < MAX_PLAYERS)
 	{
-		Bit_Set(YSI_gGroupPlayers[g], p, s, bits<MAX_PLAYERS>);
-		P:4("Group_SetPlayer: %d %d", g, _:YSI_gGroupPlayers[g][0]);
-		if (YSI_g_sNextUpdateFunc[0])
+		PA_Set(YSI_gGroupPlayers[g], p, s);//, bits<MAX_PLAYERS>);
+		P:4("Group_SetPlayer: %d %d", _:g, _:YSI_gGroupPlayers[g][1]);
+		/*if (YSI_g_sNextUpdateFunc[0])
 		{
-			CallLocalFunction(YSI_g_sNextUpdateFunc, "iii", p, g, s);
+			CallLocalFunction(YSI_g_sNextUpdateFunc, "iii", p, _:g, s);
+		}*/
+		if (YSI_g_sNextUpdateFunc)
+		{
+			#emit PUSH.S     s
+			#emit PUSH.S     g
+			#emit PUSH.S     p
+			#emit PUSH.C     12
+			#emit LCTRL      6
+			#emit ADD.C      28
+			#emit PUSH.pri
+			#emit LOAD.pri   YSI_g_sNextUpdateFunc
+			#emit SCTRL      6
+		}
+	}
+	return 1;
+}
+
+foreign Group:Group_SetBalancedInternal(p,Group:gs[],s,c);
+
+global Group:Group_SetBalancedInternal(p,Group:gs[],s,c)
+{
+	// Find which of the listed groups has the least players in.
+	#pragma unused s
+	new
+		count = cellmax,
+		Group:id = Group:-1,
+		slot = Bit_Slot(p) + 1,
+		Bit:mask = Bit_Mask(p),
+		Bit:inv = ~mask;
+	for (new i = 0; i != c; ++i)
+	{
+		// Find the group with the least players.
+		new
+			Group:gi = GROUP_TEMP_FIX(gs[i]);
+		if (_Group_IsValid(gi))
+		{
+			new
+				cc = PA_GetCount(YSI_gGroupPlayers[gi]);
+			if (YSI_gGroupPlayers[gi][slot] & mask)
+			{
+				// The player is already in this group - prefer it to others.
+				--cc;
+				if (cc <= count)
+				{
+					count = cc;
+					id = gi;
+				}
+				// Remove the player from this group.  Doing this here avoids a
+				// double loop.
+				YSI_gGroupPlayers[gi][slot] &= inv;
+			}
+			else
+			{
+				// Needs to be better than their current group to move.
+				if (cc < count)
+				{
+					count = cc;
+					id = gi;
+				}
+			}
+		}
+	}
+	if (id != Group:-1)
+	{
+		// Quickly update all the player location stats.
+		YSI_gGroupPlayers[id][slot] |= mask;
+		// Do all the updates at once insted of using Group_SetPlayer which can
+		// be quite slow for large numbers of updates.  I should really encode
+		// this in a more generic way so that other people can use this deferal.
+		if (YSI_g_sNextUpdateFunc)
+		{
+			// Using "PUSH.C 0" forces a full update.
+			#emit PUSH.C     0
+			#emit PUSH.C     0
+			#emit PUSH.S     p
+			#emit PUSH.C     12
+			#emit LCTRL      6
+			#emit ADD.C      28
+			#emit PUSH.pri
+			#emit LOAD.pri   YSI_g_sNextUpdateFunc
+			#emit SCTRL      6
+		}
+		return Group:id;
+		//Group_SetPlayer(
+	}
+	return GROUP_GLOBAL;
+}
+
+stock Group:Group_SetBalanced(playerid, {Group, _}:...)
+{
+	new
+		Group:possible[MAX_GROUPS],
+		count = numargs();
+	switch (count)
+	{
+		case 1, 2:
+		{
+			P:W("Group_AddBalanced requires at least 2 groups or an array.");
+		}
+		case 3:
+		{
+			new
+				third = getarg(2);
+			if (third & _:GROUP_MASK)
+			{
+				// Two groups.
+				possible[0] = Group:getarg(1);
+				possible[1] = Group:third;
+				return Group_SetBalancedInternal(playerid, possible, MAX_GROUPS, 2);
+			}
+			else
+			{
+				// Array of groups.
+				for (new i = 0; i != third; ++i)
+				{
+					possible[i] = getarg(1, i);
+				}
+				return Group_SetBalancedInternal(playerid, possible, MAX_GROUPS, third);
+			}
+		}
+		default:
+		{
+			for (new i = 1; i != count; ++i)
+			{
+				possible[i - 1] = getarg(i);
+			}
+			return Group_SetBalancedInternal(playerid, possible, MAX_GROUPS, count - 1);
 		}
 	}
 }
 
-RF@pt:bool:Group_GetPlayer[ii](Group:g,p)<g,p>
+foreign bool:Group_GetPlayer(Group:g,p);
+
+global bool:Group_GetPlayer(Group:g,p)
 {
+	P:2("bool:Group_GetPlayer called: %i, %i", _:g, p);
 	GROUP_FIX(g);
 	if (_Group_IsValid(g) && 0 <= p < MAX_PLAYERS)
 	{
-		return Bit_Get(YSI_gGroupPlayers[g], p);
+		return PA_Get(YSI_gGroupPlayers[g], p);
 		//Bit_Set(YSI_gGroupPlayers[g], p, s, bits<MAX_PLAYERS>);
 	}
 	return false;
 }
 
-RF@vp:Group_SetName[is](Group:g,n[])<g,n>
+foreign Group_SetName(Group:g,string:n[]);
+
+global Group_SetName(Group:g,string:n[])
 {
+	P:2("Group_SetName called: %i, \"%s\"", _:g, n);
 	GROUP_FIX(g);
 	if (_Group_IsValid(g))
 	{
 		strpack(YSI_gGroupData[g][E_GROUP_DATA_NAME], n, MAX_GROUP_NAME char);
+		YSI_gGroupData[g][E_GROUP_DATA_HASH] = YHash(n);
 	}
+	return 1;
 }
 
-RS@p:Group_GetName[i](Group:g)<g>
+foreign string:Group_GetName(Group:g);
+
+global string:Group_GetName(Group:g)
 {
+	P:2("Group_GetName called: %i", _:g);
 	new
 		ret[YSI_MAX_STRING];
 	GROUP_FIX(g);
@@ -329,8 +444,31 @@ RS@p:Group_GetName[i](Group:g)<g>
 	return ret;
 }
 
-RF@vp:Group_SetGang[is](Group:g,bool:n)<g,n>
+foreign Group:Group_GetID(string:name[]);
+
+global Group:Group_GetID(string:name[])
 {
+	P:2("Group_GetID called: %s", name);
+	new
+		Group:i,
+		hash = YHash(name);
+	while (i != MAX_GROUPS)
+	{
+		if (_Group_IsActive(i) && YSI_gGroupData[i][E_GROUP_DATA_HASH] == hash)
+		{
+			break;
+		}
+		++i;
+	}
+	if (i == MAX_GROUPS) return GROUP_GLOBAL;
+	return i | GROUP_MASK;
+}
+
+foreign Group_SetGang(Group:g,bool:n);
+
+global Group_SetGang(Group:g,bool:n)
+{
+	P:2("Group_SetGang called: %i, %i", _:g, n);
 	GROUP_FIX(g);
 	if (_Group_IsValid(g))
 	{
@@ -343,10 +481,14 @@ RF@vp:Group_SetGang[is](Group:g,bool:n)<g,n>
 			_Group_VetGang(g);
 		}
 	}
+	return 1;
 }
 
-RF@pt:bool:Group_GetGang[i](Group:g)<g>
+foreign bool:Group_GetGang(Group:g);
+
+global bool:Group_GetGang(Group:g)
 {
+	P:2("bool:Group_GetGang called: %i", _:g);
 	GROUP_FIX(g);
 	if (_Group_IsValid(g))
 	{
@@ -355,17 +497,24 @@ RF@pt:bool:Group_GetGang[i](Group:g)<g>
 	return false;
 }
 
-RF@vp:Group_SetColour[ii](Group:g,c)<g,c>
+foreign Group_SetColour(Group:g,c);
+
+global Group_SetColour(Group:g,c)
 {
+	P:2("Group_SetColour called: %i, %i", _:g, c);
 	GROUP_FIX(g);
 	if (_Group_IsValid(g))
 	{
 		_Group_SetColor(g, c);
 	}
+	return 1;
 }
 
-RF@p:Group_GetColour[i](Group:g)<g>
+foreign Group_GetColour(Group:g);
+
+global Group_GetColour(Group:g)
 {
+	P:2("Group_GetColour called: %i", _:g);
 	GROUP_FIX(g);
 	if (_Group_IsValid(g))
 	{
@@ -378,9 +527,12 @@ RF@p:Group_GetColour[i](Group:g)<g>
 #define Group_SetColor Group_SetColour
 #define Group_GetColor Group_GetColour
 
-RF@pt:Group:Group_Create[s](name[])<name>
+foreign Group:Group_Create(string:name[]);
+
+global Group:Group_Create(string:name[])
 {
-	P:3("Group_Create called in %d", _@);
+	P:2("Group:Group_Create called: \"%s\"", name);
+	P:2("Group_Create called in %d", _@);
 	new
 		Group:i;
 	while (i != MAX_GROUPS && _Group_IsActive(i))
@@ -390,21 +542,74 @@ RF@pt:Group:Group_Create[s](name[])<name>
 	if (i == MAX_GROUPS) return GROUP_GLOBAL;
 	strpack(YSI_gGroupData[i][E_GROUP_DATA_NAME], name, MAX_GROUP_NAME char);
 	++YSI_g_sGroupCount;
+	PA_Init(YSI_gGroupPlayers[i]);
 	YSI_gGroupData[i][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS_ACTIVE;
+	YSI_gGroupData[i][E_GROUP_DATA_HASH] = YHash(name);
 	// Now initialise all the little bits.  CallREMOTEFunction to get ALL
 	// scripts which may control part of the group system.
 	//CallRemoteFunction(#_GROUP_CREATE, "ii", _:i, -1);
-	if (YSI_g_sNextInitFunc[0])
+	/*if (YSI_g_sNextInitFunc[0])
 	{
 		CallLocalFunction(YSI_g_sNextInitFunc, "ii", _:i, -1);
+	}*/
+	if (YSI_g_sNextInitFunc)
+	{
+		#emit PUSH.C     0xFFFFFFFF
+		#emit PUSH.S     i
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.pri   YSI_g_sNextInitFunc
+		#emit SCTRL      6
 	}
 	return i | GROUP_MASK;
 }
 
+// Added for the fun of it.
+foreign Group_Destroy(Group:group);
+
+global Group_Destroy(Group:group)
+{
+	P:2("Group_Destroy called: %i", _:group);
+	P:2("Group_Destroy called in %d", _@);
+	GROUP_FIX(group);
+	if (_Group_IsValid(group))
+	{
+		YSI_gGroupData[group][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
+		YSI_gGroupData[group][E_GROUP_DATA_HASH] = 0;
+		if (YSI_g_sNextUpdateFunc)
+		{
+			// Update all players who were in this group as they may have lost
+			// some permissions.
+			foreach (new p : Player)
+			{
+				if (_Group_HasPlayer(group, p))
+				{
+					//CallLocalFunction(YSI_g_sNextInitFunc, "iii", p, _:MAX_GROUPS, 0);
+					#emit PUSH.C     0
+					#emit PUSH.C     0
+					#emit PUSH.S     p
+					#emit PUSH.C     12
+					#emit LCTRL      6
+					#emit ADD.C      28
+					#emit PUSH.pri
+					#emit LOAD.pri   YSI_g_sNextUpdateFunc
+					#emit SCTRL      6
+				}
+			}
+		}
+	}
+	return 1;
+}
+
 //forward _GROUP_CREATE(group);
 
-stock YSI_gSGroup(Group:group)
+foreign YSI_gSGroupFunc(Group:group);
+
+global YSI_gSGroupFunc(Group:group)
 {
+	P:3("YSI_gSGroup called: %i", _:group);
 	GROUP_FIX(group);
 	if (!_Group_IsValid(group))
 	{
@@ -418,19 +623,22 @@ stock YSI_gSGroup(Group:group)
 			};
 	new
 		cur;
-	for (new i = 0; i != bits<MAX_PLAYERS>; ++i)
+	for (new i = 1; i != bits<MAX_PLAYERS> + 1; ++i)
 	{
 		if ((cur = _:YSI_gGroupPlayers[group][i]))
 		{
 			// http://supertech.csail.mit.edu/papers/debruijn.pdf
-			return (i * cellbits) + scDeBruijn[((cur & -cur) * 0x077CB531) >>> 27];
+			return ((i - 1) * cellbits) + scDeBruijn[((cur & -cur) * 0x077CB531) >>> 27];
 		}
 	}
 	return -1;
 }
 
-stock YSI_gAGroupFunc(Group:group, start)
+foreign YSI_gAGroupFunc(Group:group, start);
+
+global YSI_gAGroupFunc(Group:group, start)
 {
+	P:3("YSI_gAGroupFunc called: %i, %i", _:group, start);
 	GROUP_FIX(group);
 	if (!_Group_IsValid(group))
 	{
@@ -442,19 +650,20 @@ stock YSI_gAGroupFunc(Group:group, start)
 				0,  1,  28, 2,  29, 14, 24, 3,  30, 22, 20, 15, 25, 17, 4,  8,
 				31, 27, 13, 23, 21, 19, 16, 7,  26, 12, 18, 6,  11, 5,  10, 9
 			};
+	++start;
 	new
 		cur,
-		i = Bit_Slot(start);
-	if ((cur = (_:YSI_gGroupPlayers[group][i] & (~((1 << (start + 1)) - 1)))))
+		i = Bit_Slot(start) + 1;
+	if ((cur = (_:YSI_gGroupPlayers[group][i] & (~((1 << start) - 1)))))
 	{
-		return (i * cellbits) + scDeBruijn[((cur & -cur) * 0x077CB531) >>> 27];
+		return ((i - 1) * cellbits) + scDeBruijn[((cur & -cur) * 0x077CB531) >>> 27];
 	}
 	++i;
-	while (i != bits<MAX_PLAYERS>)
+	while (i != bits<MAX_PLAYERS> + 1)
 	{
 		if ((cur = _:YSI_gGroupPlayers[group][i]))
 		{
-			return (i * cellbits) + scDeBruijn[((cur & -cur) * 0x077CB531) >>> 27];
+			return ((i - 1) * cellbits) + scDeBruijn[((cur & -cur) * 0x077CB531) >>> 27];
 		}
 		++i;
 	}
@@ -463,24 +672,79 @@ stock YSI_gAGroupFunc(Group:group, start)
 
 /*stock Group:operator-(Group:group, Group:playerid)
 {
+	P:3("Group:operator- called: %i, %i", _:group, _:playerid);
 	Group_SetPlayer(group, playerid, false);
 	return group;
 }
 
 stock Group:operator+(Group:group, playerid)
 {
+	P:3("Group:operator+ called: %i, %i", _:group, playerid);
 	Group_SetPlayer(group, playerid, false);
 	return group;
 }
 
 stock Group:operator==(Group:group, playerid)
 {
+	P:3("Group:operator== called: %i, %i", _:group, playerid);
 	return Group_GetPlayer(group, playerid);
 }*/
 
-#define YSI_gAGroup(%0)[%1] YSI_gAGroupFunc(%0,%1)
+//#define YSI_gAGroup(%0)[%1] YSI_gAGroupFunc(%0,%1)
+
+foreign Group:YSI_gSPlayerGroupsFunc(playerid);
+
+global Group:YSI_gSPlayerGroupsFunc(playerid)
+{
+	P:3("Group:YSI_gSPlayerGroups called: %i", playerid);
+    new
+        s = Bit_Slot(playerid) + 1,
+        Bit:m = ~Bit_Mask(playerid);
+    for (new Group:i; i != MAX_GROUPS; ++i)
+    {
+        if (_Group_IsValid(i))
+        {
+            // Fast membership test.
+            if (YSI_gGroupPlayers[i][s] & m)
+            {
+                return i | GROUP_MASK;
+            }
+        }
+    }
+    return Group:-1;
+}
+
+foreign Group:YSI_gAPlayerGroupsFunc(playerid, Group:start);
+
+global Group:YSI_gAPlayerGroupsFunc(playerid, Group:start)
+{
+	P:3("Group:YSI_gAPlayerGroupsFunc called: %i, %i", playerid, _:start);
+    // Get the bit for this player in the bit array.
+    new
+        s = Bit_Slot(playerid) + 1,
+        Bit:m = ~Bit_Mask(playerid);
+    // To identify them, groups have special data set, but we need access to
+    // the low-level information contained within.
+    for (new Group:i = GROUP_TEMP_FIX(start); i != MAX_GROUPS; ++i)
+    {
+        if (_Group_IsValid(i))
+        {
+            // Fast membership test.
+            if (YSI_gGroupPlayers[i][s] & m)
+            {
+                return Group:i | GROUP_MASK;
+            }
+        }
+    }
+    return Group:-1;
+}
+
+//#define YSI_gAPlayerGroups(%0)[%1] YSI_gAPlayerGroupsFunc(%0,%1)
+
+// These are hacks to make the old system of functions working.
+#define Group(%0)_YSI_gS;_:%1!=-1;%2=%8Group(%3)_YSI_gA[%4] YSI_gSGroupFunc(%0);_:%1!=-1;%2=YSI_gAGroupFunc(%3,%4)
+
+#define PlayerGroups(%0)_YSI_gS;_:%1!=-1;%2=%8PlayerGroups(%3)_YSI_gA[%4] YSI_gSPlayerGroupsFunc(%0);_:%1!=-1;%2=YSI_gAPlayerGroupsFunc(%3,%4)
 
 #define _YSIM_RESET_USER
 #include <YSI\y_master>
-
-#undef ALS_PREFIX

@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 					==============================
 					Y Sever Includes - Debug Setup
 					==============================
@@ -8,11 +8,13 @@ Description:
 	General debug levels:
 	
 	0 - No debug information.
-	1 - Callbacks start and finish.
-	2 - Major functions called.
-	3 - Major control flow.
-	4 - Minor control flow/functions.
-	5 - Code steps.
+	1 - Callbacks and timers.
+	2 - Remote functions.
+	3 - Stock functions.
+	4 - Static functions.
+	5 - Code.
+	6 - Loops.
+	7 - Extra loop code.
 	
 	If you use P:0 you get an optional debug print controlled by the global
 	state ysi_debug - which is either on or off.
@@ -29,17 +31,17 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the SA:MP script information include.
+	The Original Code is the YSI debug include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2008
+	Portions created by the Initial Developer are Copyright (C) 2011
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
-		ZeeX, koolk
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
 	
 	Thanks:
-		Peter, Cam - Support.
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
 		ZeeX - Very productive conversations.
 		koolk - IsPlayerinAreaEx code.
 		TheAlpha - Danish translation.
@@ -54,9 +56,10 @@ Legal:
 		Matite - Pestering me to release it and using it.
 	
 	Very special thanks to:
-		Thiadmer - PAWN.
+		Thiadmer - PAWN, whose limits continue to amaze me!
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
+	
 Version:
 	1.0
 Changelog:
@@ -82,8 +85,10 @@ Functions:
 Callbacks:
 	-
 Definitions:
-	DBGP - Simple Debug_Print wrapper.
-	DBGC - Simple Debug_Code wrapper.
+	P:<0-6> - Print a message.
+	P:C - Run debug code.
+	P:E - Print an error message.
+	P:W - Print a warning message.
 Enums:
 	-
 Macros:
@@ -101,11 +106,13 @@ Compile options:
 	_DEBUG - Debugging level to use.
 Operators:
 	-
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #include <YSI\internal\y_version>
 
 #include <YSI\internal\y_funcinc>
+
+#include <YSI\y_scriptinit>
 
 #if !defined _DEBUG
 	#define _DEBUG 0
@@ -114,7 +121,7 @@ Operators:
 #define P:%1(%2); Debug_Print%1(%2);
 #define C:%1(%2); Debug_Code%1(%2);
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Debug_Code
 Params:
@@ -129,7 +136,7 @@ Notes:
 	
 	The code must all be on one line to avoid errors.
 	This isn't really a function as the first parameter is part of the name.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define DBGC1 Debug_Code1
 #define DBGC2 Debug_Code2
@@ -172,7 +179,14 @@ Notes:
 	#define Debug_Code5(%1);
 #endif
 
-/*----------------------------------------------------------------------------*-
+#if _DEBUG >= 6
+	#define Debug_Code6(%1); \
+		%1
+#else
+	#define Debug_Code6(%1);
+#endif
+
+/*----------------------------------------------------------------------------*\
 Function:
 	Debug_Print
 Params:
@@ -185,7 +199,7 @@ Notes:
 	This isn't really a function as the first parameter is part of the name:
 	
 	Debug_Print4("variables: %d, %d", i, j);
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define DBGP1 Debug_Print1
 #define DBGP2 Debug_Print2
@@ -228,6 +242,35 @@ Notes:
 	#define Debug_Print5(%1);
 #endif
 
+#if _DEBUG >= 6
+	#define Debug_Print6(%1); \
+		printf(%1);
+#else
+	#define Debug_Print6(%1);
+#endif
+
+#if _DEBUG >= 7
+	#define Debug_Print7(%1); \
+		printf(%1);
+#else
+	#define Debug_Print7(%1);
+#endif
+
+#define Debug_PrintE(%1); \
+	Debug_Print0("*** YSI Error: " #%1);
+
+#define Debug_PrintW(%1); \
+	Debug_Print0("*** YSI Warning: " #%1);
+
+#define Debug_PrintI(%1); \
+	Debug_Print0("*** YSI Info: " #%1);
+
+#define Debug_PrintF(%1); \
+	Debug_Print0("*** YSI Fatal Error: " #%1);
+
+#define Debug_PrintC(%1); \
+	Debug_Code1(%1);
+
 stock Debug_Print0(str[], {Float,_}:...) <ysi_debug:on>
 {
 	// This uses the variable parameter passing method based on code by Zeex.
@@ -239,6 +282,8 @@ stock Debug_Print0(str[], {Float,_}:...) <ysi_debug:on>
 		new
 			arg_start,
 			arg_end;
+		
+		//#emit BREAK
 		
 		// Load the real address of the last static parameter.  Do this by
 		// loading the address of the parameter and then adding the value of
@@ -298,7 +343,31 @@ stock Debug_Print0(str[], {Float,_}:...) <>
 	#pragma unused str
 }
 
-#if _DEBUG > 0
+/*#if _DEBUG > 0
 	#define Debug_Print0(%1); \
 		printf(%1);
-#endif
+#endif*/
+
+public OnScriptInit()
+{
+	goto Debug_OnScriptInit_check_fault;
+Debug_OnScriptInit_no_fault:
+	CallLocalFunction("Debug_OnScriptInit", "");
+	// Fake the "return" instruction to avoid warnings we know won't happen.
+	#emit CONST.pri 1
+	#emit RETN
+Debug_OnScriptInit_check_fault:
+	//printf("FILTERSCRIPT: %d, %s", YSI_FILTERSCRIPT, #OnScriptInit);
+	state ysi_debug : on;
+	#emit CONST.pri YSI_FILTERSCRIPT
+	//#emit PUSH.C    ysi_debug
+	#emit JNZ       Debug_OnScriptInit_no_fault
+	P:F("YSI_FILTERSCRIPT == 0");
+	#emit CONST.pri 0
+	#emit SCTRL     6
+	return 1;
+}
+
+#undef OnScriptInit
+#define OnScriptInit Debug_OnScriptInit
+forward OnScriptInit();

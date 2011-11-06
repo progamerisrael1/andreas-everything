@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 					===============================
 					 y_funcinc - Fix SYSREQ.C bugs
 					===============================
@@ -20,17 +20,17 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the SA:MP script information include.
+	The Original Code is the YSI funcinc include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2008
+	Portions created by the Initial Developer are Copyright (C) 2011
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
-		ZeeX, koolk
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
 	
 	Thanks:
-		Peter, Cam - Support.
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
 		ZeeX - Very productive conversations.
 		koolk - IsPlayerinAreaEx code.
 		TheAlpha - Danish translation.
@@ -45,15 +45,16 @@ Legal:
 		Matite - Pestering me to release it and using it.
 	
 	Very special thanks to:
-		Thiadmer - PAWN.
+		Thiadmer - PAWN, whose limits continue to amaze me!
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
+	
 Version:
 	1.0
 Changelog:
 	06/08/10:
 		First version
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 forward _@_y_funcinc_@_();
 public _@_y_funcinc_@_()
@@ -63,4 +64,9 @@ public _@_y_funcinc_@_()
 	printf("");
 	new _funcinc_a[1 char];
 	strunpack(_funcinc_a, "");
+	memcpy("", "", 0, 0, 0);
+	format("", 0, "");
+	strfind("", "", false, 0);
 }
+
+//#include <YSI\y_utils>

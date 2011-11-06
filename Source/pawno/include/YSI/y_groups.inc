@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 					=======================================
 					 y_groups - Player group abstractions! 
 					=======================================
@@ -18,17 +18,17 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the SA:MP script information include.
+	The Original Code is the YSI groups include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2008
+	Portions created by the Initial Developer are Copyright (C) 2011
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
-		ZeeX, koolk
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
 	
 	Thanks:
-		Peter, Cam - Support.
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
 		ZeeX - Very productive conversations.
 		koolk - IsPlayerinAreaEx code.
 		TheAlpha - Danish translation.
@@ -43,15 +43,16 @@ Legal:
 		Matite - Pestering me to release it and using it.
 	
 	Very special thanks to:
-		Thiadmer - PAWN.
+		Thiadmer - PAWN, whose limits continue to amaze me!
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
+	
 Version:
 	1.0
 Changelog:
 	29/11/10:
 		First version
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #include <YSI\internal\y_version>
 
@@ -59,7 +60,7 @@ Changelog:
 
 #include <YSI\internal\y_nogroups>
 
-#if defined YSI_GROUPS_LAST
+/*#if defined YSI_GROUPS_LAST
 	#if YSI_GROUPS_LAST == 25
 		#undef _GROUP_MAKE_NAME
 		#undef _GROUP_MAKE_LIMIT
@@ -82,7 +83,7 @@ Changelog:
 		#define _GROUP_MAKE_LIMIT       _GROUP_MAKE_LIMIT_INTTEST2
 	#endif
 	#undef YSI_GROUPS_LAST
-#endif
+#endif*/
 
 #if defined _YSI_GROUPS_FIRST_HALF
 	#undef _YSI_GROUPS_FIRST_HALF
@@ -96,9 +97,9 @@ Changelog:
 		// Mark this library as existing.
 		#define _YSI_GROUP_CLASSES_INCLUDED
 		// These all need doing twice - once here and once below.
-		#if defined _YSI_HAS_GROUP_SYSTEM
-			#include <YSI\internal\y_groupfirst>
-		#endif
+		//#if defined _YSI_HAS_GROUP_SYSTEM
+		//	#include <YSI\internal\y_groupfirst>
+		//#endif
 		#undef _GROUP_MAKE_NAME
 		#undef _GROUP_MAKE_LIMIT
 		#define _GROUP_MAKE_NAME        _GROUP_MAKE_NAME_CLASSES
@@ -119,9 +120,9 @@ Changelog:
 		// Mark this library as existing.
 		#define _YSI_GROUP_COMMANDS_INCLUDED
 		// These all need doing twice - once here and once below.
-		#if defined _YSI_HAS_GROUP_SYSTEM
-			#include <YSI\internal\y_groupfirst>
-		#endif
+		//#if defined _YSI_HAS_GROUP_SYSTEM
+		//	#include <YSI\internal\y_groupfirst>
+		//#endif
 		#undef _GROUP_MAKE_NAME
 		#undef _GROUP_MAKE_LIMIT
 		#define _GROUP_MAKE_NAME        _GROUP_MAKE_NAME_CMD
@@ -140,9 +141,9 @@ Changelog:
 			// Mark this library as existing.
 			#define _YSI_GROUP_INTTEST_INCLUDED
 			// These all need doing twice - once here and once below.
-			#if defined _YSI_HAS_GROUP_SYSTEM
-				#include <YSI\internal\y_groupfirst>
-			#endif
+			//#if defined _YSI_HAS_GROUP_SYSTEM
+			//	#include <YSI\internal\y_groupfirst>
+			//#endif
 			#undef _GROUP_MAKE_NAME
 			#undef _GROUP_MAKE_LIMIT
 			#define _GROUP_MAKE_NAME    _GROUP_MAKE_NAME_INTTEST
@@ -160,9 +161,9 @@ Changelog:
 			// Mark this library as existing.
 			#define _YSI_GROUP_INTTEST2_INCLUDED
 			// These all need doing twice - once here and once below.
-			#if defined _YSI_HAS_GROUP_SYSTEM
-				#include <YSI\internal\y_groupfirst>
-			#endif
+			//#if defined _YSI_HAS_GROUP_SYSTEM
+			//	#include <YSI\internal\y_groupfirst>
+			//#endif
 			#undef _GROUP_MAKE_NAME
 			#undef _GROUP_MAKE_LIMIT
 			#define _GROUP_MAKE_NAME    _GROUP_MAKE_NAME_INTTEST2
@@ -170,7 +171,7 @@ Changelog:
 			#if defined _YSI_HAS_GROUP_SYSTEM
 				#include <YSI\internal\y_groupsecond>
 			#endif
-			//#include <YSI\internal\y_groupsingle>
+			#include <YSI\internal\y_groupsingle>
 			// End.
 			#endinput
 		#endif
@@ -198,7 +199,7 @@ Changelog:
 		#define _YSIM_OVERRIDE          22
 		#include <YSI\y_master>
 		// Include the first half of the file for the call chain.
-		#include <YSI\internal\y_groupfirst>
+		//#include <YSI\internal\y_groupfirst>
 		#undef _GROUP_MAKE_NAME
 		#undef _GROUP_MAKE_LIMIT
 		#define _GROUP_MAKE_NAME        _GROUP_MAKE_NAME_CLASSES
@@ -212,7 +213,7 @@ Changelog:
 		#define _YSIM_OVERRIDE          25
 		#include <YSI\y_master>
 		// Include the first half of the file for the call chain.
-		#include <YSI\internal\y_groupfirst>
+		//#include <YSI\internal\y_groupfirst>
 		#undef _GROUP_MAKE_NAME
 		#undef _GROUP_MAKE_LIMIT
 		#define _GROUP_MAKE_NAME        _GROUP_MAKE_NAME_CMD
@@ -225,7 +226,7 @@ Changelog:
 		#if defined _YSI_GROUP_INTTEST_INCLUDED
 			#define _YSIM_OVERRIDE      9
 			#include <YSI\y_master>
-			#include <YSI\internal\y_groupfirst>
+			//#include <YSI\internal\y_groupfirst>
 			#undef _GROUP_MAKE_NAME
 			#undef _GROUP_MAKE_LIMIT
 			#define _GROUP_MAKE_NAME    _GROUP_MAKE_NAME_INTTEST
@@ -235,7 +236,7 @@ Changelog:
 		#if defined _YSI_GROUP_INTTEST2_INCLUDED
 			#define _YSIM_OVERRIDE      8
 			#include <YSI\y_master>
-			#include <YSI\internal\y_groupfirst>
+			//#include <YSI\internal\y_groupfirst>
 			#undef _GROUP_MAKE_NAME
 			#undef _GROUP_MAKE_LIMIT
 			#define _GROUP_MAKE_NAME    _GROUP_MAKE_NAME_INTTEST2
@@ -254,7 +255,7 @@ Changelog:
 		#endif
 		#include <YSI\y_master>
 		//#include <YSI\internal\y_groupsingle>
-		#include <YSI\internal\y_groupfirst>
+		//#include <YSI\internal\y_groupfirst>
 		#undef _GROUP_MAKE_NAME
 		#undef _GROUP_MAKE_LIMIT
 		#define _GROUP_MAKE_NAME        GROUP_LIBRARY_NAME
@@ -275,3 +276,10 @@ Changelog:
 		#error You must define both GROUP_LIBRARY_SIZE and GROUP_LIBRARY_NAME.
 	#endif
 #endif
+
+// Revert to the user's included definition if y_groups was included after all
+// group using libraries and after explicit y_master inclusion.
+//#include <YSI\internal\y_grouprevert>
+
+//#define YSI_SET_LAST_GROUP 24
+#include <YSI\internal\y_grouprevert>

@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 					===================================
 					Y Sever Includes - Connections Core
 					===================================
@@ -17,17 +17,17 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the SA:MP script information include.
+	The Original Code is the YSI flooding include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2008
+	Portions created by the Initial Developer are Copyright (C) 2011
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
-		ZeeX, koolk
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
 	
 	Thanks:
-		Peter, Cam - Support.
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
 		ZeeX - Very productive conversations.
 		koolk - IsPlayerinAreaEx code.
 		TheAlpha - Danish translation.
@@ -42,9 +42,10 @@ Legal:
 		Matite - Pestering me to release it and using it.
 	
 	Very special thanks to:
-		Thiadmer - PAWN.
+		Thiadmer - PAWN, whose limits continue to amaze me!
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
+	
 Changelog:
 	15/11/10:
 		Updated to YSI 1.0.
@@ -86,26 +87,27 @@ Compile options:
 	-
 Operators:
 	-
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #include <YSI\internal\y_version>
+#include <YSI\y_hooks>
+#include <YSI\y_debug>
 
 enum e_FLOOD_ACTION (+= 0x00010000)
 {
-	e_FLOOD_ACTION_COUNT = 0x0000FFFF
+	e_FLOOD_ACTION_COUNT = 0x0000FFFF,
 	e_FLOOD_ACTION_ACTION = 0x000F0000,
 	e_FLOOD_ACTION_NOTHING = 0,
 	e_FLOOD_ACTION_BLOCK,
 	e_FLOOD_ACTION_KICK,
-	e_FLOOD_ACTION_BAN,
-	e_FLOOD_ACTION_OPC = 0x80000000,
+	e_FLOOD_ACTION_BAN
 }
 
 static
 	YSI_g_sPlayerIPs[MAX_PLAYERS],
 	e_FLOOD_ACTION:YSI_g_sMaxConnections = e_FLOOD_ACTION_COUNT | e_FLOOD_ACTION_BLOCK;
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	SetMaxConnections
 Params:
@@ -115,57 +117,15 @@ Return:
 	-
 Notes:
 	Sets the maximum connections allowed from a single IP.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock SetMaxConnections(max = -1, e_FLOOD_ACTION:action = e_FLOOD_ACTION_BLOCK)
 {
-	YSI_g_sMaxConnections = (e_FLOOD_ACTION:max & e_FLOOD_ACTION_COUNT) | action | (YSI_g_sMaxConnections & e_FLOOD_ACTION_OPC);
+	P:3("SetMaxConnections called: %i, %i", max, _:action);
+	YSI_g_sMaxConnections = (e_FLOOD_ACTION:max & e_FLOOD_ACTION_COUNT) | action;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	OnScriptInit
-Params:
-	-
-Return:
-	-
-Notes:
-	Constructor.
--*----------------------------------------------------------------------------*/
-
-#if defined FILTERSCRIPT
-	public OnFilterScriptInit()
-#else
-	public OnGameModeInit()
-#endif
-{
-	if (funcidx("YFLD_OnPlayerConnect") != -1)
-	{
-		YSI_g_sMaxConnections |= e_FLOOD_ACTION_OPC;
-	}
-	CallLocalFunction("YFLD_OnScriptInit", "");
-	return 1;
-}
-
-#if defined FILTERSCRIPT
-	#if defined _ALS_OnFilterScriptInit
-		#undef OnFilterScriptInit
-	#else
-		#define _ALS_OnFilterScriptInit
-	#endif
-	#define OnFilterScriptInit YFLD_OnScriptInit
-#else
-	#if defined _ALS_OnGameModeInit
-		#undef OnGameModeInit
-	#else
-		#define _ALS_OnGameModeInit
-	#endif
-	#define OnGameModeInit YFLD_OnScriptInit
-#endif
-
-forward YFLD_OnScriptInit();
-
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Conn_OnPlayerConnect
 Params:
@@ -178,21 +138,17 @@ Notes:
 	
 	Could be edited to only loop through players once but I'm not sure the
 	extra code required would be faster anyway, definately not easier.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
-public OnPlayerConnect(playerid)
+hook OnPlayerConnect(playerid)
 {
-	if (YSI_g_sMaxConnections & e_FLOOD_ACTION_OPC)
-	{
-		CallLocalFunction("YFLD_OnPlayerConnect", "i", playerid);
-	}
 	if ((YSI_g_sMaxConnections & e_FLOOD_ACTION_COUNT) != e_FLOOD_ACTION_COUNT)
 	{
 		new
 			count = 0,
 			IP = GetIP(playerid);
 		YSI_g_sPlayerIPs[playerid] = IP;
-		foreach (Player, i)
+		foreach (new i : Player)
 		{
 			if (YSI_g_sPlayerIPs[i] == IP)
 			{
@@ -213,6 +169,14 @@ public OnPlayerConnect(playerid)
 				case e_FLOOD_ACTION_KICK:
 				{
 					// Kick all the players.
+					foreach (new i : Player)
+					{
+						if(YSI_g_sPlayerIPs[i] == IP)
+						{
+							Kick(i);
+						}
+					}
+					return 0;
 				}
 				case e_FLOOD_ACTION_BAN:
 				{
@@ -226,23 +190,7 @@ public OnPlayerConnect(playerid)
 				}
 			}
 		}
-		foreach (Player, i)
-		{
-			if (YSI_g_sPlayerIPs[i] == IP)
-			{
-				Kick(i);
-			}
-		}
 		return 0;
 	}
 	return 1;
 }
-
-#if defined _ALS_OnPlayerConnect
-	#undef OnPlayerConnect
-#else
-	#define _ALS_OnPlayerConnect
-#endif
-#define OnPlayerConnect YFLD_OnPlayerConnect
-
-forward YFLD_OnPlayerConnect(playerid);

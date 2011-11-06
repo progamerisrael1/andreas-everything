@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 					=================================
 					Y Sever Includes - Misc Functions
 					=================================
@@ -17,17 +17,17 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the SA:MP script information include.
+	The Original Code is the YSI utils include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2008
+	Portions created by the Initial Developer are Copyright (C) 2011
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
-		ZeeX, koolk
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
 	
 	Thanks:
-		Peter, Cam - Support.
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
 		ZeeX - Very productive conversations.
 		koolk - IsPlayerinAreaEx code.
 		TheAlpha - Danish translation.
@@ -42,9 +42,10 @@ Legal:
 		Matite - Pestering me to release it and using it.
 	
 	Very special thanks to:
-		Thiadmer - PAWN.
+		Thiadmer - PAWN, whose limits continue to amaze me!
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
+	
 Version:
 	0.1.3
 Changelog:
@@ -65,10 +66,28 @@ Variables:
 		TRUE - True hack for infinate loops.
 		FALSE - False hack for one-time loops.
 		NULL - 1 long string for passing via Call(Remote|Local)Function.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #include <YSI\internal\y_version>
+
+#include <YSI\y_debug>
+#include <YSI\y_amx>
 //#tryinclude <sscanf>
+
+/*// "File,Float," must remain last always.
+#if defined CUSTOM_TAG_TYPES
+	#define File,Float, Float,File,CUSTOM_TAG_TYPES
+#else
+	#define File,Float, Float,File
+#endif*/
+// Add new tags to the START of this list.
+#define GLOBAL_TAG_TYPES {_,Language,Bit,PlayerText3D,Text,Text3D,Menu,DB,DBResult,Style,XML,Bintree,Group,Timer,File,Float} //,CUSTOM_TAG_TYPES}
+
+// VERY VERY VERY IMPORTANT!!! y_inline uses "130" instead of "YSI_MAX_STRING"
+// for two lines (one is "520" for "130 * 4").
+#define YSI_MAX_STRING                  (130)
+
+#define FUNCTION_LENGTH                 (32)
 
 #if !defined TRUE
 new stock
@@ -83,9 +102,59 @@ new stock
 	NULL[2] = {1, 0};
 #endif
 
+// Define "volatile" as nothing.
+#if !defined volatile
+	#define volatile
+#endif
+
+#define YSIM_MASTER #M
+
+#define YSIM_RETURN #R
+
+#define YSIM_CALLER #C
+
+#define YSIM_TEXT_D #T
+#define YSIM_TEXT_L #L
+#define YSIM_TEXT_S #Y
+#define YSIM_TEXT_P #Z
+
+#define YSIM_ORDERS #O
+
+#define YSIM_HFIRST #H
+
+#define YSIM_OPDRET #D
+
+#define YSIM_TXTFND #X
+
+#define YSIM_TXTIND #I
+
+#define YSIM_TXTLEN #E
+
+#if !defined YSIM_STRING
+	#define YSIM_STRING (42)
+#endif
+
+#define FLOAT_INFINITY                  (Float:0x7F800000)
+#define FLOAT_NEG_INFINITY              (Float:0xFF800000)
+#define FLOAT_NEGATIVE_INFINITY         (Float:0xFF800000)
+#define FLOAT_NAN                       (Float:0x7FFFFFFF)
+#define FLOAT_NOT_A_NUMBER              (Float:0x7FFFFFFF)
+#define FLOAT_QNAN                      (Float:0x7FFFFFFF)
+#define FLOAT_QUIET_NAN                 (Float:0x7FFFFFFF)
+#define FLOAT_QUIET_NOT_A_NUMBER        (Float:0x7FFFFFFF)
+#define FLOAT_SNAN                      (Float:0x7FBFFFFF)
+#define FLOAT_SIGNALING_NAN             (Float:0x7FBFFFFF)
+#define FLOAT_SIGNALING_NOT_A_NUMBER    (Float:0x7FBFFFFF)
+
 //#pragma unused TRUE, FALSE, NULL
 
-/*----------------------------------------------------------------------------*-
+#define ceildiv(%0,%1) \
+	(((%0)+(%1)-1)/(%1))
+
+#define floordiv(%0,%1) \
+	((%0)/(%1))
+
+/*----------------------------------------------------------------------------*\
 Function:
 	isnull
 Params:
@@ -94,14 +163,14 @@ Return:
 	-
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #if !defined isnull
 	#define isnull(%1) \
 		((%1[0] == 0) || (%1[0] == 1 && %1[1] == 0))
 #endif
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	isodd
 Params:
@@ -110,12 +179,12 @@ Return:
 	-
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define isodd(%1) \
 	((%1) & 1)
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	iseven
 Params:
@@ -124,12 +193,12 @@ Return:
 	-
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define iseven(%1) \
 	(!isodd(%1))
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	strcpy
 Params:
@@ -140,13 +209,13 @@ Return:
 	-
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
-#define strcpy(%0,%1,%2) \
-	strcat((%0[0] = '\0', %0), %1, %2)
+#define strcpy(%0,%1) \
+	strcat((%0[0] = '\0', %0), %1)
 //	memcpy(%0,%1,0,strlen(%1)*4+4,%2)
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	StripNL
 Params:
@@ -155,16 +224,17 @@ Return:
 	-
 Notes:
 	Updated from old versions, should be more efficient
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock StripNL(str[])
 {
+	P:3("StripNL called: \"%s\"", str);
 	new
 		i = strlen(str);
 	while (i-- && str[i] <= ' ') str[i] = '\0';
 }
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	endofline
 Params:
@@ -174,15 +244,17 @@ Return:
 	-
 Notes:
 	Checks if the current point in a line is the end of non-whitespace data.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock endofline(line[], pos)
 {
+	P:3("endofline called: \"%s\", %i", line, pos);
+	if (pos < 0 || pos > strlen(line)) return 0;
 	while (line[pos]) if (line[pos++] > ' ') return 0;
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	chrfind
 Params:
@@ -193,19 +265,34 @@ Return:
 	Fail - -1, Success - pos
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock chrfind(needle, haystack[], start = 0)
 {
+	P:3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
 	if (start < 0)
 	{
 		start = 0;
 	}
+	else if (start > strlen(haystack)) return -1;
 	while (haystack[start]) if (haystack[start++] == needle) return start - 1;
 	return -1;
 }
 
-/*----------------------------------------------------------------------------*-
+//#define chrfind(%0'%1'%2,%3) str
+
+stock chrfindp(needle, haystack[], start = 0)
+{
+	P:3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
+	if (start < 0)
+	{
+		start = 0;
+	}
+	while (haystack{start}) if (haystack{start++} == needle) return start - 1;
+	return -1;
+}
+
+/*----------------------------------------------------------------------------*\
 Function:
 	bernstein
 Params:
@@ -234,10 +321,11 @@ Notes:
 	strings for the updated text system involving file based styling and this
 	is not checked for collisions as it's unimportant.  But this doesn't affect
 	the function at all, I just mentioned it here for "interest".
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock bernstein(string[])
 {
+	P:3("bernstein called: \"%s\"", string);
 	new
 		hash = -1,
 		i,
@@ -249,7 +337,7 @@ stock bernstein(string[])
 	return hash;
 }
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	ishex
 Params:
@@ -258,10 +346,11 @@ Return:
 	-
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock ishex(str[])
 {
+	P:3("ishex called: \"%s\"", str);
 	new
 		i,
 		cur;
@@ -275,7 +364,77 @@ stock ishex(str[])
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
+Function:
+	unpack
+Params:
+	str[] - String to unpack
+Return:
+	unpacked string
+Notes:
+	Mainly used for debugging.
+\*----------------------------------------------------------------------------*/
+
+stock unpack(const str[])
+{
+	P:3("unpack called: \"%s\"", str);
+	new
+		ret[YSI_MAX_STRING] = {0};
+	if (strlen(str) <= YSI_MAX_STRING)
+	{
+		strunpack(ret, str);
+	}
+	return ret;
+}
+
+/*----------------------------------------------------------------------------*\
+Function:
+	GetIP
+Params:
+	playerid - Player to get IP of.
+Return:
+	IP as a 32bit int.
+Notes:
+	-
+\*----------------------------------------------------------------------------*/
+
+stock GetIP(playerid)
+{
+	new
+		ip[16];
+	GetPlayerIp(playerid, ip, sizeof (ip));
+	new
+		ipv = strval(ip) << 24,
+		pos = 0;
+	while (pos < 15 && ip[pos++] != '.') {}
+	ipv += strval(ip[pos]) << 16;
+	while (pos < 15 && ip[pos++] != '.') {}
+	ipv += strval(ip[pos]) << 8;
+	while (pos < 15 && ip[pos++] != '.') {}
+	ipv += strval(ip[pos]);
+	return ipv;
+}
+
+/*----------------------------------------------------------------------------*\
+Function:
+	getstring
+Params:
+	addr - Address of the string on the heap.
+Return:
+	string
+Notes:
+	Is passed the result of getarg, which will be the address of a string (in
+	theory) and uses that for DMA to get the string.
+\*----------------------------------------------------------------------------*/
+
+stock getstring(addr)
+{
+	new
+		ret[YSI_MAX_STRING];
+	return ret;
+}
+
+/*----------------------------------------------------------------------------*\
 Function:
 	isnumeric
 Params:
@@ -284,10 +443,11 @@ Return:
 	-
 Notes:
 	Checks if a given string is numeric.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock isnumeric(str[])
 {
+	P:3("isnumeric called: \"%s\"", str);
 	new
 		ch,
 		i;
@@ -313,7 +473,7 @@ stock isnumeric(str[])
 			ret,
 			val,
 			i;
-		if (string[0] == '0' && (string[1] == 'x' || string[1] == 'X')) i = 2;
+		if (string[0] == '0' && string[1] | 0x20 == 'x') i = 2;
 		while (string[i])
 		{
 			ret <<= 4;
@@ -365,7 +525,7 @@ stock isnumeric(str[])
 		{
 			case '0':
 			{
-				if (string[1] == 'b' || string[1] == 'B')
+				if (string[1] | 0x20 == 'b')
 				{
 					pos = 2;
 				}
@@ -401,3 +561,78 @@ stock isnumeric(str[])
 		return value;
 	}
 #endif
+
+stock memset(dest[], size = sizeof (dest), val = 0, blocksize = 8)
+{
+	new
+		i;
+	if (size < 0 || blocksize < 0) 
+	{
+		return 0;
+	}
+	if (size <= blocksize)	
+	{
+		while (i != size)
+		{
+			dest[i++] = val;
+		}
+	}
+	else
+	{
+		//printf("%d %d %d", i, blocksize, size);
+		// Set up the initial set area.
+		while (i != blocksize)
+		{
+			dest[i++] = val;
+		}
+		//printf("%d %d %d", i, blocksize, size);
+		size -= blocksize;
+		// Copy this blank area over the rest of the array.
+		while (i < size)
+		{
+			memcpy(dest[i], dest, 0, blocksize * 4, blocksize);
+			i += blocksize;
+		}
+		//printf("%d %d %d", i, blocksize, size);
+		size += blocksize;
+		// Do any small remaining bits.
+		while (i != size)
+		{
+			dest[i++] = val;
+		}
+		//printf("%d %d %d", i, blocksize, size);
+	}
+	return 1;
+}
+
+#if !defined ReturnPlayerName
+	stock ReturnPlayerName(playerid)
+	{
+		new
+			str[MAX_PLAYER_NAME];
+		GetPlayerName(playerid, str, sizeof (str));
+		return str;
+	}
+#endif
+
+stock ftouch(const filename[])
+{
+	if (fexist(filename))
+	{
+		return 0;
+	}
+	else
+	{
+		new
+			File:f = fopen(filename, io_write);
+		if (f)
+		{
+			fclose(f);
+			return 1;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+}

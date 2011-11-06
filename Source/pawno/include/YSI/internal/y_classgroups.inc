@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 					=======================================
 					 y_classes - Advanced class selection! 
 					=======================================
@@ -18,17 +18,17 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the SA:MP script information include.
+	The Original Code is the YSI classgroups include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2008
+	Portions created by the Initial Developer are Copyright (C) 2011
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
-		ZeeX, koolk
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
 	
 	Thanks:
-		Peter, Cam - Support.
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
 		ZeeX - Very productive conversations.
 		koolk - IsPlayerinAreaEx code.
 		TheAlpha - Danish translation.
@@ -43,19 +43,20 @@ Legal:
 		Matite - Pestering me to release it and using it.
 	
 	Very special thanks to:
-		Thiadmer - PAWN.
+		Thiadmer - PAWN, whose limits continue to amaze me!
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
+	
 Version:
 	1.0
 Changelog:
 	29/11/10:
 		First version
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <YSI_has_groups:y>
 {
-	P:3("Class_AddClass<y>: call Resolve %d %d %d", class, forgroup, cp);
+	P:2("Class_AddClass<y>: call Resolve %d %d %d", class, _:forgroup, cp);
 	if (cp)
 	{
 		// Here "class" means "playerid".

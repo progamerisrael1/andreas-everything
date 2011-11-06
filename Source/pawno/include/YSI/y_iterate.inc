@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 					===========================
 					 foreach efficient looping
 					===========================
@@ -11,11 +11,11 @@ Description:
 	actual number of connected players.  Even when n is MAX_PLAYERS this is
 	still faster.
 Legal:
-	Copyright (C) 2009 Alex "Y_Less" Cole
+	Version: MPL 1.1
 	
-	The contents of this file are subject to the Mozilla Public License Version
-	1.1 (the "License"); you may not use this file except in compliance with
-	the License. You may obtain a copy of the License at
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 (the "License"); you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
 	Software distributed under the License is distributed on an "AS IS" basis,
@@ -23,12 +23,41 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the SA:MP foreach iterator code.
+	The Original Code is the YSI foreach include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright (C) 2011
+	the Initial Developer. All Rights Reserved.
+	
+	Contributors:
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
+	
+	Thanks:
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+		ZeeX - Very productive conversations.
+		koolk - IsPlayerinAreaEx code.
+		TheAlpha - Danish translation.
+		breadfish - German translation.
+		Fireburn - Dutch translation.
+		yom - French translation.
+		50p - Polish translation.
+		Zamaroht - Spanish translation.
+		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
+			for me to strive to better.
+		Pixels^ - Running XScripters where the idea was born.
+		Matite - Pestering me to release it and using it.
+	
+	Very special thanks to:
+		Thiadmer - PAWN, whose limits continue to amaze me!
+		Kye/Kalcor - SA:MP.
+		SA:MP Team past, present and future - SA:MP.
+	
 Version:
-	0.1.8
+	0.4
 Changelog:
+	28/04/11:
+		Moved iterator identifiers to end of variables.
+		Rewrote "foreach" to accept two syntaxes for "foreach (new i : Iter)".
 	16/08/10:
 		Removed all the "2" versions of the functions.
 	14/08/10:
@@ -129,9 +158,9 @@ Iterators:
 	Bot - List of all bots (npcs) connected.
 	NPC - Alias of Bot.
 	Character - All players and bots.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
-#define _Y_ITERATE_LOCAL_VERSION        1
+#define _Y_ITERATE_LOCAL_VERSION        5
 
 // Foreach is testing us.
 #if defined _FOREACH_INC_TEST
@@ -147,6 +176,7 @@ Iterators:
 		#if !defined _FOREACH_CUR_VERSION
 			// Foreach exists, but it's an old version - don't try use this
 			// system or the variables will conflict.
+			#error "Old foreach.inc files are no longer compatible with YSI."
 			#endinput
 		#endif
 		#if _FOREACH_CUR_VERSION > _Y_ITERATE_LOCAL_VERSION
@@ -163,6 +193,9 @@ Iterators:
 	#error "Please include a_samp or a_npc before foreach"
 #endif
 
+#include <YSI\y_debug>
+#include <YSI\y_hooks>
+
 #if defined SendChat || defined FOREACH_NO_PLAYERS
 	#define BOTSYNC_IS_BOT     (true)
 #endif
@@ -171,17 +204,11 @@ Iterators:
 	#define _FOREACH_BOT
 #endif
 
-#if !defined BOTSYNC_IS_BOT
-	static
-		bool:YSI_g_OPC = false,
-		bool:YSI_g_OPDC = false;
-#endif
-
 #if defined YSI_ITTER_NO_SORT
 	#error YSI_ITTER_NO_SORT is no longer supported by foreach.
 #endif
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_Create2
 Params:
@@ -192,21 +219,22 @@ Return:
 	-
 Notes:
 	Creates a new array of itterator start/array pair.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
+// If this ever changes, update the size reference in y_users.
 #define Iter_Create2 Itter_Create2
 #define Itter_Create2(%1,%2,%3) \
 	new \
-		YSI_gS%1[%2] = {-1, ...}, \
-		YSI_gC%1[%2] = {0}, \
-		YSI_gA%1[%2][%3]
+		%1_YSI_gS[%2] = {-1, ...}, \
+		%1_YSI_gC[%2] = {0}, \
+		%1_YSI_gA[%2][%3]
 
 #define IteratorArray:%1[%2]<%3> \
-	YSI_gS%1[%2] = {-1, ...}, \
-	YSI_gC%1[%2] = {0}, \
-	YSI_gA%1[%2][%3]
+	%1_YSI_gS[%2] = {-1, ...}, \
+	%1_YSI_gC[%2] = {0}, \
+	%1_YSI_gA[%2][%3]
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_Init2
 Params:
@@ -218,13 +246,13 @@ Notes:
 
 native Iter_Init(IteratorArray:Name[]<>);
 
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define Iter_Init Itter_Init
 #define Itter_Init(%1) \
-	Itter_InitInternal(YSI_gA%1, sizeof (YSI_gA%1), sizeof (YSI_gA%1[]))
+	Itter_InitInternal(%1_YSI_gA, sizeof (%1_YSI_gA), sizeof (%1_YSI_gA[]))
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_Create
 Params:
@@ -234,28 +262,29 @@ Return:
 	-
 Notes:
 	Creates a new itterator start/array pair.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
+// If this ever changes, update the size reference in y_users.
 #define Iter_Create Itter_Create
 #define Itter_Create(%1,%2) \
 	new \
-		YSI_gS%1 = -1, \
-		YSI_gC%1 = 0, \
-		YSI_gA%1[%2] = {-1, ...}
+		%1_YSI_gS = -1, \
+		%1_YSI_gC = 0, \
+		%1_YSI_gA[%2] = {-1, ...}
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Array:
 	Iterator
 Notes:
 	Creates a new itterator start/array pair.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define Iterator:%1<%2> \
-	YSI_gS%1 = -1, \
-	YSI_gC%1 = 0, \
-	YSI_gA%1[%2] = {-1, ...}
+	%1_YSI_gS = -1, \
+	%1_YSI_gC = 0, \
+	%1_YSI_gA[%2] = {-1, ...}
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_Add
 Params:
@@ -268,13 +297,13 @@ Notes:
 
 native Iter_Add(Iterator:Name<>, value);
 
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define Iter_Add Itter_Add
 #define Itter_Add(%1,%2) \
-	Itter_AddInternal(YSI_gS%1, YSI_gC%1, YSI_gA%1, %2)
+	Itter_AddInternal(%1_YSI_gS, %1_YSI_gC, %1_YSI_gA, %2)
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_Free
 Params:
@@ -286,13 +315,13 @@ Notes:
 
 native Iter_Free(Iterator:Name<>);
 
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define Iter_Free Itter_Free
 #define Itter_Free(%1) \
-	Itter_FreeInternal(YSI_gS%1, YSI_gC%1, YSI_gA%1, sizeof (YSI_gA%1))
+	Itter_FreeInternal(%1_YSI_gS, %1_YSI_gC, %1_YSI_gA, sizeof (%1_YSI_gA))
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_Remove
 Params:
@@ -305,13 +334,13 @@ Notes:
 
 native Iter_Remove(Iterator:Name<>, value);
 
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define Iter_Remove Itter_Remove
 #define Itter_Remove(%1,%2) \
-	Itter_RemoveInternal(YSI_gS%1, YSI_gC%1, YSI_gA%1, %2)
+	Itter_RemoveInternal(%1_YSI_gS, %1_YSI_gC, %1_YSI_gA, %2)
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_Random
 Params:
@@ -323,13 +352,13 @@ Notes:
 
 native Iter_Random(Iterator:Name<>);
 
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define Iter_Random Itter_Random
 #define Itter_Random(%1) \
-	Itter_RandomInternal(YSI_gS%1, YSI_gC%1, YSI_gA%1)
+	Itter_RandomInternal(%1_YSI_gS, %1_YSI_gC, %1_YSI_gA)
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_Debug
 Params:
@@ -338,13 +367,13 @@ Return:
 	-
 Notes:
 	Wrapper for Itter_ShowArray.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define Iter_Debug Itter_Debug
 #define Itter_Debug(%1) \
-	Itter_ShowArray(YSI_gS%1, YSI_gA%1, YSI_gC%1)
+	Itter_ShowArray(%1_YSI_gS, %1_YSI_gA, %1_YSI_gC)
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_Count
 Params:
@@ -356,13 +385,13 @@ Notes:
 
 native Iter_Count(Iterator:Name<>);
 
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define Iter_Count Itter_Count
 #define Itter_Count(%1) \
-	YSI_gC%1
+	%1_YSI_gC
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_Clear
 Params:
@@ -374,15 +403,15 @@ Notes:
 
 native Iter_Clear(IteratorArray:Name[]<>);
 
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define Iter_Clear Itter_Clear
 #define Itter_Clear(%1) \
-	Itter_ClearInternal(YSI_gS%1, YSI_gC%1, YSI_gA%1)
+	Itter_ClearInternal(%1_YSI_gS, %1_YSI_gC, %1_YSI_gA)
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Create the internal itterators.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #if !defined BOTSYNC_IS_BOT
 	new
@@ -393,13 +422,13 @@ Create the internal itterators.
 			Iterator:Bot<MAX_PLAYERS>,
 			Iterator:Character<MAX_PLAYERS>;
 		
-		#define YSI_gNPCS YSI_gBotS
-		#define YSI_gNPCC YSI_gBotC
-		#define YSI_gNPCA YSI_gBotA
+		#define NPC_YSI_gS Bot_YSI_gS
+		#define NPC_YSI_gC Bot_YSI_gC
+		#define NPC_YSI_gA Bot_YSI_gA
 	#endif
 #endif
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	foreach
 Params:
@@ -410,14 +439,76 @@ Return:
 Notes:
 	Not exactly the same as PHP foreach, just itterates through a list and
 	returns the value of the current slot but uses that slot as the next index
-	too.  Variables must be in the form YSI_g<name>S for the start index and
-	YSI_g<name>A for the data array where <name> is what's entered in data.
--*----------------------------------------------------------------------------*/
+	too.  Variables must be in the form _YSI_g<name>S for the start index and
+	_YSI_g<name>A for the data array where <name> is what's entered in data.
+\*----------------------------------------------------------------------------*/
 
-#define foreach(%1,%2) \
-	for (new %2 = YSI_gS%1; %2 != -1; %2 = YSI_gA%1[%2])
+#if 1
+	//#define foreach(%1,%2)
+	//	for (new %2 = %1_YSI_gS; _:%2 != -1; %2 = %1_YSI_gA[%2])
+	#define foreach%1(%0) for(new Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%0|||)
+	// This allows us to use "new" multiple times - stripping off ONLY whole words.
+	#define new%0|||%9|||%1:%2||| %9|||%0|||%1|||%2|||
+	
+	// This one is called if the new syntax is required, but the state of "new" is
+	// as-yet unknown.  This attempts to call "%1" as a macro, if it starts with
+	// "new" as a whole word then it will (and will also helpfully strip off the
+	// "new" keyword for us).
+	#define Y_FOREACH_THIRD|||%0|||%1|||%2||| %1=Y_FOREACH_FIFTH|||Y_FOREACH_FOURTH|||%1:%2|||
+	
+	// This is called if the "new" macro is called for a second time.
+	#define Y_FOREACH_FOURTH|||%0=Y_FOREACH_FIFTH|||%1|||%2||| new Y_FOREACH_SIXTH;%0|||Y_FOREACH_SEVENTH|||%2|||
+	
+	// This is called when there are tags on the "new" declaration.
+	#define Y_FOREACH_SEVENTH|||%9Y_FOREACH_SIXTH;%0|||%1|||%2||| new %0:%1=%2_YSI_gS;_:%1!=-1;%1=%2_YSI_gA[%1]
+	
+	// This is called when there aren't.
+	#define Y_FOREACH_SIXTH;%0|||Y_FOREACH_SEVENTH|||%2||| %0=%2_YSI_gS;_:%0!=-1;%0=%2_YSI_gA[%0]
+	//hta:%0=hta:%2_YSI_gS;_:%0!=-1;%0=hta:%2_YSI_gA[%0]
+	//#define Y_FOREACH_FOURTH|||%0=Y_FOREACH_FIFTH|||%1|||%2||| new hta:%0=hta:%2_YSI_gS;_:%0!=-1;%0=hta:%2_YSI_gA[%0]
+	
+	// Move any tags from the second half to the first half.
+	//#define hta:%0=hta:%1:%2;_:%3!=-1;%4=hta:%5:%6[%7] %0:%1=%2;_:%1!=-1;%1=%6[%1]
+	
+	// This is called if "%1" didn't have "new" at the start.
+	#define Y_FOREACH_FIFTH|||Y_FOREACH_FOURTH|||%1:%2||| %2_YSI_gS;_:%1!=-1;%1=%2_YSI_gA[%1]
+	
+	//%1=%2_YSI_gS;_:Y_FOREACH_NONEW:%1!=-1;%1=%2_YSI_gA[%1]
+	// This is the old version, but DON'T add "new" because that already exists from
+	// the failed "new" macro call above.
+	#define Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%1,%2||| %2=%1_YSI_gS;_:%2!=-1;%2=%1_YSI_gA[%2]
+	//#define Y_FOREACH_NONEW:new%0!=-1;new%1=%2[new%3] %0!=-1;%1=%2[%3]
+#else
+	
+	//#define foreach(%1,%2)
+	//	for (new %2 = %1_YSI_gS; _:%2 != -1; %2 = %1_YSI_gA[%2])
+	#define foreach%1(%0) for(new Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%0|||)
+	// This allows us to use "new" multiple times - stripping off ONLY whole words.
+	#define new%0|||%9|||%1;%2||| %9|||%0|||%1|||%2|||
+	
+	// This one is called if the new syntax is required, but the state of "new" is
+	// as-yet unknown.  This attempts to call "%1" as a macro, if it starts with
+	// "new" as a whole word then it will (and will also helpfully strip off the
+	// "new" keyword for us).
+	#define Y_FOREACH_THIRD|||%0|||%1|||%2||| %1=Y_FOREACH_FIFTH|||Y_FOREACH_FOURTH|||%1;%2|||
+	
+	// This is called if the "new" macro is called for a second time.
+	#define Y_FOREACH_FOURTH|||%0=Y_FOREACH_FIFTH|||%1|||%2||| new %0=%2_YSI_gS;_:%0!=-1;%0=%2_YSI_gA[%0]
+	
+	// Move any tags from the second half to the first half.
+	//#define hta:%0=%1:%2;_:%3!=-1;%4=%5:%6[%7] %0:%1=%2;_:%1!=-1;%1=%6[%1]
+	
+	// This is called if "%1" didn't have "new" at the start.
+	#define Y_FOREACH_FIFTH|||Y_FOREACH_FOURTH|||%1;%2||| %2_YSI_gS;_:%1!=-1;%1=%2_YSI_gA[%1]
+	
+	//%1=%2_YSI_gS;_:Y_FOREACH_NONEW:%1!=-1;%1=%2_YSI_gA[%1]
+	// This is the old version, but DON'T add "new" because that already exists from
+	// the failed "new" macro call above.
+	#define Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%1,%2||| %2=%1_YSI_gS;_:%2!=-1;%2=%1_YSI_gA[%2]
+	//#define Y_FOREACH_NONEW:new%0!=-1;new%1=%2[new%3] %0!=-1;%1=%2[%3]
+#endif
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	foreachex
 Params:
@@ -427,12 +518,12 @@ Return:
 	-
 Notes:
 	Similar to foreach but doesn't declare a new variable for the itterator.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #define foreachex(%1,%2) \
-	for (%2 = YSI_gS%1; %2 != -1; %2 = YSI_gA%1[%2])
+	for (%2 = %1_YSI_gS; _:%2 != -1; %2 = %1_YSI_gA[%2])
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_OnPlayerConnect
 Params:
@@ -443,16 +534,15 @@ Notes:
 	Adds a player to the loop data.  Now sorts the list too.  Note that I found
 	the most bizzare bug ever (I *think* it may be a compiler but, but it
 	requires further investigation), basically it seems that multiple variables
-	were being treated as the same variable (namely YSI_gBotS and
-	YSI_gCharacterS were the same and YSI_gBotC and YSI_gCharacterC were the
+	were being treated as the same variable (namely _YSI_gBotS and
+	_YSI_gCharacterS were the same and _YSI_gBotC and _YSI_gCharacterC were the
 	same).  Adding print statements which reference these variables seem to fix
 	the problem, and I've tried to make sure that the values will never actually
 	get printed.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #if !defined BOTSYNC_IS_BOT
-	public
-		OnPlayerConnect(playerid)
+	hook OnPlayerConnect0(playerid)
 	{
 		#if defined _FOREACH_BOT
 			if (!IsPlayerNPC(playerid))
@@ -470,25 +560,11 @@ Notes:
 		#else
 			Itter_Add(Player, playerid);
 		#endif
-		if (YSI_g_OPC)
-		{
-			return CallLocalFunction("Itter_OnPlayerConnect", "i", playerid);
-		}
 		return 1;
 	}
-	
-	#if defined _ALS_OnPlayerConnect
-		#undef OnPlayerConnect
-	#else
-		#define _ALS_OnPlayerConnect
-	#endif
-	#define OnPlayerConnect Itter_OnPlayerConnect
-	
-	forward
-		Itter_OnPlayerConnect(playerid);
 #endif
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_OnGameModeInit
 Params:
@@ -500,137 +576,114 @@ Notes:
 	this hopefully fixes them.  The OnFilterScriptInit code is written to be
 	very fast by utilising the internal array structure instead of the regular
 	Add functions.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #if !defined BOTSYNC_IS_BOT
-	#if defined FILTERSCRIPT
-		public
-			OnFilterScriptInit()
+	hook OnGameModeInit0()
+	{
+		if (!YSI_FILTERSCRIPT)
 		{
-			if (YSI_gCPlayer)
+			if (Player_YSI_gC)
 			{
-				print("foreach error: Something went wrong again!  Please tell Y_less");
+				print("foreach error: Something went wrong again!  Attempting reset...");
 				#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-					printf("%d", YSI_gSBot);
-					printf("%d", YSI_gCBot);
-					printf("%d", YSI_gSCharacter);
-					printf("%d", YSI_gCCharacter);
+					printf("%d", Bot_YSI_gS);
+					printf("%d", Bot_YSI_gC);
+					printf("%d", Character_YSI_gS);
+					printf("%d", Character_YSI_gC);
+					Bot_YSI_gC = 0;
+					Character_YSI_gC = 0;
+					Bot_YSI_gS = -1;
+					Character_YSI_gS = -1;
 				#endif
-				printf("%d", YSI_gSPlayer);
-				printf("%d", YSI_gCPlayer);
-			}
-			#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-				new
-					lastBot = -1,
-					lastCharacter = -1;
-			#endif
-			new
-				lastPlayer = -1;
-			for (new i = 0; i != MAX_PLAYERS; ++i)
-			{
-				if (IsPlayerConnected(i))
+				printf("%d", Player_YSI_gS);
+				printf("%d", Player_YSI_gC);
+				Player_YSI_gC = 0;
+				Player_YSI_gS = -1;
+				for (new i = 0; i != MAX_PLAYERS; ++i)
 				{
-					#if defined _FOREACH_BOT
-						if (!IsPlayerNPC(i))
-						{
-							if (lastPlayer == -1)
-							{
-								YSI_gSPlayer = i;
-							}
-							else
-							{
-								YSI_gAPlayer[lastPlayer] = i;
-							}
-							++YSI_gCPlayer;
-							lastPlayer = i;
-						}
-						#if !defined FOREACH_NO_BOTS
-							else
-							{
-								if (lastBot == -1)
-								{
-									YSI_gSBot = i;
-								}
-								else
-								{
-									YSI_gABot[lastBot] = i;
-								}
-								++YSI_gCBot;
-								lastBot = i;
-							}
-							#pragma tabsize 4
-							if (lastCharacter == -1)
-							{
-								YSI_gSCharacter = i;
-							}
-							else
-							{
-								YSI_gACharacter[lastCharacter] = i;
-							}
-							++YSI_gCCharacter;
-							lastCharacter = i;
-						#endif
-					#else
+					#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
+						Bot_YSI_gA[i] = -1;
+						Character_YSI_gA[i] = -1;
+					#endif
+					Player_YSI_gA[i] = -1;
+				}
+			}
+			else
+			{
+				return 1;
+			}
+		}
+		#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
+			new
+				lastBot = -1,
+				lastCharacter = -1;
+		#endif
+		new
+			lastPlayer = -1;
+		for (new i = 0; i != MAX_PLAYERS; ++i)
+		{
+			if (IsPlayerConnected(i))
+			{
+				#if defined _FOREACH_BOT
+					if (!IsPlayerNPC(i))
+					{
 						if (lastPlayer == -1)
 						{
-							YSI_gSPlayer = i;
+							Player_YSI_gS = i;
 						}
 						else
 						{
-							YSI_gAPlayer[lastPlayer] = i;
+							Player_YSI_gA[lastPlayer] = i;
 						}
-						++YSI_gCPlayer;
+						++Player_YSI_gC;
 						lastPlayer = i;
+					}
+					#if !defined FOREACH_NO_BOTS
+						else
+						{
+							if (lastBot == -1)
+							{
+								Bot_YSI_gS = i;
+							}
+							else
+							{
+								Bot_YSI_gA[lastBot] = i;
+							}
+							++Bot_YSI_gC;
+							lastBot = i;
+						}
+						#pragma tabsize 4
+						if (lastCharacter == -1)
+						{
+							Character_YSI_gS = i;
+						}
+						else
+						{
+							Character_YSI_gA[lastCharacter] = i;
+						}
+						++Character_YSI_gC;
+						lastCharacter = i;
 					#endif
-				}
-			}
-			YSI_g_OPC = (funcidx("Itter_OnPlayerConnect") != -1);
-			YSI_g_OPDC = (funcidx("Itter_OnPlayerDisconnect") != -1);
-			CallLocalFunction("Itter_OnFilterScriptInit", "");
-		}
-		
-		#if defined _ALS_OnFilterScriptInit
-			#undef OnFilterScriptInit
-		#else
-			#define _ALS_OnFilterScriptInit
-		#endif
-		#define OnFilterScriptInit Itter_OnFilterScriptInit
-		
-		forward Itter_OnFilterScriptInit();
-	#else
-		public
-			OnGameModeInit()
-		{
-			if (YSI_gCPlayer)
-			{
-				print("foreach error: Something went wrong again!  Please tell Y_less");
-				#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-					printf("%d", YSI_gSBot);
-					printf("%d", YSI_gCBot);
-					printf("%d", YSI_gSCharacter);
-					printf("%d", YSI_gCCharacter);
+				#else
+					if (lastPlayer == -1)
+					{
+						Player_YSI_gS = i;
+					}
+					else
+					{
+						Player_YSI_gA[lastPlayer] = i;
+					}
+					++Player_YSI_gC;
+					lastPlayer = i;
 				#endif
-				printf("%d", YSI_gSPlayer);
-				printf("%d", YSI_gCPlayer);
 			}
-			YSI_g_OPC = (funcidx("Itter_OnPlayerConnect") != -1);
-			YSI_g_OPDC = (funcidx("Itter_OnPlayerDisconnect") != -1);
-			CallLocalFunction("Itter_OnGameModeInit", "");
 		}
-		
-		#if defined _ALS_OnGameModeInit
-			#undef OnGameModeInit
-		#else
-			#define _ALS_OnGameModeInit
-		#endif
-		#define OnGameModeInit Itter_OnGameModeInit
-		
-		forward
-			Itter_OnGameModeInit();
-	#endif
+		return 1;
+	}
 #endif
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_OnPlayerDisconnect
 Params:
@@ -639,11 +692,10 @@ Return:
 	-
 Notes:
 	Removes a player from the loop data.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #if !defined BOTSYNC_IS_BOT
-	public
-		OnPlayerDisconnect(playerid, reason)
+	hook OnPlayerDisconnect9(playerid, reason)
 	{
 		#if defined _FOREACH_BOT
 			if (!IsPlayerNPC(playerid))
@@ -661,25 +713,11 @@ Notes:
 		#else
 			Itter_Remove(Player, playerid);
 		#endif
-		if (YSI_g_OPDC)
-		{
-			return CallLocalFunction("Itter_OnPlayerDisconnect", "ii", playerid, reason);
-		}
 		return 1;
 	}
-	
-	#if defined _ALS_OnPlayerDisconnect
-		#undef OnPlayerDisconnect
-	#else
-		#define _ALS_OnPlayerDisconnect
-	#endif
-	#define OnPlayerDisconnect Itter_OnPlayerDisconnect
-	
-	forward
-		Itter_OnPlayerDisconnect(playerid, reason);
 #endif
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_ShowArray
 Params:
@@ -691,7 +729,7 @@ Return:
 Notes:
 	Pure debug function.  Has regular prints not debug prints
 	as it's only called when debug is on.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock
 	Itter_ShowArray(start, members[], size)
@@ -716,7 +754,7 @@ stock
 	}
 }
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_RandomInternal
 Params:
@@ -727,7 +765,7 @@ Return:
 	-
 Notes:
 	Returns a random value from an iterator.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock
 	Itter_RandomInternal(start, count, array[])
@@ -753,7 +791,7 @@ stock
 	return -1;
 }
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_FreeInternal
 Params:
@@ -769,7 +807,7 @@ Notes:
 	wether a slot is unused or the last one.  If you want to use the slot
 	straight after finding it the itterator will need to re-find it to add in
 	the data.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock
 	Itter_FreeInternal(start, count, array[], size)
@@ -799,7 +837,7 @@ stock
 	return -1;
 }
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_AddInternal
 Params:
@@ -811,7 +849,7 @@ Return:
 	-
 Notes:
 	Adds a value to a given itterator set.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock
 	Itter_AddInternal(&start, &count, array[], value)
@@ -852,7 +890,7 @@ stock
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_RemoveInternal
 Params:
@@ -864,7 +902,7 @@ Return:
 	-
 Notes:
 	Removes a value from an itterator.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock
 	Itter_RemoveInternal(&start, &count, array[], value)
@@ -896,7 +934,7 @@ stock
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_ClearInternal
 Params:
@@ -907,7 +945,7 @@ Return:
 	-
 Notes:
 	Resets an iterator.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock
 	Itter_ClearInternal(&start, &count, array[])
@@ -928,7 +966,7 @@ stock
 	}
 }
 
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 Function:
 	Itter_InitInternal
 Params:
@@ -940,7 +978,7 @@ Return:
 Notes:
 	Multi-dimensional arrays can't be initialised at compile time, so need to be
 	done at run time, which is slightly annoying.
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 stock
 	Itter_InitInternal(arr[][], s0, s1)

@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 					==============================
 					 y_hooks - Hook any callback!
 					==============================
@@ -17,18 +17,19 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the SA:MP script information include.
+	The Original Code is the SA:MP callback hooks include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright (C) 2008
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
-		ZeeX, koolk
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
 	
 	Thanks:
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
 		Peter, Cam - Support.
-		ZeeX - Very productive conversations.
+		ZeeX, g_aSlice/Slice, Popz, others - Very productive conversations.
 		koolk - IsPlayerinAreaEx code.
 		TheAlpha - Danish translation.
 		breadfish - German translation.
@@ -42,401 +43,480 @@ Legal:
 		Matite - Pestering me to release it and using it.
 	
 	Very special thanks to:
-		Thiadmer - PAWN.
+		Thiadmer - PAWN, whose limits continue to amaze me!
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
+	
 Version:
-	1.0
+	2.0
 Changelog:
+	17/03/11:
+		Second complete re-write using another new technique.  Now VERY fast!
+		Updated OnPlayerUpdate code using Google63's SCTRL jump code.
 	06/08/10:
 		First version
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
+
+#undef _inc_y_hooks
+
+// Multiple includes!
+#include <YSI\internal\y_unique>
+
+#if defined _INC_y_hooks
+	#endinput
+#endif
+// Everything except including "y_unique" is done once only.
+#define _INC_y_hooks
 
 #include <YSI\internal\y_version>
 #include <a_samp>
+#include <YSI\y_debug>
 
-#include <YSI\y_scripting>
-#include <YSI\y_utils>
+#include <YSI\y_amx>
 
 #define ALS_PREFIX S@@
 
 #include <YSI\y_als>
-#include <YSI\y_stringhash>
-#include <YSI\internal\y_shortfunc>
 
-#include <YSI\y_debug>
+#if !defined YSI_FILTERSCRIPT
+	new
+		bool:YSI_FILTERSCRIPT = false;
+#endif
 
-//#define Hook:%1_On%2(%3) forward %1_@%2(%3); public %1_@%2(%3)
-#define Hook:%1_On%2(%3) @yH_%2_%1(%3);@yH_%2_%1(%3)
+#define hook%0On%1(%2) UNIQUE_FUNCTION<@yH_%1...>(%2);UNIQUE_FUNCTION<@yH_%1...>(%2)
+//#define master_hook%0On%1(%2) UNIQUE_FUNCTION<@yH_%1...>(%2);UNIQUE_FUNCTION<@yH_%1...>(%2)<>{return ALS_R_%1;}UNIQUE_FUNCTION<@yH_%1...>(%2)<_YCM:y>
+#define rehook%0On%1(%2) UNIQUE_FUNCTION<@yH_%1...>(%2)
 
-#define HOOK_FUNC_SEARCH                 (Scripting_FastString('@', 'y', 'H', '_'))
+#define Hook:%0On%1(%2) UNIQUE_FUNCTION<@yH_%1...%0>(%2);UNIQUE_FUNCTION<@yH_%1...%0>(%2)
 
-#define HOOKS_INSERT<%0> tmp=_:gs_aHookFunctionPointers[ALS_On%0],gs_aHookFunctionPointers[ALS_On%0]=Bit:((tmp!=_:-1?tmp&0xFFFF:idx-1)|idx<<16);
+/*#if !defined OnPlayerLogin
+#endif
 
-//#define HOOKS_CALL<%0,%1>(%2) new t=_:gs_aHookFunctionPointers[ALS_On%0];if(t!=-1){new e=t>>>16;t&=0xFFFF;do t=Scripting_GetPublic(t,gs_szFunctionBuffer,"@yH_"#%0),P@(gs_szFunctionBuffer,#%1#x,%2);while(t!=e);}
-#define HOOKS_C_INT<%0,%1>(%2) new t=_:gs_aHookFunctionPointers[ALS_On%0];if(t!=-1){new e=t>>>16;t&=0xFFFF;do t=Scripting_GetPublic(t,gs_szFunctionBuffer,"@yH_"#%0),P@(gs_szFunctionBuffer,#%1#x,%2);while(t!=e);}
+#if !defined OnPlayerLogout
+#endif*/
 
-#define HUK_C_GameModeInit              HOOKS_C_INT<GameModeInit             ,>()
-#define HUK_C_GameModeExit              HOOKS_C_INT<GameModeExit             ,>()
-#define HUK_C_FilterScriptInit          HOOKS_C_INT<FilterScriptInit         ,>()
-#define HUK_C_FilterScriptExit          HOOKS_C_INT<FilterScriptExit         ,>()
-#define HUK_C_PlayerConnect             HOOKS_C_INT<PlayerConnect            ,i>(playerid)
-#define HUK_C_PlayerDisconnect          HOOKS_C_INT<PlayerDisconnect         ,ii>(playerid,reason)
-#define HUK_C_PlayerSpawn               HOOKS_C_INT<PlayerSpawn              ,i>(playerid)
-#define HUK_C_PlayerDeath               HOOKS_C_INT<PlayerDeath              ,iii>(playerid,killerid,reason)
-#define HUK_C_VehicleSpawn              HOOKS_C_INT<VehicleSpawn             ,i>(vehicleid)
-#define HUK_C_VehicleDeath              HOOKS_C_INT<VehicleDeath             ,ii>(vehicleid,killerid)
-#define HUK_C_PlayerText                HOOKS_C_INT<PlayerText               ,is>(playerid,text)
-#define HUK_C_PlayerCommandText         HOOKS_C_INT<PlayerCommandText        ,is>(playerid,cmdtext)
-#define HUK_C_PlayerRequestClass        HOOKS_C_INT<PlayerRequestClass       ,ii>(playerid,classid)
-#define HUK_C_PlayerEnterVehicle        HOOKS_C_INT<PlayerEnterVehicle       ,iii>(playerid,vehicleid,ispassenger)
-#define HUK_C_PlayerExitVehicle         HOOKS_C_INT<PlayerExitVehicle        ,ii>(playerid,vehicleid)
-#define HUK_C_PlayerStateChange         HOOKS_C_INT<PlayerStateChange        ,iii>(playerid,newstate,oldstate)
-#define HUK_C_PlayerEnterCheckpoint     HOOKS_C_INT<PlayerEnterCheckpoint    ,i>(playerid)
-#define HUK_C_PlayerLeaveCheckpoint     HOOKS_C_INT<PlayerLeaveCheckpoint    ,i>(playerid)
-#define HUK_C_PlayerEnterRaceCheckpoint HOOKS_C_INT<PlayerEnterRaceCheckpoint,i>(playerid)
-#define HUK_C_PlayerLeaveRaceCheckpoint HOOKS_C_INT<PlayerLeaveRaceCheckpoint,i>(playerid)
-#define HUK_C_RconCommand               HOOKS_C_INT<RconCommand              ,s>(cmd)
-#define HUK_C_PlayerRequestSpawn        HOOKS_C_INT<PlayerRequestSpawn       ,i>(playerid)
-#define HUK_C_ObjectMoved               HOOKS_C_INT<ObjectMoved              ,i>(objectid)
-#define HUK_C_PlayerObjectMoved         HOOKS_C_INT<PlayerObjectMoved        ,ii>(playerid,objectid)
-#define HUK_C_PlayerPickUpPickup        HOOKS_C_INT<PlayerPickUpPickup       ,ii>(playerid,pickupid)
-#define HUK_C_VehicleMod                HOOKS_C_INT<VehicleMod               ,iii>(playerid,vehicleid,componentid)
-#define HUK_C_EnterExitModShop          HOOKS_C_INT<EnterExitModShop         ,iii>(playerid,enterexit,interiorid)
-#define HUK_C_VehiclePaintjob           HOOKS_C_INT<VehiclePaintjob          ,iii>(playerid,vehicleid,paintjobid)
-#define HUK_C_VehicleRespray            HOOKS_C_INT<VehicleRespray           ,iiii>(playerid,vehicleid,color1,color2)
-#define HUK_C_VehicleDamageStatusUpdate HOOKS_C_INT<VehicleDamageStatusUpdate,ii>(playerid,playerid)
-#define HUK_C_PlayerSelectedMenuRow     HOOKS_C_INT<PlayerSelectedMenuRow    ,ii>(playerid,row)
-#define HUK_C_PlayerExitedMenu          HOOKS_C_INT<PlayerExitedMenu         ,i>(playerid)
-#define HUK_C_PlayerInteriorChange      HOOKS_C_INT<PlayerInteriorChange     ,iii>(playerid,newinteriorid,oldinteriorid)
-#define HUK_C_PlayerKeyStateChange      HOOKS_C_INT<PlayerKeyStateChange     ,iii>(playerid,newkeys,oldkeys)
-#define HUK_C_RconLoginAttempt          HOOKS_C_INT<RconLoginAttempt         ,ssi>(ip,password,success)
-#define HUK_C_PlayerUpdate              HOOKS_C_INT<PlayerUpdate             ,i>(playerid)
-#define HUK_C_PlayerStreamIn            HOOKS_C_INT<PlayerStreamIn           ,ii>(playerid,forplayerid)
-#define HUK_C_PlayerStreamOut           HOOKS_C_INT<PlayerStreamOut          ,ii>(playerid,forplayerid)
-#define HUK_C_VehicleStreamIn           HOOKS_C_INT<VehicleStreamIn          ,ii>(vehicleid,forplayerid)
-#define HUK_C_VehicleStreamOut          HOOKS_C_INT<VehicleStreamOut         ,ii>(vehicleid,forplayerid)
-//#define HUK_C_DialogResponse            HOOKS_C_INT<DialogResponse           ,ii>(playerid,dialogid,response,listitem,inputtext)
-#define HUK_C_PlayerClickPlayer         HOOKS_C_INT<PlayerClickPlayer        ,iii>(playerid,clickedplayerid,source)
-//#define HUK_C_DialogResponse if(inputtext[0]){HOOKS_C_INT<DialogResponse,iiiis>(playerid,dialogid,response,listitem,inputtext)}else{HOOKS_C_INT<DialogResponse,iiiis>(playerid,dialogid,response,listitem,NULL)}
+//forward Hooks_OnPlayerLogin(playerid, yid);
 
-//#define CALL_WRAPPER<%0> HUK_C_%0 ALS_CALL_%0
-#define HOOKS_CALL<%0> HUK_C_%0 ALS_C_%0
+//forward Hooks_OnPlayerLogout(playerid, yid);
 
-#define HOOKS_MAX_UPDATES               (4)
+//hook OnPlayerConnect
 
-static
-	gs_aHookFunctionPointers[ALS] = {Bit:-1, ...},
-	gs_szFunctionBuffer[32],
-	gs_aOnPlayerUpdateHooks[HOOKS_MAX_UPDATES] = {-1, ...}/*,
-	gs_pCodeStart*/;
+#if !defined HOOKS_MAX_UPDATES
+	// Slight increase from the previous version.
+	#define HOOKS_MAX_UPDATES           (8)
+#endif
 
+// One of the few places where this is still used.
 ALS_DATA<>
 
-/*static Hooks_GetNext(&idx)
-{
-	idx = Scripting_GetPublicFast(idx, gs_szFunctionBuffer, HOOK_FUNC_SEARCH);
-	if (idx == 0)
-	{
-		return -1;
-	}
-	return YHash(gs_szFunctionBuffer[4], true, hash_bernstein, strfind(gs_szFunctionBuffer[4], "_"));
-}*/
+// This includes the "hooks_do_als:" label (which should really be renamed since
+// we DON'T do ALS).  Now renamed to hooks_do_hooks_call_no_als.
+#define HOOK_C_INT<%0,%1,%2>(%3) if(Bit_GetBit(Bit:gs_ALS,_:ALS_On%0))return P@(#ALS_PREFIX"_On"#%0,#%2#x,%3);hooks_do_hooks_call_no_als:return ret;
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Hooks_GenFuncList
-Params:
-	-
-Return:
-	-
-Notes:
-	Generates a set of data describing every callback for speed later.
--*----------------------------------------------------------------------------*/
+#define HOOK_C_ScriptInit                HOOK_C_INT<ScriptInit               ,ALS_R_ScriptInit,>()
+#define HOOK_C_ScriptExit                HOOK_C_INT<ScriptExit               ,ALS_R_ScriptExit,>()
+#define HOOK_C_GameModeInit              HOOK_C_INT<GameModeInit             ,ALS_R_GameModeInit,>()
+#define HOOK_C_GameModeExit              HOOK_C_INT<GameModeExit             ,ALS_R_GameModeExit,>()
+#define HOOK_C_FilterScriptInit          HOOK_C_INT<FilterScriptInit         ,ALS_R_FilterScriptInit,>()
+#define HOOK_C_FilterScriptExit          HOOK_C_INT<FilterScriptExit         ,ALS_R_FilterScriptExit,>()
+#define HOOK_C_PlayerConnect             HOOK_C_INT<PlayerConnect            ,ALS_R_PlayerConnect,i>(playerid)
+#define HOOK_C_PlayerDisconnect          HOOK_C_INT<PlayerDisconnect         ,ALS_R_PlayerDisconnect,ii>(playerid,reason)
+#define HOOK_C_PlayerSpawn               HOOK_C_INT<PlayerSpawn              ,ALS_R_PlayerSpawn,i>(playerid)
+#define HOOK_C_PlayerDeath               HOOK_C_INT<PlayerDeath              ,ALS_R_PlayerDeath,iii>(playerid,killerid,reason)
+#define HOOK_C_VehicleSpawn              HOOK_C_INT<VehicleSpawn             ,ALS_R_VehicleSpawn,i>(vehicleid)
+#define HOOK_C_VehicleDeath              HOOK_C_INT<VehicleDeath             ,ALS_R_VehicleDeath,ii>(vehicleid,killerid)
+#define HOOK_C_PlayerText                HOOK_C_INT<PlayerText               ,ALS_R_PlayerText,is>(playerid,text)
+#define HOOK_C_PlayerCommandText         HOOK_C_INT<PlayerCommandText        ,ALS_R_PlayerCommandText,is>(playerid,cmdtext)
+#define HOOK_C_PlayerRequestClass        HOOK_C_INT<PlayerRequestClass       ,ALS_R_PlayerRequestClass,ii>(playerid,classid)
+#define HOOK_C_PlayerEnterVehicle        HOOK_C_INT<PlayerEnterVehicle       ,ALS_R_PlayerEnterVehicle,iii>(playerid,vehicleid,ispassenger)
+#define HOOK_C_PlayerExitVehicle         HOOK_C_INT<PlayerExitVehicle        ,ALS_R_PlayerExitVehicle,ii>(playerid,vehicleid)
+#define HOOK_C_PlayerStateChange         HOOK_C_INT<PlayerStateChange        ,ALS_R_PlayerStateChange,iii>(playerid,newstate,oldstate)
+#define HOOK_C_PlayerEnterCheckpoint     HOOK_C_INT<PlayerEnterCheckpoint    ,ALS_R_PlayerEnterCheckpoint,i>(playerid)
+#define HOOK_C_PlayerLeaveCheckpoint     HOOK_C_INT<PlayerLeaveCheckpoint    ,ALS_R_PlayerLeaveCheckpoint,i>(playerid)
+#define HOOK_C_PlayerEnterRaceCheckpoint HOOK_C_INT<PlayerEnterRaceCheckpoint,ALS_R_PlayerEnterRaceCheckpoint,i>(playerid)
+#define HOOK_C_PlayerLeaveRaceCheckpoint HOOK_C_INT<PlayerLeaveRaceCheckpoint,ALS_R_PlayerLeaveRaceCheckpoint,i>(playerid)
+#define HOOK_C_RconCommand               HOOK_C_INT<RconCommand              ,ALS_R_RconCommand,s>(cmd)
+#define HOOK_C_PlayerRequestSpawn        HOOK_C_INT<PlayerRequestSpawn       ,ALS_R_PlayerRequestSpawn,i>(playerid)
+#define HOOK_C_ObjectMoved               HOOK_C_INT<ObjectMoved              ,ALS_R_ObjectMoved,i>(objectid)
+#define HOOK_C_PlayerObjectMoved         HOOK_C_INT<PlayerObjectMoved        ,ALS_R_PlayerObjectMoved,ii>(playerid,objectid)
+#define HOOK_C_PlayerPickUpPickup        HOOK_C_INT<PlayerPickUpPickup       ,ALS_R_PlayerPickUpPickup,ii>(playerid,pickupid)
+#define HOOK_C_VehicleMod                HOOK_C_INT<VehicleMod               ,ALS_R_VehicleMod,iii>(playerid,vehicleid,componentid)
+#define HOOK_C_EnterExitModShop          HOOK_C_INT<EnterExitModShop         ,ALS_R_EnterExitModShop,iii>(playerid,enterexit,interiorid)
+#define HOOK_C_VehiclePaintjob           HOOK_C_INT<VehiclePaintjob          ,ALS_R_VehiclePaintjob,iii>(playerid,vehicleid,paintjobid)
+#define HOOK_C_VehicleRespray            HOOK_C_INT<VehicleRespray           ,ALS_R_VehicleRespray,iiii>(playerid,vehicleid,color1,color2)
+#define HOOK_C_VehicleDamageStatusUpdate HOOK_C_INT<VehicleDamageStatusUpdate,ALS_R_VehicleDamageStatusUpdate,ii>(playerid,vehicleid)
+#define HOOK_C_PlayerSelectedMenuRow     HOOK_C_INT<PlayerSelectedMenuRow    ,ALS_R_PlayerSelectedMenuRow,ii>(playerid,row)
+#define HOOK_C_PlayerExitedMenu          HOOK_C_INT<PlayerExitedMenu         ,ALS_R_PlayerExitedMenu,i>(playerid)
+#define HOOK_C_PlayerInteriorChange      HOOK_C_INT<PlayerInteriorChange     ,ALS_R_PlayerInteriorChange,iii>(playerid,newinteriorid,oldinteriorid)
+#define HOOK_C_PlayerKeyStateChange      HOOK_C_INT<PlayerKeyStateChange     ,ALS_R_PlayerKeyStateChange,iii>(playerid,newkeys,oldkeys)
+#define HOOK_C_RconLoginAttempt          HOOK_C_INT<RconLoginAttempt         ,ALS_R_RconLoginAttempt,ssi>(ip,password,success)
+#define HOOK_C_PlayerUpdate              HOOK_C_INT<PlayerUpdate             ,ALS_R_PlayerUpdate,i>(playerid)
+#define HOOK_C_PlayerStreamIn            HOOK_C_INT<PlayerStreamIn           ,ALS_R_PlayerStreamIn,ii>(playerid,forplayerid)
+#define HOOK_C_PlayerStreamOut           HOOK_C_INT<PlayerStreamOut          ,ALS_R_PlayerStreamOut,ii>(playerid,forplayerid)
+#define HOOK_C_VehicleStreamIn           HOOK_C_INT<VehicleStreamIn          ,ALS_R_VehicleStreamIn,ii>(vehicleid,forplayerid)
+#define HOOK_C_VehicleStreamOut          HOOK_C_INT<VehicleStreamOut         ,ALS_R_VehicleStreamOut,ii>(vehicleid,forplayerid)
+//#define HOOK_C_DialogResponse            HOOK_C_INT<DialogResponse           ,ALS_R_DialogResponse,ii>(playerid,dialogid,response,listitem,inputtext)
+#define HOOK_C_PlayerClickPlayer         HOOK_C_INT<PlayerClickPlayer        ,ALS_R_PlayerClickPlayer,iii>(playerid,clickedplayerid,source)
+#define HOOK_C_PlayerLogin               HOOK_C_INT<PlayerLogin              ,ALS_R_PlayerLogin,ii>(playerid,uid)
+#define HOOK_C_PlayerLogout              HOOK_C_INT<PlayerLogout             ,ALS_R_PlayerLogout,ii>(playerid,uid)
+#define HOOK_C_DialogResponse if(inputtext[0]){HOOK_C_INT<DialogResponse,ALS_R_DialogResponse,iiiis>(playerid,dialogid,response,listitem,inputtext)}else{HOOK_C_INT<DialogResponse,ALS_R_DialogResponse,iiiis>(playerid,dialogid,response,listitem,NULL)}
 
-static Hooks_GenFuncList()
+#define HOOK_CALL<%0> HOOK_C_%0
+
+#define HOOK_R_INT<%0,%1,%2>(%3) return Bit_GetBit(Bit:gs_ALS,_:ALS_On%0)?P@(#ALS_PREFIX"_On"#%0,#%2#x,%3):ret;
+
+#define HOOK_R_ScriptInit                HOOK_R_INT<ScriptInit               ,ALS_R_ScriptInit,>()
+#define HOOK_R_ScriptExit                HOOK_R_INT<ScriptExit               ,ALS_R_ScriptExit,>()
+#define HOOK_R_GameModeInit              HOOK_R_INT<GameModeInit             ,ALS_R_GameModeInit,>()
+#define HOOK_R_GameModeExit              HOOK_R_INT<GameModeExit             ,ALS_R_GameModeExit,>()
+#define HOOK_R_FilterScriptInit          HOOK_R_INT<FilterScriptInit         ,ALS_R_FilterScriptInit,>()
+#define HOOK_R_FilterScriptExit          HOOK_R_INT<FilterScriptExit         ,ALS_R_FilterScriptExit,>()
+#define HOOK_R_PlayerConnect             HOOK_R_INT<PlayerConnect            ,ALS_R_PlayerConnect,i>(playerid)
+#define HOOK_R_PlayerDisconnect          HOOK_R_INT<PlayerDisconnect         ,ALS_R_PlayerDisconnect,ii>(playerid,reason)
+#define HOOK_R_PlayerSpawn               HOOK_R_INT<PlayerSpawn              ,ALS_R_PlayerSpawn,i>(playerid)
+#define HOOK_R_PlayerDeath               HOOK_R_INT<PlayerDeath              ,ALS_R_PlayerDeath,iii>(playerid,killerid,reason)
+#define HOOK_R_VehicleSpawn              HOOK_R_INT<VehicleSpawn             ,ALS_R_VehicleSpawn,i>(vehicleid)
+#define HOOK_R_VehicleDeath              HOOK_R_INT<VehicleDeath             ,ALS_R_VehicleDeath,ii>(vehicleid,killerid)
+#define HOOK_R_PlayerText                HOOK_R_INT<PlayerText               ,ALS_R_PlayerText,is>(playerid,text)
+#define HOOK_R_PlayerCommandText         HOOK_R_INT<PlayerCommandText        ,ALS_R_PlayerCommandText,is>(playerid,cmdtext)
+#define HOOK_R_PlayerRequestClass        HOOK_R_INT<PlayerRequestClass       ,ALS_R_PlayerRequestClass,ii>(playerid,classid)
+#define HOOK_R_PlayerEnterVehicle        HOOK_R_INT<PlayerEnterVehicle       ,ALS_R_PlayerEnterVehicle,iii>(playerid,vehicleid,ispassenger)
+#define HOOK_R_PlayerExitVehicle         HOOK_R_INT<PlayerExitVehicle        ,ALS_R_PlayerExitVehicle,ii>(playerid,vehicleid)
+#define HOOK_R_PlayerStateChange         HOOK_R_INT<PlayerStateChange        ,ALS_R_PlayerStateChange,iii>(playerid,newstate,oldstate)
+#define HOOK_R_PlayerEnterCheckpoint     HOOK_R_INT<PlayerEnterCheckpoint    ,ALS_R_PlayerEnterCheckpoint,i>(playerid)
+#define HOOK_R_PlayerLeaveCheckpoint     HOOK_R_INT<PlayerLeaveCheckpoint    ,ALS_R_PlayerLeaveCheckpoint,i>(playerid)
+#define HOOK_R_PlayerEnterRaceCheckpoint HOOK_R_INT<PlayerEnterRaceCheckpoint,ALS_R_PlayerEnterRaceCheckpoint,i>(playerid)
+#define HOOK_R_PlayerLeaveRaceCheckpoint HOOK_R_INT<PlayerLeaveRaceCheckpoint,ALS_R_PlayerLeaveRaceCheckpoint,i>(playerid)
+#define HOOK_R_RconCommand               HOOK_R_INT<RconCommand              ,ALS_R_RconCommand,s>(cmd)
+#define HOOK_R_PlayerRequestSpawn        HOOK_R_INT<PlayerRequestSpawn       ,ALS_R_PlayerRequestSpawn,i>(playerid)
+#define HOOK_R_ObjectMoved               HOOK_R_INT<ObjectMoved              ,ALS_R_ObjectMoved,i>(objectid)
+#define HOOK_R_PlayerObjectMoved         HOOK_R_INT<PlayerObjectMoved        ,ALS_R_PlayerObjectMoved,ii>(playerid,objectid)
+#define HOOK_R_PlayerPickUpPickup        HOOK_R_INT<PlayerPickUpPickup       ,ALS_R_PlayerPickUpPickup,ii>(playerid,pickupid)
+#define HOOK_R_VehicleMod                HOOK_R_INT<VehicleMod               ,ALS_R_VehicleMod,iii>(playerid,vehicleid,componentid)
+#define HOOK_R_EnterExitModShop          HOOK_R_INT<EnterExitModShop         ,ALS_R_EnterExitModShop,iii>(playerid,enterexit,interiorid)
+#define HOOK_R_VehiclePaintjob           HOOK_R_INT<VehiclePaintjob          ,ALS_R_VehiclePaintjob,iii>(playerid,vehicleid,paintjobid)
+#define HOOK_R_VehicleRespray            HOOK_R_INT<VehicleRespray           ,ALS_R_VehicleRespray,iiii>(playerid,vehicleid,color1,color2)
+#define HOOK_R_VehicleDamageStatusUpdate HOOK_R_INT<VehicleDamageStatusUpdate,ALS_R_VehicleDamageStatusUpdate,ii>(playerid,vehicleid)
+#define HOOK_R_PlayerSelectedMenuRow     HOOK_R_INT<PlayerSelectedMenuRow    ,ALS_R_PlayerSelectedMenuRow,ii>(playerid,row)
+#define HOOK_R_PlayerExitedMenu          HOOK_R_INT<PlayerExitedMenu         ,ALS_R_PlayerExitedMenu,i>(playerid)
+#define HOOK_R_PlayerInteriorChange      HOOK_R_INT<PlayerInteriorChange     ,ALS_R_PlayerInteriorChange,iii>(playerid,newinteriorid,oldinteriorid)
+#define HOOK_R_PlayerKeyStateChange      HOOK_R_INT<PlayerKeyStateChange     ,ALS_R_PlayerKeyStateChange,iii>(playerid,newkeys,oldkeys)
+#define HOOK_R_RconLoginAttempt          HOOK_R_INT<RconLoginAttempt         ,ALS_R_RconLoginAttempt,ssi>(ip,password,success)
+#define HOOK_R_PlayerUpdate              HOOK_R_INT<PlayerUpdate             ,ALS_R_PlayerUpdate,i>(playerid)
+#define HOOK_R_PlayerStreamIn            HOOK_R_INT<PlayerStreamIn           ,ALS_R_PlayerStreamIn,ii>(playerid,forplayerid)
+#define HOOK_R_PlayerStreamOut           HOOK_R_INT<PlayerStreamOut          ,ALS_R_PlayerStreamOut,ii>(playerid,forplayerid)
+#define HOOK_R_VehicleStreamIn           HOOK_R_INT<VehicleStreamIn          ,ALS_R_VehicleStreamIn,ii>(vehicleid,forplayerid)
+#define HOOK_R_VehicleStreamOut          HOOK_R_INT<VehicleStreamOut         ,ALS_R_VehicleStreamOut,ii>(vehicleid,forplayerid)
+//#define HOOK_R_DialogResponse            HOOK_R_INT<DialogResponse           ,ALS_R_DialogResponse,ii>(playerid,dialogid,response,listitem,inputtext)
+#define HOOK_R_PlayerClickPlayer         HOOK_R_INT<PlayerClickPlayer        ,ALS_R_PlayerClickPlayer,iii>(playerid,clickedplayerid,source)
+#define HOOK_R_PlayerLogin               HOOK_R_INT<PlayerLogin              ,ALS_R_PlayerLogin,ii>(playerid,uid)
+#define HOOK_R_PlayerLogout              HOOK_R_INT<PlayerLogout             ,ALS_R_PlayerLogout,ii>(playerid,uid)
+#define HOOK_R_DialogResponse if(inputtext[0]){HOOK_R_INT<DialogResponse,ALS_R_DialogResponse,iiiis>(playerid,dialogid,response,listitem,inputtext)}else{HOOK_R_INT<DialogResponse,ALS_R_DialogResponse,iiiis>(playerid,dialogid,response,listitem,NULL)}
+
+#define HOOK_RETURN<%0> HOOK_R_%0
+
+enum E_FUNC_HOOK_DATA
 {
-	// Check for old style hooks using the new ALS library.
-	ALS_DETECT<GameModeInit>
-	#if 1
-	ALS_DETECT<GameModeExit>
-	ALS_DETECT<FilterScriptInit>
-	ALS_DETECT<FilterScriptExit>
-	ALS_DETECT<PlayerConnect>
-	ALS_DETECT<PlayerDisconnect>
-	ALS_DETECT<PlayerSpawn>
-	ALS_DETECT<PlayerDeath>
-	ALS_DETECT<VehicleSpawn>
-	ALS_DETECT<VehicleDeath>
-	ALS_DETECT<PlayerText>
-	ALS_DETECT<PlayerCommandText>
-	ALS_DETECT<PlayerRequestClass>
-	ALS_DETECT<PlayerEnterVehicle>
-	ALS_DETECT<PlayerExitVehicle>
-	ALS_DETECT<PlayerStateChange>
-	ALS_DETECT<PlayerEnterCheckpoint>
-	ALS_DETECT<PlayerLeaveCheckpoint>
-	ALS_DETECT<PlayerEnterRaceCheckpoint>
-	ALS_DETECT<PlayerLeaveRaceCheckpoint>
-	ALS_DETECT<RconCommand>
-	ALS_DETECT<PlayerRequestSpawn>
-	ALS_DETECT<ObjectMoved>
-	ALS_DETECT<PlayerObjectMoved>
-	ALS_DETECT<PlayerPickUpPickup>
-	ALS_DETECT<VehicleMod>
-	ALS_DETECT<EnterExitModShop>
-	ALS_DETECT<VehiclePaintjob>
-	ALS_DETECT<VehicleRespray>
-	ALS_DETECT<VehicleDamageStatusUpdate>
-	ALS_DETECT<PlayerSelectedMenuRow>
-	ALS_DETECT<PlayerExitedMenu>
-	ALS_DETECT<PlayerInteriorChange>
-	ALS_DETECT<PlayerKeyStateChange>
-	ALS_DETECT<RconLoginAttempt>
-	ALS_DETECT<PlayerUpdate>
-	ALS_DETECT<PlayerStreamIn>
-	ALS_DETECT<PlayerStreamOut>
-	ALS_DETECT<VehicleStreamIn>
-	ALS_DETECT<VehicleStreamOut>
-	ALS_DETECT<DialogResponse>
-	ALS_DETECT<PlayerClickPlayer>
-	#endif
-	// Check for new style hooks.  This gets the bounds of functions, to make
-	// later calls very slightly faster!
+	E_FUNC_HOOK_DATA_START,
+	E_FUNC_HOOK_DATA_END
+}
+
+static stock
+	YSI_g_sCallbackAddresses[HOOKS_MAX_UPDATES * _:ALS],
+	YSI_g_sCallbackData[ALS][E_FUNC_HOOK_DATA],
+	YSI_g_sLastFoundIndex;
+
+static Hooks_RedirectPublic(from[], to[])
+{
+	P:4("Hooks_RedirectPublic called: \"%s\", \"%s\"", from, to);
 	new
-		idx = 0,
-		tmp;
-	// For some reason compile time initialisation didn't work...
-	for (new ALS:i; i != ALS; ++i)
+		addr;
+	if (AMX_GetPublicEntry(0, addr, from))
 	{
-		gs_aHookFunctionPointers[i] = -1;
-	}
-	for ( ; ; )
-	{
-		idx = Scripting_GetPublicFast(idx, gs_szFunctionBuffer, HOOK_FUNC_SEARCH);
-		if (idx == 0)
+		new
+			pointer;
+		if (AMX_GetPublicPointer(0, pointer, to))
 		{
-			break;
-		}
-		//return YHash(gs_szFunctionBuffer[4], true, bernstein, strfind(gs_szFunctionBuffer[4], "_"));
-		//switch (Hooks_GetNext(idx))
-		switch (YHash(gs_szFunctionBuffer[4], true, hash_bernstein, strfind(gs_szFunctionBuffer[4], "_")))
-		{
-			case _H(G,a,m,e,M,o,d,e,I,n,i,t):
-				HOOKS_INSERT<GameModeInit>
-			case _H(G,a,m,e,M,o,d,e,E,x,i,t):
-				HOOKS_INSERT<GameModeExit>
-			case _H(F,i,l,t,e,r,S,c,r,i,p,t,I,n,i,t):
-				HOOKS_INSERT<FilterScriptInit>
-			case _H(F,i,l,t,e,r,S,c,r,i,p,t,E,x,i,t):
-				HOOKS_INSERT<FilterScriptExit>
-			case _H(P,l,a,y,e,r,C,o,n,n,e,c,t):
-				HOOKS_INSERT<PlayerConnect>
-			case _H(P,l,a,y,e,r,D,i,s,c,o,n,n,e,c,t):
-				HOOKS_INSERT<PlayerDisconnect>
-			case _H(P,l,a,y,e,r,S,p,a,w,n):
-				HOOKS_INSERT<PlayerSpawn>
-			case _H(P,l,a,y,e,r,D,e,a,t,h):
-				HOOKS_INSERT<PlayerDeath>
-			case _H(V,e,h,i,c,l,e,S,p,a,w,n):
-				HOOKS_INSERT<VehicleSpawn>
-			case _H(V,e,h,i,c,l,e,D,e,a,t,h):
-				HOOKS_INSERT<VehicleDeath>
-			case _H(P,l,a,y,e,r,T,e,x,t):
-				HOOKS_INSERT<PlayerText>
-			case _H(P,l,a,y,e,r,C,o,m,m,a,n,d,T,e,x,t):
-				HOOKS_INSERT<PlayerCommandText>
-			case _H(P,l,a,y,e,r,R,e,q,u,e,s,t,C,l,a,s,s):
-				HOOKS_INSERT<PlayerRequestClass>
-			case _H(P,l,a,y,e,r,E,n,t,e,r,V,e,h,i,c,l,e,):
-				HOOKS_INSERT<PlayerEnterVehicle>
-			case _H(P,l,a,y,e,r,E,x,i,t,V,e,h,i,c,l,e,):
-				HOOKS_INSERT<PlayerExitVehicle>
-			case _H(P,l,a,y,e,r,S,t,a,t,e,C,h,a,n,g,e):
-				HOOKS_INSERT<PlayerStateChange>
-			case _H(P,l,a,y,e,r,E,n,t,e,r,C,h,e,c,k,p,o,i,n,t), _H(P,l,a,y,e,r,E,n,t,e,r,C,P):
-				HOOKS_INSERT<PlayerEnterCheckpoint>
-			case _H(P,l,a,y,e,r,L,e,a,v,e,C,h,e,c,k,p,o,i,n,t), _H(P,l,a,y,e,r,L,e,a,v,e,C,P):
-				HOOKS_INSERT<PlayerLeaveCheckpoint>
-			case _H(P,l,a,y,e,r,E,n,t,e,r,R,a,c,e,C,h,e,c,k,p,o,i,n,t), _H(P,l,a,y,e,r,E,n,t,e,r,R,C,P):
-				HOOKS_INSERT<PlayerEnterRaceCheckpoint>
-			case _H(P,l,a,y,e,r,L,e,a,v,e,R,a,c,e,C,h,e,c,k,p,o,i,n,t), _H(P,l,a,y,e,r,L,e,a,v,e,R,C,P):
-				HOOKS_INSERT<PlayerLeaveRaceCheckpoint>
-			case _H(R,c,o,n,C,o,m,m,a,n,d):
-				HOOKS_INSERT<RconCommand>
-			case _H(P,l,a,y,e,r,R,e,q,u,e,s,t,S,p,a,w,n):
-				HOOKS_INSERT<PlayerRequestSpawn>
-			case _H(O,b,j,e,c,t,M,o,v,e,d):
-				HOOKS_INSERT<ObjectMoved>
-			case _H(P,l,a,y,e,r,O,b,j,e,c,t,M,o,v,e,d):
-				HOOKS_INSERT<PlayerObjectMoved>
-			case _H(P,l,a,y,e,r,P,i,c,k,U,p,P,i,c,k,u,p):
-				HOOKS_INSERT<PlayerPickUpPickup>
-			case _H(V,e,h,i,c,l,e,M,o,d):
-				HOOKS_INSERT<VehicleMod>
-			case _H(E,n,t,e,r,E,x,i,t,M,o,d,S,h,o,p):
-				HOOKS_INSERT<EnterExitModShop>
-			case _H(V,e,h,i,c,l,e,P,a,i,n,t,j,o,b):
-				HOOKS_INSERT<VehiclePaintjob>
-			case _H(V,e,h,i,c,l,e,R,e,s,p,r,a,y):
-				HOOKS_INSERT<VehicleRespray>
-			case _H(V,e,h,i,c,l,e,D,a,m,a,g,e,S,t,a,t,u,s,U,p,d,a,t,e), _H(V,e,h,i,c,l,e,D,a,m,a,g,e,U,p,d,a,t,e):
-				HOOKS_INSERT<VehicleDamageStatusUpdate>
-			case _H(P,l,a,y,e,r,S,e,l,e,c,t,e,d,M,e,n,u,R,o,w), _H(P,l,a,y,e,r,S,e,l,e,c,t,e,d,M,e,n,u):
-				HOOKS_INSERT<PlayerSelectedMenuRow>
-			case _H(P,l,a,y,e,r,E,x,i,t,e,d,M,e,n,u):
-				HOOKS_INSERT<PlayerExitedMenu>
-			case _H(P,l,a,y,e,r,I,n,t,e,r,i,o,r,C,h,a,n,g,e):
-				HOOKS_INSERT<PlayerInteriorChange>
-			case _H(P,l,a,y,e,r,K,e,y,S,t,a,t,e,C,h,a,n,g,e):
-				HOOKS_INSERT<PlayerKeyStateChange>
-			case _H(R,c,o,n,L,o,g,i,n,A,t,t,e,m,p,t):
-				HOOKS_INSERT<RconLoginAttempt>
-			case _H(P,l,a,y,e,r,S,t,r,e,a,m,I,n):
-				HOOKS_INSERT<PlayerStreamIn>
-			case _H(P,l,a,y,e,r,S,t,r,e,a,m,O,u,t):
-				HOOKS_INSERT<PlayerStreamOut>
-			case _H(V,e,h,i,c,l,e,S,t,r,e,a,m,I,n):
-				HOOKS_INSERT<VehicleStreamIn>
-			case _H(V,e,h,i,c,l,e,S,t,r,e,a,m,O,u,t):
-				HOOKS_INSERT<VehicleStreamOut>
-			case _H(D,i,a,l,o,g,R,e,s,p,o,n,s,e):
-				HOOKS_INSERT<DialogResponse>
-			case _H(P,l,a,y,e,r,C,l,i,c,k,P,l,a,y,e,r):
-				HOOKS_INSERT<PlayerClickPlayer>
-			case -1:
-				// Do nothing - end condition.
-				break;
-			case _H(P,l,a,y,e,r,U,p,d,a,t,e):
-			{
-				//HOOKS_INSERT<PlayerUpdate>
-				// This uses different code to improve speed a little bit.
-				tmp = _:gs_aHookFunctionPointers[ALS_OnPlayerUpdate];
-				if (tmp == -1)
-				{
-					gs_aHookFunctionPointers[ALS_OnPlayerUpdate] = Bit:0;
-					// Save the index of the first OnPlayerUpdate function.
-					gs_aOnPlayerUpdateHooks[0] = idx - 1;
-					//gs_aOnPlayerUpdateHooks[0] = Scripting_GetPublicPointer(gs_szFunctionBuffer);
-				}
-				else
-				{
-					// f = First, the upper limit.
-					// s = Second, the lower limit.
-					// Note that this only supports 65535 public functions, but
-					// I suspect the compiler may get a little upset before you
-					// reach that number - and if it doesn't you're going to
-					// end up with a HUGE AMX!
-					// f should always be larger than s in a normal system, even
-					// if it's only 1 larger.
-					new
-						s = tmp & 0xFFFF;
-					if (tmp & 0xFFFF0000)
-					{
-						// Given up counting - too many for quick
-						// resolution.
-						gs_aHookFunctionPointers[ALS_OnPlayerUpdate] = Bit:(s | idx << 16);
-					}
-					else
-					{
-						// Counting.
-						if (++s == HOOKS_MAX_UPDATES)
-						{
-							// Reached the limit of the number of quick hooks
-							// for OnPlayerUpdate supported.
-							gs_aHookFunctionPointers[ALS_OnPlayerUpdate] = Bit:(idx - 1 | idx << 16);
-						}
-						else
-						{
-							gs_aOnPlayerUpdateHooks[s] = idx - 1;
-							//gs_aOnPlayerUpdateHooks[s] = Scripting_GetPublicPointer(gs_szFunctionBuffer);
-							gs_aHookFunctionPointers[ALS_OnPlayerUpdate] = Bit:s;
-						}
-					}
-				}
-				//gs_aHookFunctionPointers[ALS_OnPlayerUpdate] = Bit:((tmp!=_:-1?tmp&0xFFFF:idx-1)|idx<<16);
-			}
-		}
-	}
-	// Now, skip functions we don't need...  This is actually self modifying
-	// code, so if you don't use any of the Hook: features, they are never even
-	// called.  The functionality of this script depends entirely on the rest of
-	// the script.  This can't be made in to a macro because #OnWhatever needs
-	// to stringise the value in the current define if it exists, whereas doing
-	// #On%0 would just make a string of "OnWhatever".
-	if (gs_aHookFunctionPointers[ALS_OnGameModeInit] == Bit:-1) Scripting_RedirectPublic(#OnGameModeInit, Scripting_GetPublicPointer("S@@_OnGameModeInit"));
-	// Now the same again.
-	#if 1
-	if (gs_aHookFunctionPointers[ALS_OnGameModeExit] == Bit:-1) Scripting_RedirectPublic(#OnGameModeExit, Scripting_GetPublicPointer("S@@_OnGameModeExit"));
-	if (gs_aHookFunctionPointers[ALS_OnFilterScriptInit] == Bit:-1) Scripting_RedirectPublic(#OnFilterScriptInit, Scripting_GetPublicPointer("S@@_OnFilterScriptInit"));
-	if (gs_aHookFunctionPointers[ALS_OnFilterScriptExit] == Bit:-1) Scripting_RedirectPublic(#OnFilterScriptExit, Scripting_GetPublicPointer("S@@_OnFilterScriptExit"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerConnect] == Bit:-1) Scripting_RedirectPublic(#OnPlayerConnect, Scripting_GetPublicPointer("S@@_OnPlayerConnect"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerDisconnect] == Bit:-1) Scripting_RedirectPublic(#OnPlayerDisconnect, Scripting_GetPublicPointer("S@@_OnPlayerDisconnect"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerSpawn] == Bit:-1) Scripting_RedirectPublic(#OnPlayerSpawn, Scripting_GetPublicPointer("S@@_OnPlayerSpawn"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerDeath] == Bit:-1) Scripting_RedirectPublic(#OnPlayerDeath, Scripting_GetPublicPointer("S@@_OnPlayerDeath"));
-	if (gs_aHookFunctionPointers[ALS_OnVehicleSpawn] == Bit:-1) Scripting_RedirectPublic(#OnVehicleSpawn, Scripting_GetPublicPointer("S@@_OnVehicleSpawn"));
-	if (gs_aHookFunctionPointers[ALS_OnVehicleDeath] == Bit:-1) Scripting_RedirectPublic(#OnVehicleDeath, Scripting_GetPublicPointer("S@@_OnVehicleDeath"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerText] == Bit:-1) Scripting_RedirectPublic(#OnPlayerText, Scripting_GetPublicPointer("S@@_OnPlayerText"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerCommandText] == Bit:-1) Scripting_RedirectPublic(#OnPlayerCommandText, Scripting_GetPublicPointer("S@@_OnPlayerCommandText"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerRequestClass] == Bit:-1) Scripting_RedirectPublic(#OnPlayerRequestClass, Scripting_GetPublicPointer("S@@_OnPlayerRequestClass"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerEnterVehicle] == Bit:-1) Scripting_RedirectPublic(#OnPlayerEnterVehicle, Scripting_GetPublicPointer("S@@_OnPlayerEnterVehicle"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerExitVehicle] == Bit:-1) Scripting_RedirectPublic(#OnPlayerExitVehicle, Scripting_GetPublicPointer("S@@_OnPlayerExitVehicle"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerStateChange] == Bit:-1) Scripting_RedirectPublic(#OnPlayerStateChange, Scripting_GetPublicPointer("S@@_OnPlayerStateChange"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerEnterCheckpoint] == Bit:-1) Scripting_RedirectPublic(#OnPlayerEnterCheckpoint, Scripting_GetPublicPointer("S@@_OnPlayerEnterCheckpoint"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerLeaveCheckpoint] == Bit:-1) Scripting_RedirectPublic(#OnPlayerLeaveCheckpoint, Scripting_GetPublicPointer("S@@_OnPlayerLeaveCheckpoint"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerEnterRaceCheckpoint] == Bit:-1) Scripting_RedirectPublic(#OnPlayerEnterRaceCheckpoint, Scripting_GetPublicPointer("S@@_OnPlayerEnterRaceCheckpoint"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerLeaveRaceCheckpoint] == Bit:-1) Scripting_RedirectPublic(#OnPlayerLeaveRaceCheckpoint, Scripting_GetPublicPointer("S@@_OnPlayerLeaveRaceCheckpoint"));
-	if (gs_aHookFunctionPointers[ALS_OnRconCommand] == Bit:-1) Scripting_RedirectPublic(#OnRconCommand, Scripting_GetPublicPointer("S@@_OnRconCommand"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerRequestSpawn] == Bit:-1) Scripting_RedirectPublic(#OnPlayerRequestSpawn, Scripting_GetPublicPointer("S@@_OnPlayerRequestSpawn"));
-	if (gs_aHookFunctionPointers[ALS_OnObjectMoved] == Bit:-1) Scripting_RedirectPublic(#OnObjectMoved, Scripting_GetPublicPointer("S@@_OnObjectMoved"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerObjectMoved] == Bit:-1) Scripting_RedirectPublic(#OnPlayerObjectMoved, Scripting_GetPublicPointer("S@@_OnPlayerObjectMoved"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerPickUpPickup] == Bit:-1) Scripting_RedirectPublic(#OnPlayerPickUpPickup, Scripting_GetPublicPointer("S@@_OnPlayerPickUpPickup"));
-	if (gs_aHookFunctionPointers[ALS_OnVehicleMod] == Bit:-1) Scripting_RedirectPublic(#OnVehicleMod, Scripting_GetPublicPointer("S@@_OnVehicleMod"));
-	if (gs_aHookFunctionPointers[ALS_OnEnterExitModShop] == Bit:-1) Scripting_RedirectPublic(#OnEnterExitModShop, Scripting_GetPublicPointer("S@@_OnEnterExitModShop"));
-	if (gs_aHookFunctionPointers[ALS_OnVehiclePaintjob] == Bit:-1) Scripting_RedirectPublic(#OnVehiclePaintjob, Scripting_GetPublicPointer("S@@_OnVehiclePaintjob"));
-	if (gs_aHookFunctionPointers[ALS_OnVehicleRespray] == Bit:-1) Scripting_RedirectPublic(#OnVehicleRespray, Scripting_GetPublicPointer("S@@_OnVehicleRespray"));
-	if (gs_aHookFunctionPointers[ALS_OnVehicleDamageStatusUpdate] == Bit:-1) Scripting_RedirectPublic(#OnVehicleDamageStatusUpdate, Scripting_GetPublicPointer("S@@_OnVehicleDamageStatusUpdate"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerSelectedMenuRow] == Bit:-1) Scripting_RedirectPublic(#OnPlayerSelectedMenuRow, Scripting_GetPublicPointer("S@@_OnPlayerSelectedMenuRow"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerExitedMenu] == Bit:-1) Scripting_RedirectPublic(#OnPlayerExitedMenu, Scripting_GetPublicPointer("S@@_OnPlayerExitedMenu"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerInteriorChange] == Bit:-1) Scripting_RedirectPublic(#OnPlayerInteriorChange, Scripting_GetPublicPointer("S@@_OnPlayerInteriorChange"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerKeyStateChange] == Bit:-1) Scripting_RedirectPublic(#OnPlayerKeyStateChange, Scripting_GetPublicPointer("S@@_OnPlayerKeyStateChange"));
-	if (gs_aHookFunctionPointers[ALS_OnRconLoginAttempt] == Bit:-1) Scripting_RedirectPublic(#OnRconLoginAttempt, Scripting_GetPublicPointer("S@@_OnRconLoginAttempt"));
-	//if (gs_aHookFunctionPointers[ALS_OnPlayerUpdate] == Bit:-1) Scripting_RedirectPublic(#OnPlayerUpdate, Scripting_GetPublicPointer("S@@_OnPlayerUpdate"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerStreamIn] == Bit:-1) Scripting_RedirectPublic(#OnPlayerStreamIn, Scripting_GetPublicPointer("S@@_OnPlayerStreamIn"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerStreamOut] == Bit:-1) Scripting_RedirectPublic(#OnPlayerStreamOut, Scripting_GetPublicPointer("S@@_OnPlayerStreamOut"));
-	if (gs_aHookFunctionPointers[ALS_OnVehicleStreamIn] == Bit:-1) Scripting_RedirectPublic(#OnVehicleStreamIn, Scripting_GetPublicPointer("S@@_OnVehicleStreamIn"));
-	if (gs_aHookFunctionPointers[ALS_OnVehicleStreamOut] == Bit:-1) Scripting_RedirectPublic(#OnVehicleStreamOut, Scripting_GetPublicPointer("S@@_OnVehicleStreamOut"));
-	if (gs_aHookFunctionPointers[ALS_OnDialogResponse] == Bit:-1) Scripting_RedirectPublic(#OnDialogResponse, Scripting_GetPublicPointer("S@@_OnDialogResponse"));
-	if (gs_aHookFunctionPointers[ALS_OnPlayerClickPlayer] == Bit:-1) Scripting_RedirectPublic(#OnPlayerClickPlayer, Scripting_GetPublicPointer("S@@_OnPlayerClickPlayer"));
-	#endif
-	// The OnPlayerUpdate code is special.
-	tmp = _:gs_aHookFunctionPointers[ALS_OnPlayerUpdate];
-	if (tmp == -1)
-	{
-		Scripting_RedirectPublic(#OnPlayerUpdate, Scripting_GetPublicPointer("S@@_OnPlayerUpdate"));
-	}
-	else
-	{
-		if (!(tmp & 0xFFFF))
-		{
-			// Some fast find functions, but no normal ones.
-			gs_aHookFunctionPointers[ALS_OnPlayerUpdate] = Bit:-1;
+			AMX_Write(addr, pointer);
 		}
 	}
 }
 
-#pragma tabsize 0
+static Hooks_AddOne(idx, &toaddidx, struc[E_FUNC_HOOK_DATA])
+{
+	// This is a combination between the count and the end point.
+	++struc[E_FUNC_HOOK_DATA_END];
+	if (toaddidx == sizeof (YSI_g_sCallbackAddresses))
+	{
+		if (struc[E_FUNC_HOOK_DATA_START] != sizeof (YSI_g_sCallbackAddresses))
+		{
+			YSI_g_sLastFoundIndex = idx;
+		}
+	}
+	else
+	{
+		new
+			addr = (idx - 1) * 8 + AMX_HEADER_PUBLICS;
+		#emit LREF.S.pri addr
+		#emit STOR.S.pri addr
+		YSI_g_sCallbackAddresses[toaddidx++] = addr;
+	}
+}
 
-// Hook OnGameModeInit using the old system to call the new system.
+static Hooks_FindAll(name[], &toaddidx, struc[E_FUNC_HOOK_DATA], &count)
+{
+	new
+		buffer[32],
+		len = strlen(name);
+	struc[E_FUNC_HOOK_DATA_START] = toaddidx;
+	struc[E_FUNC_HOOK_DATA_END] = toaddidx;
+	for (new idx; (idx = AMX_GetPublicNamePrefix(idx, buffer, _A<@yH_>)); )
+	{
+		if (!strcmp(name, buffer[1], false, len))
+		{
+			Hooks_AddOne(idx, toaddidx, struc);
+		}
+	}
+	if (struc[E_FUNC_HOOK_DATA_START] < sizeof (YSI_g_sCallbackAddresses) && struc[E_FUNC_HOOK_DATA_END] >= sizeof (YSI_g_sCallbackAddresses))
+	{
+		P:W("y_hooks buffer exhausted, resorting to slow method.");
+	}
+	count = struc[E_FUNC_HOOK_DATA_END] - struc[E_FUNC_HOOK_DATA_START];
+	// Don't store the end, if the count goes off the end of the addresses array
+	// then we need to just start reading from the AMX directly.
+}
+
+#define HOOKS_DO_ONE_CALLBACK<%0> ALS_DETECT<%0>Hooks_FindAll(#%0,cidx,YSI_g_sCallbackData[ALS_On%0],count);if(!count)Hooks_RedirectPublic(#On%0,#S@@_On%0);
+
+static Hooks_OnScriptInit()
+{
+	P:2("Hooks_OnScriptInit called");
+	new
+		cidx,
+		count;
+	//HOOKS_DO_ONE_CALLBACK<AnyScriptInit>
+	//HOOKS_DO_ONE_CALLBACK<AnyScriptExit>
+	HOOKS_DO_ONE_CALLBACK<ScriptInit>
+	HOOKS_DO_ONE_CALLBACK<ScriptExit>
+	HOOKS_DO_ONE_CALLBACK<GameModeInit>
+	HOOKS_DO_ONE_CALLBACK<GameModeExit>
+	HOOKS_DO_ONE_CALLBACK<FilterScriptInit>
+	HOOKS_DO_ONE_CALLBACK<FilterScriptExit>
+	HOOKS_DO_ONE_CALLBACK<PlayerConnect>
+	HOOKS_DO_ONE_CALLBACK<PlayerDisconnect>
+	HOOKS_DO_ONE_CALLBACK<PlayerSpawn>
+	HOOKS_DO_ONE_CALLBACK<PlayerDeath>
+	HOOKS_DO_ONE_CALLBACK<VehicleSpawn>
+	HOOKS_DO_ONE_CALLBACK<VehicleDeath>
+	HOOKS_DO_ONE_CALLBACK<PlayerText>
+	HOOKS_DO_ONE_CALLBACK<PlayerCommandText>
+	HOOKS_DO_ONE_CALLBACK<PlayerRequestClass>
+	HOOKS_DO_ONE_CALLBACK<PlayerEnterVehicle>
+	HOOKS_DO_ONE_CALLBACK<PlayerExitVehicle>
+	HOOKS_DO_ONE_CALLBACK<PlayerStateChange>
+	HOOKS_DO_ONE_CALLBACK<PlayerEnterCheckpoint>
+	HOOKS_DO_ONE_CALLBACK<PlayerLeaveCheckpoint>
+	HOOKS_DO_ONE_CALLBACK<PlayerEnterRaceCheckpoint>
+	HOOKS_DO_ONE_CALLBACK<PlayerLeaveRaceCheckpoint>
+	HOOKS_DO_ONE_CALLBACK<RconCommand>
+	HOOKS_DO_ONE_CALLBACK<PlayerRequestSpawn>
+	HOOKS_DO_ONE_CALLBACK<ObjectMoved>
+	HOOKS_DO_ONE_CALLBACK<PlayerObjectMoved>
+	HOOKS_DO_ONE_CALLBACK<PlayerPickUpPickup>
+	HOOKS_DO_ONE_CALLBACK<VehicleMod>
+	HOOKS_DO_ONE_CALLBACK<EnterExitModShop>
+	HOOKS_DO_ONE_CALLBACK<VehiclePaintjob>
+	HOOKS_DO_ONE_CALLBACK<VehicleRespray>
+	HOOKS_DO_ONE_CALLBACK<VehicleDamageStatusUpdate>
+	HOOKS_DO_ONE_CALLBACK<PlayerSelectedMenuRow>
+	HOOKS_DO_ONE_CALLBACK<PlayerExitedMenu>
+	HOOKS_DO_ONE_CALLBACK<PlayerInteriorChange>
+	HOOKS_DO_ONE_CALLBACK<PlayerKeyStateChange>
+	HOOKS_DO_ONE_CALLBACK<RconLoginAttempt>
+	HOOKS_DO_ONE_CALLBACK<PlayerUpdate>
+	HOOKS_DO_ONE_CALLBACK<PlayerStreamIn>
+	HOOKS_DO_ONE_CALLBACK<PlayerStreamOut>
+	HOOKS_DO_ONE_CALLBACK<VehicleStreamIn>
+	HOOKS_DO_ONE_CALLBACK<VehicleStreamOut>
+	HOOKS_DO_ONE_CALLBACK<DialogResponse>
+	HOOKS_DO_ONE_CALLBACK<PlayerClickPlayer>
+	HOOKS_DO_ONE_CALLBACK<PlayerLogin>
+	HOOKS_DO_ONE_CALLBACK<PlayerLogout>
+	new
+		end   = YSI_g_sCallbackData[ALS_OnScriptInit][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnScriptInit][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_ScriptInit;
+	if (start == end)
+	{
+		// We need to use this version of the return code instead of jumping to
+		// the end of the function because "#emit" can only see labels BEFORE
+		// where it is in the code.  This is quite annoying but can be worked
+		// around in this case.
+		P:2("Hooks_OnScriptInit end");
+hooks_do_hooks_call_no_als:
+		return;
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		//#emit CONST.alt  0xFFFFFFFF
+		//#emit PUSH.alt
+		/*#emit HEAP 4
+		#emit STOR.I
+		#emit PUSH.alt
+		printf("%d");
+		#emit STACK 4
+		#emit HEAP 0xFFFFFFFC*/
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_ScriptInit");
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnScriptInit end");
+}
+
+static Hooks_OnScriptExit()
+{
+	P:2("Hooks_OnScriptExit called");
+	new
+		end   = YSI_g_sCallbackData[ALS_OnScriptExit][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnScriptExit][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_ScriptExit;
+	if (start == end)
+	{
+		P:2("Hooks_OnScriptExit end");
+hooks_do_hooks_call_no_als:
+		return;
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_ScriptExit");
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnScriptExit end");
+}
+
 public OnGameModeInit()
 {
-	#if !defined FILTERSCRIPT
-		// Generate the list of functions
-		Hooks_GenFuncList();
-	#endif
-	HOOKS_CALL<GameModeInit>
-	//HOOKS_CALL<GameModeInit,>()
-	//ALS_CALL<OnGameModeInit,>()
+	P:2("Hooks_OnGameModeInit called: %d", YSI_FILTERSCRIPT);
+	if (!YSI_FILTERSCRIPT)
+	{
+		Hooks_OnScriptInit();
+		//Hooks_OnAnyScriptInit();
+	}
+	new
+		end   = YSI_g_sCallbackData[ALS_OnGameModeInit][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnGameModeInit][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_GameModeInit;
+	if (start == end)
+	{
+		P:2("Hooks_OnGameModeInit end");
+		HOOK_CALL<GameModeInit>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		// Note that this label is embedded in the "HOOK_CALL" macro above.
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_GameModeInit");
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnGameModeInit end");
+	HOOK_RETURN<GameModeInit>
 }
 #if defined _ALS_OnGameModeInit
 	#undef OnGameModeInit
@@ -446,108 +526,63 @@ public OnGameModeInit()
 #define OnGameModeInit S@@_OnGameModeInit
 ALS_FORWARD<GameModeInit>
 
-public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
-{
-	if (inputtext[0])
-	{
-		HOOKS_C_INT<DialogResponse,iiiis>(playerid,dialogid,response,listitem,inputtext)
-		ALS_C_INT<DialogResponse,1,iiiis>(playerid,dialogid,response,listitem,inputtext)
-	}
-	else
-	{
-		HOOKS_C_INT<DialogResponse,iiiis>(playerid,dialogid,response,listitem,NULL)
-		ALS_C_INT<DialogResponse,1,iiiis>(playerid,dialogid,response,listitem,NULL)
-	}
-	//HOOKS_CALL<DialogResponse>
-}
-#if defined _ALS_OnDialogResponse
-	#undef OnDialogResponse
-#else
-	#define _ALS_OnDialogResponse
-#endif
-#define OnDialogResponse S@@_OnDialogResponse
-ALS_FORWARD<DialogResponse>
-
-public OnPlayerUpdate(playerid)
-{
-	P:1("Hooks_OnPlayerUpdate called");
-	// This is the special one.
-	for (new i = 0; i != HOOKS_MAX_UPDATES; ++i)
-	{
-		P:2("Hooks_OnPlayerUpdate: i = %d", i);
-		new
-			tmp = gs_aOnPlayerUpdateHooks[i];
-		if (tmp == -1)
-		{
-			ALS_CALL<PlayerUpdate>
-		}
-		// This function can return any public, it's not limited to getting
-		// OnPlayerUpdate functions, but the passed index means it will reach a
-		// matching function, which will be an update function, instantly.
-		Scripting_GetPublicFast(tmp, gs_szFunctionBuffer, HOOK_FUNC_SEARCH);
-		CallLocalFunction(gs_szFunctionBuffer,"i", playerid);
-	}
-	P:2("Hooks_OnPlayerUpdate ended");
-	// This uses the normal call wrapper.
-	HOOKS_CALL<PlayerUpdate>
-}
-#if defined _ALS_OnPlayerUpdate
-	#undef OnPlayerUpdate
-#else
-	#define _ALS_OnPlayerUpdate
-#endif
-#define OnPlayerUpdate S@@_OnPlayerUpdate
-ALS_FORWARD<PlayerUpdate>
-
-public OnFilterScriptInit()
-{
-	#if defined FILTERSCRIPT
-		// Generate the list of functions
-		Hooks_GenFuncList();
-	#endif
-	HOOKS_CALL<FilterScriptInit>
-}
-#if defined _ALS_OnFilterScriptInit
-	#undef OnFilterScriptInit
-#else
-	#define _ALS_OnFilterScriptInit
-#endif
-#define OnFilterScriptInit S@@_OnFilterScriptInit
-ALS_FORWARD<FilterScriptInit>
-
-// =============================================================================
-// =============================================================================
-// |||                                                                       |||
-// |||   NOTE:                                                               |||
-// |||                                                                       |||
-// |||     EVERYTHING BEYOND THIS POINT IS BORING AND CAN BE IGNORED -       |||
-// |||     IT'S JUST THE SAME CODE OVER AND OVER FOR EVERY CALLBACK:         |||
-// |||                                                                       |||
-// |||                                                                       |||
-// |||       public OnPlayerConnect(playerid)                                |||
-// |||       {                                                               |||
-// |||           HOOKS_CALL<PlayerConnect>                                   |||
-// |||       }                                                               |||
-// |||       #if defined _ALS_OnPlayerConnect                                |||
-// |||           #undef OnPlayerConnect                                      |||
-// |||       #else                                                           |||
-// |||           #define _ALS_OnPlayerConnect                                |||
-// |||       #endif                                                          |||
-// |||       #define OnPlayerConnect S@@_OnPlayerConnect                     |||
-// |||       ALS_FORWARD<PlayerConnect>                                      |||
-// |||                                                                       |||
-// |||                                                                       |||
-// |||     THE "#if 1" WILL ALLOW YOU TO HIDE ALL THE CODE IN AN             |||
-// |||     EDITOR WITH CODE FOLDING, FOR EXAMPLE NOTEPAD++                   |||
-// |||                                                                       |||
-// =============================================================================
-// =============================================================================
-
-#if 1
-
 public OnGameModeExit()
 {
-	HOOKS_CALL<GameModeExit>
+	P:2("Hooks_OnGameModeExit called");
+	if (!YSI_FILTERSCRIPT)
+	{
+		Hooks_OnScriptExit();
+		//Hooks_OnAnyScriptExit();
+	}
+	new
+		end   = YSI_g_sCallbackData[ALS_OnGameModeExit][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnGameModeExit][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_GameModeExit;
+	if (start == end)
+	{
+		P:2("Hooks_OnGameModeExit end");
+		HOOK_CALL<GameModeExit>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_GameModeExit");
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnGameModeExit end");
+	HOOK_RETURN<GameModeExit>
 }
 #if defined _ALS_OnGameModeExit
 	#undef OnGameModeExit
@@ -557,9 +592,237 @@ public OnGameModeExit()
 #define OnGameModeExit S@@_OnGameModeExit
 ALS_FORWARD<GameModeExit>
 
+/*static Hooks_OnAnyScriptInit()
+{
+	P:2("Hooks_OnAnyScriptInit called");
+	new
+		end   = YSI_g_sCallbackData[ALS_OnAnyScriptInit][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnAnyScriptInit][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerCommandText;
+	if (start == end)
+	{
+		P:2("Hooks_OnAnyScriptInit end");
+		//HOOK_CALL<AnyScriptInit>
+hooks_do_hooks_call_no_als:
+		return;
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		// Note that this label is embedded in the "HOOK_CALL" macro above.
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_AnyScriptInit");
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnAnyScriptInit end");
+	//HOOK_RETURN<AnyScriptInit>
+}
+
+static Hooks_OnAnyScriptExit()
+{
+	P:2("Hooks_OnAnyScriptExit called");
+	new
+		end   = YSI_g_sCallbackData[ALS_OnAnyScriptExit][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnAnyScriptExit][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerCommandText;
+	if (start == end)
+	{
+		P:2("Hooks_OnAnyScriptExit end");
+		//HOOK_CALL<AnyScriptExit>
+hooks_do_hooks_call_no_als:
+		return;
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_AnyScriptExit");
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnAnyScriptExit end");
+	//HOOK_RETURN<AnyScriptExit>
+}*/
+
+public OnFilterScriptInit()
+{
+	P:2("Hooks_OnFilterScriptInit called");
+	Hooks_OnScriptInit();
+	//Hooks_OnAnyScriptInit();
+	YSI_FILTERSCRIPT = true;
+	new
+		end   = YSI_g_sCallbackData[ALS_OnFilterScriptInit][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnFilterScriptInit][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_FilterScriptInit;
+	if (start == end)
+	{
+		P:2("Hooks_OnFilterScriptInit end");
+		HOOK_CALL<FilterScriptInit>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_FilterScriptInit");
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnFilterScriptInit end");
+	HOOK_RETURN<FilterScriptInit>
+}
+#if defined _ALS_OnFilterScriptInit
+	#undef OnFilterScriptInit
+#else
+	#define _ALS_OnFilterScriptInit
+#endif
+#define OnFilterScriptInit S@@_OnFilterScriptInit
+ALS_FORWARD<FilterScriptInit>
+
 public OnFilterScriptExit()
 {
-	HOOKS_CALL<FilterScriptExit>
+	P:2("Hooks_OnFilterScriptExit called");
+	Hooks_OnScriptExit();
+	//Hooks_OnAnyScriptExit();
+	new
+		end   = YSI_g_sCallbackData[ALS_OnFilterScriptExit][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnFilterScriptExit][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_FilterScriptExit;
+	if (start == end)
+	{
+		P:2("Hooks_OnFilterScriptExit end");
+		HOOK_CALL<FilterScriptExit>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_FilterScriptExit");
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnFilterScriptExit end");
+	HOOK_RETURN<FilterScriptExit>
 }
 #if defined _ALS_OnFilterScriptExit
 	#undef OnFilterScriptExit
@@ -571,7 +834,76 @@ ALS_FORWARD<FilterScriptExit>
 
 public OnPlayerConnect(playerid)
 {
-	HOOKS_CALL<PlayerConnect>
+	P:2("Hooks_OnPlayerConnect called: %d", playerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerConnect][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerConnect][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerConnect;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerConnect end");
+		HOOK_CALL<PlayerConnect>
+	}
+	new
+		pointer,
+		idx,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.  This was an experiment to play with the
+	// stack so we only ever need to push the parameters and return address once
+	// and do the loop using the return address!  Shame I've not got it working
+	// yet really!
+	/*#emit PUSH.S playerid
+	#emit PUSH.C     4
+	#emit LCTRL      6
+	#emit ADD.C      20
+	#emit PUSH.pri
+	// This is done twice so that the second time the loop runs (which isn't
+	// actually done by "while" anymore, the loop is hidden) the code's correct.
+	#emit STACK      12
+	// This is where the code above makes the SCTRL call return to!
+	#emit STACK      0xFFFFFFF4
+	//while (start != re)
+	// NOTE: THIS IS A LOOP!  I know it doesn't look like one but it is!
+	if (start != re)*/
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Clean up the stack.
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerConnect");
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	//#emit STACK      12
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerConnect end");
+	HOOK_RETURN<PlayerConnect>
 }
 #if defined _ALS_OnPlayerConnect
 	#undef OnPlayerConnect
@@ -583,7 +915,60 @@ ALS_FORWARD<PlayerConnect>
 
 public OnPlayerDisconnect(playerid, reason)
 {
-	HOOKS_CALL<PlayerDisconnect>
+	P:2("Hooks_OnPlayerDisconnect called: %d, %d", playerid, reason);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerDisconnect][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerDisconnect][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerDisconnect;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerDisconnect end");
+		HOOK_CALL<PlayerDisconnect>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S reason
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerDisconnect");
+		#emit PUSH.S reason
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerDisconnect end");
+	HOOK_RETURN<PlayerDisconnect>
 }
 #if defined _ALS_OnPlayerDisconnect
 	#undef OnPlayerDisconnect
@@ -595,7 +980,58 @@ ALS_FORWARD<PlayerDisconnect>
 
 public OnPlayerSpawn(playerid)
 {
-	HOOKS_CALL<PlayerSpawn>
+	P:2("Hooks_OnPlayerSpawn called: %d", playerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerSpawn][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerSpawn][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerSpawn;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerSpawn end");
+		HOOK_CALL<PlayerSpawn>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerSpawn");
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerSpawn end");
+	HOOK_RETURN<PlayerSpawn>
 }
 #if defined _ALS_OnPlayerSpawn
 	#undef OnPlayerSpawn
@@ -607,7 +1043,62 @@ ALS_FORWARD<PlayerSpawn>
 
 public OnPlayerDeath(playerid, killerid, reason)
 {
-	HOOKS_CALL<PlayerDeath>
+	P:2("Hooks_OnPlayerDeath called: %d, %d, %d", playerid, killerid, reason);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerDeath][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerDeath][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerDeath;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerDeath end");
+		HOOK_CALL<PlayerDeath>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S reason
+		#emit PUSH.S killerid
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerDeath");
+		#emit PUSH.S reason
+		#emit PUSH.S killerid
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerDeath end");
+	HOOK_RETURN<PlayerDeath>
 }
 #if defined _ALS_OnPlayerDeath
 	#undef OnPlayerDeath
@@ -619,7 +1110,58 @@ ALS_FORWARD<PlayerDeath>
 
 public OnVehicleSpawn(vehicleid)
 {
-	HOOKS_CALL<VehicleSpawn>
+	P:2("Hooks_OnVehicleSpawn called: %d", vehicleid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnVehicleSpawn][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnVehicleSpawn][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_VehicleSpawn;
+	if (start == end)
+	{
+		P:2("Hooks_OnVehicleSpawn end");
+		HOOK_CALL<VehicleSpawn>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S vehicleid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_VehicleSpawn");
+		#emit PUSH.S vehicleid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnVehicleSpawn end");
+	HOOK_RETURN<VehicleSpawn>
 }
 #if defined _ALS_OnVehicleSpawn
 	#undef OnVehicleSpawn
@@ -631,7 +1173,60 @@ ALS_FORWARD<VehicleSpawn>
 
 public OnVehicleDeath(vehicleid, killerid)
 {
-	HOOKS_CALL<VehicleDeath>
+	P:2("Hooks_OnVehicleDeath called: %d, %d", vehicleid, killerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnVehicleDeath][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnVehicleDeath][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_VehicleDeath;
+	if (start == end)
+	{
+		P:2("Hooks_OnVehicleDeath end");
+		HOOK_CALL<VehicleDeath>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S killerid
+		#emit PUSH.S vehicleid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_VehicleDeath");
+		#emit PUSH.S killerid
+		#emit PUSH.S vehicleid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnVehicleDeath end");
+	HOOK_RETURN<VehicleDeath>
 }
 #if defined _ALS_OnVehicleDeath
 	#undef OnVehicleDeath
@@ -643,7 +1238,60 @@ ALS_FORWARD<VehicleDeath>
 
 public OnPlayerText(playerid, text[])
 {
-	HOOKS_CALL<PlayerText>
+	P:2("Hooks_OnPlayerText called: %d, \"%s\"", playerid, text);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerText][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerText][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerText;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerText end");
+		HOOK_CALL<PlayerText>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S text
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerText");
+		#emit PUSH.S text
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerText end");
+	HOOK_RETURN<PlayerText>
 }
 #if defined _ALS_OnPlayerText
 	#undef OnPlayerText
@@ -655,7 +1303,60 @@ ALS_FORWARD<PlayerText>
 
 public OnPlayerCommandText(playerid, cmdtext[])
 {
-	HOOKS_CALL<PlayerCommandText>
+	P:2("Hooks_OnPlayerCommandText called: %d, \"%s\"", playerid, cmdtext);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerCommandText][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerCommandText][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerCommandText;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerCommandText end");
+		HOOK_CALL<PlayerCommandText>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S cmdtext
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerCommandText");
+		#emit PUSH.S cmdtext
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerCommandText end");
+	HOOK_RETURN<PlayerCommandText>
 }
 #if defined _ALS_OnPlayerCommandText
 	#undef OnPlayerCommandText
@@ -667,7 +1368,60 @@ ALS_FORWARD<PlayerCommandText>
 
 public OnPlayerRequestClass(playerid, classid)
 {
-	HOOKS_CALL<PlayerRequestClass>
+	P:2("Hooks_OnPlayerRequestClass called: %d, %d", playerid, classid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerRequestClass][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerRequestClass][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerRequestClass;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerRequestClass end");
+		HOOK_CALL<PlayerRequestClass>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S classid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerRequestClass");
+		#emit PUSH.S classid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerRequestClass end");
+	HOOK_RETURN<PlayerRequestClass>
 }
 #if defined _ALS_OnPlayerRequestClass
 	#undef OnPlayerRequestClass
@@ -679,7 +1433,62 @@ ALS_FORWARD<PlayerRequestClass>
 
 public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger)
 {
-	HOOKS_CALL<PlayerEnterVehicle>
+	P:2("Hooks_OnPlayerEnterVehicle called: %d, %d, %d", playerid, vehicleid, ispassenger);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerEnterVehicle][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerEnterVehicle][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerEnterVehicle;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerEnterVehicle end");
+		HOOK_CALL<PlayerEnterVehicle>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S ispassenger
+		#emit PUSH.S vehicleid
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerEnterVehicle");
+		#emit PUSH.S ispassenger
+		#emit PUSH.S vehicleid
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerEnterVehicle end");
+	HOOK_RETURN<PlayerEnterVehicle>
 }
 #if defined _ALS_OnPlayerEnterVehicle
 	#undef OnPlayerEnterVehicle
@@ -691,7 +1500,60 @@ ALS_FORWARD<PlayerEnterVehicle>
 
 public OnPlayerExitVehicle(playerid, vehicleid)
 {
-	HOOKS_CALL<PlayerExitVehicle>
+	P:2("Hooks_OnPlayerExitVehicle called: %d, %d", playerid, vehicleid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerExitVehicle][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerExitVehicle][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerExitVehicle;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerExitVehicle end");
+		HOOK_CALL<PlayerExitVehicle>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S vehicleid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerExitVehicle");
+		#emit PUSH.S vehicleid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerExitVehicle end");
+	HOOK_RETURN<PlayerExitVehicle>
 }
 #if defined _ALS_OnPlayerExitVehicle
 	#undef OnPlayerExitVehicle
@@ -703,7 +1565,62 @@ ALS_FORWARD<PlayerExitVehicle>
 
 public OnPlayerStateChange(playerid, newstate, oldstate)
 {
-	HOOKS_CALL<PlayerStateChange>
+	P:2("Hooks_OnPlayerStateChange called: %d, %d, %d", playerid, newstate, oldstate);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerStateChange][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerStateChange][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerStateChange;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerStateChange end");
+		HOOK_CALL<PlayerStateChange>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S oldstate
+		#emit PUSH.S newstate
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerStateChange");
+		#emit PUSH.S oldstate
+		#emit PUSH.S newstate
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerStateChange end");
+	HOOK_RETURN<PlayerStateChange>
 }
 #if defined _ALS_OnPlayerStateChange
 	#undef OnPlayerStateChange
@@ -715,7 +1632,58 @@ ALS_FORWARD<PlayerStateChange>
 
 public OnPlayerEnterCheckpoint(playerid)
 {
-	HOOKS_CALL<PlayerEnterCheckpoint>
+	P:2("Hooks_OnPlayerEnterCheckpoint called: %d", playerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerEnterCheckpoint][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerEnterCheckpoint][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerEnterCheckpoint;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerEnterCheckpoint end");
+		HOOK_CALL<PlayerEnterCheckpoint>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerEnterCheckpoint");
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerEnterCheckpoint end");
+	HOOK_RETURN<PlayerEnterCheckpoint>
 }
 #if defined _ALS_OnPlayerEnterCheckpoint
 	#undef OnPlayerEnterCheckpoint
@@ -727,7 +1695,58 @@ ALS_FORWARD<PlayerEnterCheckpoint>
 
 public OnPlayerLeaveCheckpoint(playerid)
 {
-	HOOKS_CALL<PlayerLeaveCheckpoint>
+	P:2("Hooks_OnPlayerLeaveCheckpoint called: %d", playerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerLeaveCheckpoint][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerLeaveCheckpoint][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerLeaveCheckpoint;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerLeaveCheckpoint end");
+		HOOK_CALL<PlayerLeaveCheckpoint>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerLeaveCheckpoint");
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerLeaveCheckpoint end");
+	HOOK_RETURN<PlayerLeaveCheckpoint>
 }
 #if defined _ALS_OnPlayerLeaveCheckpoint
 	#undef OnPlayerLeaveCheckpoint
@@ -739,7 +1758,58 @@ ALS_FORWARD<PlayerLeaveCheckpoint>
 
 public OnPlayerEnterRaceCheckpoint(playerid)
 {
-	HOOKS_CALL<PlayerEnterRaceCheckpoint>
+	P:2("Hooks_OnPlayerEnterRaceCheckpoint called: %d", playerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerEnterRaceCheckpoint][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerEnterRaceCheckpoint][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerEnterRaceCheckpoint;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerEnterRaceCheckpoint end");
+		HOOK_CALL<PlayerEnterRaceCheckpoint>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerEnterRaceCheckpoint");
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerEnterRaceCheckpoint end");
+	HOOK_RETURN<PlayerEnterRaceCheckpoint>
 }
 #if defined _ALS_OnPlayerEnterRaceCP
 	#undef OnPlayerEnterRaceCheckpoint
@@ -751,7 +1821,58 @@ ALS_FORWARD<PlayerEnterRaceCheckpoint>
 
 public OnPlayerLeaveRaceCheckpoint(playerid)
 {
-	HOOKS_CALL<PlayerLeaveRaceCheckpoint>
+	P:2("Hooks_OnPlayerLeaveRaceCheckpoint called: %d", playerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerLeaveRaceCheckpoint][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerLeaveRaceCheckpoint][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerLeaveRaceCheckpoint;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerLeaveRaceCheckpoint end");
+		HOOK_CALL<PlayerLeaveRaceCheckpoint>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerLeaveRaceCheckpoint");
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerLeaveRaceCheckpoint end");
+	HOOK_RETURN<PlayerLeaveRaceCheckpoint>
 }
 #if defined _ALS_OnPlayerLeaveRaceCP
 	#undef OnPlayerLeaveRaceCheckpoint
@@ -763,7 +1884,58 @@ ALS_FORWARD<PlayerLeaveRaceCheckpoint>
 
 public OnRconCommand(cmd[])
 {
-	HOOKS_CALL<RconCommand>
+	P:2("Hooks_OnRconCommand called: \"%s\"", cmd);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnRconCommand][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnRconCommand][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_RconCommand;
+	if (start == end)
+	{
+		P:2("Hooks_OnRconCommand end");
+		HOOK_CALL<RconCommand>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S cmd
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_RconCommand");
+		#emit PUSH.S cmd
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnRconCommand end");
+	HOOK_RETURN<RconCommand>
 }
 #if defined _ALS_OnRconCommand
 	#undef OnRconCommand
@@ -775,7 +1947,58 @@ ALS_FORWARD<RconCommand>
 
 public OnPlayerRequestSpawn(playerid)
 {
-	HOOKS_CALL<PlayerRequestSpawn>
+	P:2("Hooks_OnPlayerRequestSpawn called: %d", playerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerRequestSpawn][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerRequestSpawn][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerRequestSpawn;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerRequestSpawn end");
+		HOOK_CALL<PlayerRequestSpawn>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerRequestSpawn");
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerRequestSpawn end");
+	HOOK_RETURN<PlayerRequestSpawn>
 }
 #if defined _ALS_OnPlayerRequestSpawn
 	#undef OnPlayerRequestSpawn
@@ -787,7 +2010,58 @@ ALS_FORWARD<PlayerRequestSpawn>
 
 public OnObjectMoved(objectid)
 {
-	HOOKS_CALL<ObjectMoved>
+	P:2("Hooks_OnObjectMoved called: %d", objectid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnObjectMoved][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnObjectMoved][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_ObjectMoved;
+	if (start == end)
+	{
+		P:2("Hooks_OnObjectMoved end");
+		HOOK_CALL<ObjectMoved>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S objectid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_ObjectMoved");
+		#emit PUSH.S objectid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnObjectMoved end");
+	HOOK_RETURN<ObjectMoved>
 }
 #if defined _ALS_OnObjectMoved
 	#undef OnObjectMoved
@@ -799,7 +2073,60 @@ ALS_FORWARD<ObjectMoved>
 
 public OnPlayerObjectMoved(playerid, objectid)
 {
-	HOOKS_CALL<PlayerObjectMoved>
+	P:2("Hooks_OnPlayerObjectMoved called: %d, %d", playerid, objectid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerObjectMoved][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerObjectMoved][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerObjectMoved;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerObjectMoved end");
+		HOOK_CALL<PlayerObjectMoved>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S objectid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerObjectMoved");
+		#emit PUSH.S objectid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerObjectMoved end");
+	HOOK_RETURN<PlayerObjectMoved>
 }
 #if defined _ALS_OnPlayerObjectMoved
 	#undef OnPlayerObjectMoved
@@ -811,7 +2138,60 @@ ALS_FORWARD<PlayerObjectMoved>
 
 public OnPlayerPickUpPickup(playerid, pickupid)
 {
-	HOOKS_CALL<PlayerPickUpPickup>
+	P:2("Hooks_OnPlayerPickUpPickup called: %d, %d", playerid, pickupid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerPickUpPickup][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerPickUpPickup][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerPickUpPickup;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerPickUpPickup end");
+		HOOK_CALL<PlayerPickUpPickup>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S pickupid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerPickUpPickup");
+		#emit PUSH.S pickupid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerPickUpPickup end");
+	HOOK_RETURN<PlayerPickUpPickup>
 }
 #if defined _ALS_OnPlayerPickUpPickup
 	#undef OnPlayerPickUpPickup
@@ -823,7 +2203,62 @@ ALS_FORWARD<PlayerPickUpPickup>
 
 public OnVehicleMod(playerid, vehicleid, componentid)
 {
-	HOOKS_CALL<VehicleMod>
+	P:2("Hooks_OnVehicleMod called: %d, %d, %d", playerid, vehicleid, componentid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnVehicleMod][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnVehicleMod][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_VehicleMod;
+	if (start == end)
+	{
+		P:2("Hooks_OnVehicleMod end");
+		HOOK_CALL<VehicleMod>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S componentid
+		#emit PUSH.S vehicleid
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_VehicleMod");
+		#emit PUSH.S componentid
+		#emit PUSH.S vehicleid
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnVehicleMod end");
+	HOOK_RETURN<VehicleMod>
 }
 #if defined _ALS_OnVehicleMod
 	#undef OnVehicleMod
@@ -835,7 +2270,62 @@ ALS_FORWARD<VehicleMod>
 
 public OnEnterExitModShop(playerid, enterexit, interiorid)
 {
-	HOOKS_CALL<EnterExitModShop>
+	P:2("Hooks_OnEnterExitModShop called: %d, %d, %d", playerid, enterexit, interiorid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnEnterExitModShop][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnEnterExitModShop][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_EnterExitModShop;
+	if (start == end)
+	{
+		P:2("Hooks_OnEnterExitModShop end");
+		HOOK_CALL<EnterExitModShop>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S interiorid
+		#emit PUSH.S enterexit
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_EnterExitModShop");
+		#emit PUSH.S interiorid
+		#emit PUSH.S enterexit
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnEnterExitModShop end");
+	HOOK_RETURN<EnterExitModShop>
 }
 #if defined _ALS_OnEnterExitModShop
 	#undef OnEnterExitModShop
@@ -847,7 +2337,62 @@ ALS_FORWARD<EnterExitModShop>
 
 public OnVehiclePaintjob(playerid, vehicleid, paintjobid)
 {
-	HOOKS_CALL<VehiclePaintjob>
+	P:2("Hooks_OnVehiclePaintjob called: %d, %d, %d", playerid, vehicleid, paintjobid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnVehiclePaintjob][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnVehiclePaintjob][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_VehiclePaintjob;
+	if (start == end)
+	{
+		P:2("Hooks_OnVehiclePaintjob end");
+		HOOK_CALL<VehiclePaintjob>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S paintjobid
+		#emit PUSH.S vehicleid
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_VehiclePaintjob");
+		#emit PUSH.S paintjobid
+		#emit PUSH.S vehicleid
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnVehiclePaintjob end");
+	HOOK_RETURN<VehiclePaintjob>
 }
 #if defined _ALS_OnVehiclePaintjob
 	#undef OnVehiclePaintjob
@@ -859,7 +2404,64 @@ ALS_FORWARD<VehiclePaintjob>
 
 public OnVehicleRespray(playerid, vehicleid, color1, color2)
 {
-	HOOKS_CALL<VehicleRespray>
+	P:2("Hooks_OnVehicleRespray called: %d, %d, %d, %d", playerid, vehicleid, color1, color2);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnVehicleRespray][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnVehicleRespray][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_VehicleRespray;
+	if (start == end)
+	{
+		P:2("Hooks_OnVehicleRespray end");
+		HOOK_CALL<VehicleRespray>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S color2
+		#emit PUSH.S color1
+		#emit PUSH.S vehicleid
+		#emit PUSH.S playerid
+		#emit PUSH.C     16
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_VehicleRespray");
+		#emit PUSH.S color2
+		#emit PUSH.S color1
+		#emit PUSH.S vehicleid
+		#emit PUSH.S playerid
+		#emit PUSH.C     16
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnVehicleRespray end");
+	HOOK_RETURN<VehicleRespray>
 }
 #if defined _ALS_OnVehicleRespray
 	#undef OnVehicleRespray
@@ -871,7 +2473,60 @@ ALS_FORWARD<VehicleRespray>
 
 public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 {
-	HOOKS_CALL<VehicleDamageStatusUpdate>
+	P:2("Hooks_OnVehicleDamageStatusUpdate called: %d, %d", vehicleid, playerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnVehicleDamageStatusUpdate][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnVehicleDamageStatusUpdate][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_VehicleDamageStatusUpdate;
+	if (start == end)
+	{
+		P:2("Hooks_OnVehicleDamageStatusUpdate end");
+		HOOK_CALL<VehicleDamageStatusUpdate>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S playerid
+		#emit PUSH.S vehicleid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_VehicleDamageStatusUpdate");
+		#emit PUSH.S playerid
+		#emit PUSH.S vehicleid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnVehicleDamageStatusUpdate end");
+	HOOK_RETURN<VehicleDamageStatusUpdate>
 }
 #if defined _ALS_OnVehicleDamageStatusUpd
 	#undef OnVehicleDamageStatusUpdate
@@ -883,7 +2538,60 @@ ALS_FORWARD<VehicleDamageStatusUpdate>
 
 public OnPlayerSelectedMenuRow(playerid, row)
 {
-	HOOKS_CALL<PlayerSelectedMenuRow>
+	P:2("Hooks_OnPlayerSelectedMenuRow called: %d, %d", playerid, row);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerSelectedMenuRow][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerSelectedMenuRow][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerSelectedMenuRow;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerSelectedMenuRow end");
+		HOOK_CALL<PlayerSelectedMenuRow>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S row
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerSelectedMenuRow");
+		#emit PUSH.S row
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerSelectedMenuRow end");
+	HOOK_RETURN<PlayerSelectedMenuRow>
 }
 #if defined _ALS_OnPlayerSelectedMenuRow
 	#undef OnPlayerSelectedMenuRow
@@ -895,7 +2603,58 @@ ALS_FORWARD<PlayerSelectedMenuRow>
 
 public OnPlayerExitedMenu(playerid)
 {
-	HOOKS_CALL<PlayerExitedMenu>
+	P:2("Hooks_OnPlayerExitedMenu called: %d", playerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerExitedMenu][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerExitedMenu][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerExitedMenu;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerExitedMenu end");
+		HOOK_CALL<PlayerExitedMenu>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerExitedMenu");
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerExitedMenu end");
+	HOOK_RETURN<PlayerExitedMenu>
 }
 #if defined _ALS_OnPlayerExitedMenu
 	#undef OnPlayerExitedMenu
@@ -907,7 +2666,62 @@ ALS_FORWARD<PlayerExitedMenu>
 
 public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid)
 {
-	HOOKS_CALL<PlayerInteriorChange>
+	P:2("Hooks_OnPlayerInteriorChange called: %d, %d, %d", playerid, newinteriorid, oldinteriorid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerInteriorChange][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerInteriorChange][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerInteriorChange;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerInteriorChange end");
+		HOOK_CALL<PlayerInteriorChange>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S oldinteriorid
+		#emit PUSH.S newinteriorid
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerInteriorChange");
+		#emit PUSH.S oldinteriorid
+		#emit PUSH.S newinteriorid
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerInteriorChange end");
+	HOOK_RETURN<PlayerInteriorChange>
 }
 #if defined _ALS_OnPlayerInteriorChange
 	#undef OnPlayerInteriorChange
@@ -919,7 +2733,62 @@ ALS_FORWARD<PlayerInteriorChange>
 
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
-	HOOKS_CALL<PlayerKeyStateChange>
+	P:2("Hooks_OnPlayerKeyStateChange called: %d, %d, %d", playerid, newkeys, oldkeys);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerKeyStateChange][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerKeyStateChange][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerKeyStateChange;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerKeyStateChange end");
+		HOOK_CALL<PlayerKeyStateChange>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S oldkeys
+		#emit PUSH.S newkeys
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerKeyStateChange");
+		#emit PUSH.S oldkeys
+		#emit PUSH.S newkeys
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerKeyStateChange end");
+	HOOK_RETURN<PlayerKeyStateChange>
 }
 #if defined _ALS_OnPlayerKeyStateChange
 	#undef OnPlayerKeyStateChange
@@ -931,7 +2800,62 @@ ALS_FORWARD<PlayerKeyStateChange>
 
 public OnRconLoginAttempt(ip[], password[], success)
 {
-	HOOKS_CALL<RconLoginAttempt>
+	P:2("Hooks_OnRconLoginAttempt called: \"%s\", \"%s\", %d", ip, password, success);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnRconLoginAttempt][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnRconLoginAttempt][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_RconLoginAttempt;
+	if (start == end)
+	{
+		P:2("Hooks_OnRconLoginAttempt end");
+		HOOK_CALL<RconLoginAttempt>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S success
+		#emit PUSH.S password
+		#emit PUSH.S ip
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_RconLoginAttempt");
+		#emit PUSH.S success
+		#emit PUSH.S password
+		#emit PUSH.S ip
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnRconLoginAttempt end");
+	HOOK_RETURN<RconLoginAttempt>
 }
 #if defined _ALS_OnRconLoginAttempt
 	#undef OnRconLoginAttempt
@@ -941,9 +2865,125 @@ public OnRconLoginAttempt(ip[], password[], success)
 #define OnRconLoginAttempt S@@_OnRconLoginAttempt
 ALS_FORWARD<RconLoginAttempt>
 
+public OnPlayerUpdate(playerid)
+{
+	P:7("Hooks_OnPlayerUpdate called: %d", playerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerUpdate][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerUpdate][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerUpdate;
+	if (start == end)
+	{
+		P:7("Hooks_OnPlayerUpdate end");
+		HOOK_CALL<PlayerUpdate>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerUpdate");
+		#emit PUSH.S playerid
+		#emit PUSH.C     4
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:7("Hooks_OnPlayerUpdate end");
+	HOOK_RETURN<PlayerUpdate>
+}
+#if defined _ALS_OnPlayerUpdate
+	#undef OnPlayerUpdate
+#else
+	#define _ALS_OnPlayerUpdate
+#endif
+#define OnPlayerUpdate S@@_OnPlayerUpdate
+ALS_FORWARD<PlayerUpdate>
+
 public OnPlayerStreamIn(playerid, forplayerid)
 {
-	HOOKS_CALL<PlayerStreamIn>
+	P:2("Hooks_OnPlayerStreamIn called: %d, %d", playerid, forplayerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerStreamIn][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerStreamIn][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerStreamIn;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerStreamIn end");
+		HOOK_CALL<PlayerStreamIn>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S forplayerid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerStreamIn");
+		#emit PUSH.S forplayerid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerStreamIn end");
+	HOOK_RETURN<PlayerStreamIn>
 }
 #if defined _ALS_OnPlayerStreamIn
 	#undef OnPlayerStreamIn
@@ -955,7 +2995,60 @@ ALS_FORWARD<PlayerStreamIn>
 
 public OnPlayerStreamOut(playerid, forplayerid)
 {
-	HOOKS_CALL<PlayerStreamOut>
+	P:2("Hooks_OnPlayerStreamOut called: %d, %d", playerid, forplayerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerStreamOut][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerStreamOut][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerStreamOut;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerStreamOut end");
+		HOOK_CALL<PlayerStreamOut>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S forplayerid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerStreamOut");
+		#emit PUSH.S forplayerid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerStreamOut end");
+	HOOK_RETURN<PlayerStreamOut>
 }
 #if defined _ALS_OnPlayerStreamOut
 	#undef OnPlayerStreamOut
@@ -967,7 +3060,60 @@ ALS_FORWARD<PlayerStreamOut>
 
 public OnVehicleStreamIn(vehicleid, forplayerid)
 {
-	HOOKS_CALL<VehicleStreamIn>
+	P:2("Hooks_OnVehicleStreamIn called: %d, %d", vehicleid, forplayerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnVehicleStreamIn][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnVehicleStreamIn][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_VehicleStreamIn;
+	if (start == end)
+	{
+		P:2("Hooks_OnVehicleStreamIn end");
+		HOOK_CALL<VehicleStreamIn>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S forplayerid
+		#emit PUSH.S vehicleid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_VehicleStreamIn");
+		#emit PUSH.S forplayerid
+		#emit PUSH.S vehicleid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnVehicleStreamIn end");
+	HOOK_RETURN<VehicleStreamIn>
 }
 #if defined _ALS_OnVehicleStreamIn
 	#undef OnVehicleStreamIn
@@ -979,7 +3125,60 @@ ALS_FORWARD<VehicleStreamIn>
 
 public OnVehicleStreamOut(vehicleid, forplayerid)
 {
-	HOOKS_CALL<VehicleStreamOut>
+	P:2("Hooks_OnVehicleStreamOut called: %d, %d", vehicleid, forplayerid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnVehicleStreamOut][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnVehicleStreamOut][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_VehicleStreamOut;
+	if (start == end)
+	{
+		P:2("Hooks_OnVehicleStreamOut end");
+		HOOK_CALL<VehicleStreamOut>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S forplayerid
+		#emit PUSH.S vehicleid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_VehicleStreamOut");
+		#emit PUSH.S forplayerid
+		#emit PUSH.S vehicleid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnVehicleStreamOut end");
+	HOOK_RETURN<VehicleStreamOut>
 }
 #if defined _ALS_OnVehicleStreamOut
 	#undef OnVehicleStreamOut
@@ -989,11 +3188,137 @@ public OnVehicleStreamOut(vehicleid, forplayerid)
 #define OnVehicleStreamOut S@@_OnVehicleStreamOut
 ALS_FORWARD<VehicleStreamOut>
 
+public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+{
+	P:2("Hooks_OnDialogResponse called: %d, %d, %d, %d, \"%s\"", playerid, dialogid, response, listitem, inputtext);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnDialogResponse][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnDialogResponse][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_DialogResponse;
+	if (start == end)
+	{
+		P:2("Hooks_OnDialogResponse end");
+		HOOK_CALL<DialogResponse>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S inputtext
+		#emit PUSH.S listitem
+		#emit PUSH.S response
+		#emit PUSH.S dialogid
+		#emit PUSH.S playerid
+		#emit PUSH.C     20
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_DialogResponse");
+		#emit PUSH.S inputtext
+		#emit PUSH.S listitem
+		#emit PUSH.S response
+		#emit PUSH.S dialogid
+		#emit PUSH.S playerid
+		#emit PUSH.C     20
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnDialogResponse end");
+	HOOK_RETURN<DialogResponse>
+}
+#if defined _ALS_OnDialogResponse
+	#undef OnDialogResponse
+#else
+	#define _ALS_OnDialogResponse
+#endif
+#define OnDialogResponse S@@_OnDialogResponse
+ALS_FORWARD<DialogResponse>
+
 public OnPlayerClickPlayer(playerid, clickedplayerid, source)
 {
-	HOOKS_CALL<PlayerClickPlayer>
+	P:2("Hooks_OnPlayerClickPlayer called: %d, %d, %d", playerid, clickedplayerid, source);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerClickPlayer][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerClickPlayer][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerClickPlayer;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerClickPlayer end");
+		HOOK_CALL<PlayerClickPlayer>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S source
+		#emit PUSH.S clickedplayerid
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerClickPlayer");
+		#emit PUSH.S source
+		#emit PUSH.S clickedplayerid
+		#emit PUSH.S playerid
+		#emit PUSH.C     12
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerClickPlayer end");
+	HOOK_RETURN<PlayerClickPlayer>
 }
-#if defined _ALS_OnDPlayerClickPlayer
+#if defined _ALS_OnPlayerClickPlayer
 	#undef OnPlayerClickPlayer
 #else
 	#define _ALS_OnPlayerClickPlayer
@@ -1001,8 +3326,138 @@ public OnPlayerClickPlayer(playerid, clickedplayerid, source)
 #define OnPlayerClickPlayer S@@_OnPlayerClickPlayer
 ALS_FORWARD<PlayerClickPlayer>
 
+stock Hooks_OnPlayerLogin(playerid, uid)
+{
+	P:2("Hooks_OnPlayerLogin called: %d, %d", playerid, uid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerLogin][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerLogin][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerLogin;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerLogin end");
+hooks_do_hooks_call_no_als:
+		return;
+		//HOOK_CALL<PlayerLogin>
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S uid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerLogin");
+		#emit PUSH.S uid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerLogin end");
+	//HOOK_RETURN<PlayerLogin>
+}
+/*#if defined _ALS_OnPlayerLogin
+	#undef OnPlayerLogin
+#else
+	#define _ALS_OnPlayerLogin
 #endif
+#define OnPlayerLogin S@@_OnPlayerLogin
+ALS_FORWARD<PlayerLogin>*/
 
-#pragma tabsize 4
+stock Hooks_OnPlayerLogout(playerid, uid)
+{
+	P:2("Hooks_OnPlayerLogout called: %d, %d", playerid, uid);
+	new
+		end   = YSI_g_sCallbackData[ALS_OnPlayerLogout][E_FUNC_HOOK_DATA_END],
+		start = YSI_g_sCallbackData[ALS_OnPlayerLogout][E_FUNC_HOOK_DATA_START],
+		ret = ALS_R_PlayerLogout;
+	if (start == end)
+	{
+		P:2("Hooks_OnPlayerLogout end");
+		//HOOK_CALL<PlayerLogout>
+hooks_do_hooks_call_no_als:
+		return;
+	}
+	new
+		idx,
+		pointer,
+		re = end;
+	if (end > sizeof (YSI_g_sCallbackAddresses))
+	{
+		re = sizeof (YSI_g_sCallbackAddresses);
+		if (start != sizeof (YSI_g_sCallbackAddresses)) idx = YSI_g_sLastFoundIndex;
+	}
+	// Do the initial fast elements.
+	while (start != re)
+	{
+		pointer = YSI_g_sCallbackAddresses[start++];
+		#emit PUSH.S uid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Get any remaining pointers the old way.
+	while (start++ != end)
+	{
+		idx = AMX_GetPublicPointer(idx, pointer, "@yH_PlayerLogout");
+		#emit PUSH.S uid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.S.pri pointer
+		#emit SCTRL      6
+		#emit CONST.alt  0xFFFFFFFF
+		#emit STOR.S.pri ret
+		#emit JEQ        hooks_do_hooks_call_no_als
+	}
+	// Do ALS just in case (YSI no longer uses this though now).
+	P:2("Hooks_OnPlayerLogout end");
+	//HOOK_RETURN<PlayerLogout>
+}
+/*#if defined _ALS_OnPlayerLogout
+	#undef OnPlayerLogout
+#else
+	#define _ALS_OnPlayerLogout
+#endif
+#define OnPlayerLogout S@@_OnPlayerlogout
+ALS_FORWARD<PlayerLogout>*/
 
 #undef ALS_PREFIX

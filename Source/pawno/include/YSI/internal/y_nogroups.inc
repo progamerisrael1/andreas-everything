@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 					=======================================
 					 y_groups - Player group abstractions! 
 					=======================================
@@ -18,17 +18,17 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the SA:MP script information include.
+	The Original Code is the YSI groups include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2008
+	Portions created by the Initial Developer are Copyright (C) 2011
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
-		ZeeX, koolk
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
 	
 	Thanks:
-		Peter, Cam - Support.
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
 		ZeeX - Very productive conversations.
 		koolk - IsPlayerinAreaEx code.
 		TheAlpha - Danish translation.
@@ -43,15 +43,16 @@ Legal:
 		Matite - Pestering me to release it and using it.
 	
 	Very special thanks to:
-		Thiadmer - PAWN.
+		Thiadmer - PAWN, whose limits continue to amaze me!
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
+	
 Version:
 	1.0
 Changelog:
 	29/11/10:
 		First version
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 // This file defines functions which are called if the group system is not used.
 
@@ -65,6 +66,7 @@ static stock _Groups_DefineStates_() <YSI_has_groups:y>
 
 /*stock _@Group_Sink(e)
 {
+	P:3("_@Group_Sink called: %i", e);
 	#pragma unused e
 }*/
 
@@ -85,7 +87,7 @@ static stock _Groups_DefineStates_() <YSI_has_groups:y>
 #define _GROUP_INITIALISE               _GROUP_MAKE_NAME<..._InitialiseFromGroups>
 //#define __GROUP_INITIALISE              _GROUP_MAKE_NAME<_..._InitialiseFromGroups>
 
-#define Group:
+//#define Group:
 
 // Dummy values.
 #define _GROUP_MAKE_NAME<%0...%1>       %0_%1
@@ -94,5 +96,6 @@ static stock _Groups_DefineStates_() <YSI_has_groups:y>
 #define GROUP_GLOBAL                    (Group:-1)
 #define GROUP_MASK                      (Group:0x80000000)
 #define GROUP_FIX(%0)                   ((%0)&=~GROUP_MASK)
+#define GROUP_TEMP_FIX(%0)              ((%0)&~GROUP_MASK)
 
 #define NO_GROUPS(%0) if(!_GROUP_INITIALISE(%0))

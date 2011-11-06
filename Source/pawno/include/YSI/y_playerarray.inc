@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/*----------------------------------------------------------------------------*\
 					========================================
 					 y_playerarray - Bit arrays of players! 
 					========================================
@@ -19,10 +19,10 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the SA:MP script information include.
+	The Original Code is the YSI playerarray include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2008
+	Portions created by the Initial Developer are Copyright (C) 2011
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
@@ -50,33 +50,35 @@ Legal:
 Version:
 	1.0
 Changelog:
+	25/02/11:
+		Scrapped pointless "playing" code I was unhappy with.
 	29/11/10:
 		First version
--*----------------------------------------------------------------------------*/
+\*----------------------------------------------------------------------------*/
 
 #include <YSI\internal\y_version>
 
-#include <YSI\y_bit>
 #include <a_samp>
+#include <YSI\y_debug>
+#include <YSI\y_bit>
 
 #define PA_TYPE_NONE                    (-1)
 #define PA_TYPE_BOOL                    (-2)
 #define PA_TYPE_ID                      (-3)
 #define PA_TYPE_PA                      (-4)
 
-#define PlayerArray:%0<%1> Bit:%0[%1]//={Bit:-1}
+#if defined _YSI_SPECIAL_DEBUG
+	#define PS_IS_PLAYER_CONNECTED(%0) (%0 != INVALID_PLAYER_ID)
+#else
+	#define PS_IS_PLAYER_CONNECTED IsPlayerConnected
+#endif
 
-#define PA_DEC<%0> static stock PlayerArray:_YSI_g_sPlayerDataA[%0]<MAX_PLAYERS>;//const _YSI_g_sPlayerDataS=%0;
-#define PA_INT<%0,%2> PA_Init(_YSI_g_sPlayerDataA[(%0)],(%2));
-#define PA_ADD<%0,%1> PA+(_YSI_g_sPlayerDataA[(%0)],(%1));
-#define PA_REM<%0,%1> PA-(_YSI_g_sPlayerDataA[(%0)],(%1));
-#define PA_SET<%0,%1,%2> (%2)?(PA+(_YSI_g_sPlayerDataA[(%0)],(%1))):(PA-(_YSI_g_sPlayerDataA[(%0)],(%1)));
-
-//#define PA_Init() {Bit:-1}
+#define PlayerArray:%0<%1> Bit:%0[%1]
 
 stock PA_Init(Bit:a[], bool:init = false, s = bits<MAX_PLAYERS>)
 {
-	--s;
+	P:3("PA_Init called: %i, %i, %i", _:a, _:init, s);
+	//--s;
 	new
 		Bit:m = init ? (Bit:-1) : (Bit:0);
 	a[0] = Bit:PA_TYPE_PA;
@@ -86,56 +88,124 @@ stock PA_Init(Bit:a[], bool:init = false, s = bits<MAX_PLAYERS>)
 	}
 }
 
-//#define PA_Get(%1,%2) bool:(%1[Bit_Slot(%2)+1]&Bit_Mask(%2))
+#define PA_FastInit(%0) %0[0]=Bit:PA_TYPE_PA
 
-/*stock PA_Assign(PlayerArray:array<>, slot, value, count = bitsof (array))
-{
-	if (slot >= count) return;
-	if (set) array[Bit_Slot(slot) + 1] |= Bit_Mask(slot);
-	else array[Bit_Slot(slot) + 1] &= ~Bit_Mask(slot);
-}*/
+#define PA_GetBit(%1,%2) (%1[((%2)>>>CELLSHIFT)+1]&Bit:(1<<((%2)&cellbits-1)))
 
-stock Bit:operator+(Bit:oper2, PlayerArray:oper1)
+#define PA_Get(%1,%2) bool:PA_GetBit(Bit:%1,_:%2)
+
+#define PA_Let(%1,%2) %1[((%2)>>>CELLSHIFT)+1]|=Bit:(1<<((%2)&cellbits-1))
+
+#define PA_Vet(%1,%2) %1[((%2)>>>CELLSHIFT)+1]&=Bit:~(1<<((%2)&cellbits-1))
+
+#define PA_GetCount(%1) Bit_GetCount(%1[1],bits<MAX_PLAYERS>)
+
+//#define PA_Set(%0,%1,%2) ((%2)?Bit_Let(%0,(%1)):Bit_Vet(%0,(%1)))
+stock PA_Set(PlayerArray:d<>, slot, bool:set)
 {
-	return oper2 | Bit_Mask(_:oper1);
+	P:3("PA_Set called: %s, %i, %i", Bit_Display(Bit:d[1]), slot, _:set);
+	if (set)
+	{
+		PA_Let(d, slot);
+	}
+	else
+	{
+		PA_Vet(d, slot);
+	}
 }
 
-stock Bit:operator-(Bit:oper2, PlayerArray:oper1)
+stock YSI_gSPAFunc(PlayerArray:data<>)
 {
-	return oper2 & ~Bit_Mask(_:oper1);
+	P:3("YSI_gSPA called: %s", Bit_Display(Bit:data[1]));
+	static const
+		scDeBruijn[] =
+			{
+				0,  1,  28, 2,  29, 14, 24, 3,  30, 22, 20, 15, 25, 17, 4,  8,
+				31, 27, 13, 23, 21, 19, 16, 7,  26, 12, 18, 6,  11, 5,  10, 9
+			};
+	new
+		cur;
+	for (new i = 1; i != bits<MAX_PLAYERS> + 1; ++i)
+	{
+		if ((cur = _:data[i]))
+		{
+			// http://supertech.csail.mit.edu/papers/debruijn.pdf
+			new
+				ret = ((i - 1) * cellbits) + scDeBruijn[((cur & -cur) * 0x077CB531) >>> 27];
+			if (PS_IS_PLAYER_CONNECTED(ret))
+			{
+				return ret;
+			}
+			else
+			{
+				return YSI_gAPAFunc(data, ret);
+			}
+		}
+	}
+	return -1;
 }
 
-stock bool:operator==(Bit:oper2, PlayerArray:oper1)
+stock YSI_gAPAFunc(PlayerArray:data<>, start)
 {
-	return bool:(oper2 & Bit_Mask(_:oper1));
+	P:3("YSI_gAPAFunc called: %s, %i", Bit_Display(Bit:data[1]), start);
+	static const
+		scDeBruijn[] =
+			{
+				0,  1,  28, 2,  29, 14, 24, 3,  30, 22, 20, 15, 25, 17, 4,  8,
+				31, 27, 13, 23, 21, 19, 16, 7,  26, 12, 18, 6,  11, 5,  10, 9
+			};
+	++start;
+	YSI_gAPAFunc_loop:
+	new
+		cur,
+		i = Bit_Slot(start) + 1;
+	if ((cur = (_:data[i] & (~((1 << start) - 1)))))
+	{
+		new
+			ret = ((i - 1) * cellbits) + scDeBruijn[((cur & -cur) * 0x077CB531) >>> 27];
+		// I'd like to replace this with code which doesn't call
+		// IsPlayerConnected and doesn't use "goto", but it avoids massive tail
+		// recursion (well, it is tail recursion which I've inlined).
+		if (PS_IS_PLAYER_CONNECTED(ret))
+		{
+			return ret;
+		}
+		else
+		{
+			//return YSI_gAPAFunc(data, ret);
+			start = ret + 1;
+			goto YSI_gAPAFunc_loop;
+		}
+	}
+	++i;
+	while (i != bits<MAX_PLAYERS> + 1)
+	{
+		if ((cur = _:data[i]))
+		{
+			new
+				ret = ((i - 1) * cellbits) + scDeBruijn[((cur & -cur) * 0x077CB531) >>> 27];
+			if (PS_IS_PLAYER_CONNECTED(ret))
+			{
+				return ret;
+			}
+			else
+			{
+				//return YSI_gAPAFunc(data, ret);
+				start = ret + 1;
+				goto YSI_gAPAFunc_loop;
+			}
+		}
+		++i;
+	}
+	return -1;
 }
 
-stock bool:operator!=(Bit:oper2, PlayerArray:oper1)
-{
-	return !(oper2 & Bit_Mask(_:oper1));
-}
+//#define YSI_gAPA(%0)[%1] YSI_gAPAFunc(%0,%1)
+//#define YSI_gSPS YSI_gSPA
+//#define YSI_gAPS YSI_gAPA
 
-/*stock Bit:operator&(Bit:oper2, PlayerArray:oper1)
-{
-	#pragma unused oper1
-	return oper2;
-}
-
-stock Bit:operator|(Bit:oper2, PlayerArray:oper1)
-{
-	#pragma unused oper1
-	return oper2 & Bit_Mask(_:oper1);
-}*/
-
-//#define PA%0(%1,%2) (Bit:(%1[Bit_Slot(%2)+1]%0=PlayerArray:(%2))&Bit_Mask(%2))
-#define PA%0(%1,%2) (%1[Bit_Slot(%2)+1]%0=PlayerArray:(%2))
-
-/*stock PA_Set(PlayerArray:array<>, slot, bool:set, count = bitsof (array))
-{
-	if (slot >= count) return;
-	if (set) array[Bit_Slot(slot) + 1] |= Bit_Mask(slot);
-	else array[Bit_Slot(slot) + 1] &= ~Bit_Mask(slot);
-}*/
+#define PA(%0)_YSI_gS;_:%1!=-1;%2=%8PA(%3)_YSI_gA[%4] YSI_gSPAFunc(%0);_:%1!=-1;%2=YSI_gAPAFunc(%3,%4)
 
 #undef PlayerArray
+// If this ever changes, update the size reference in y_users.
 #define PlayerArray:%0<%1> Bit:%0[bits<%1>+1]//={Bit:-1}

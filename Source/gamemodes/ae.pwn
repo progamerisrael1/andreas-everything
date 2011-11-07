@@ -48,7 +48,7 @@ The 'odometer' code lags the gameplay MUCH. I recommend you to fix it.
 #define SCRIPT_WEB "forum.sa-mp.com"
 #define MAX_SKINS 300
 #pragma tabsize 0 // No more 'loose indentation'
-#define GetName GetPlayerNameEx // I am used to GetName in my GM, so I use this it's much easier
+#define GetName GetPlayerNameEx // I am used to GetName in my GM, so I use this it's much easier ~ Robin.
 // Macros
 #define INI_Exist(%0) fexist(%0)
 #define DISTANCE(%1,%2,%3,%4,%5,%6) floatsqroot((%1-%4)*(%1-%4) + (%2-%5)*(%2-%5) + (%3-%6)*(%3-%6))
@@ -157,7 +157,7 @@ main()
 {
 	print("\n----------------------------------");
 	print(" Andreas Everything ");
-	print(" Script Lines: 1226 ");
+	print(" Script Lines: 1292 ");//Update it every time. ~Robin
 	print(" Coded by: SA-MP Community ");
 	print("----------------------------------\n");
 }
@@ -165,9 +165,10 @@ main()
 #if !defined mysql
 public OnGameModeInit()
 {
+	EnableStuntBonusForAll(0);
 	SetGameModeText(SCRIPT_MODE);
 	SendRconCommand(SCRIPT_WEB);
-	DisableInteriorEnterExits();
+	//DisableInteriorEnterExits(); - Huh, who did this? You're just making it impossible to enter non-scripted(clientside) entrances and exits. So you can't enter PD. I recommand you to leave this open until we have scripted entrances/exits. ~ Robin.
 	// SQLite
 	BUD::Setting(opt.Database, "AE.db");
 	BUD::Setting(opt.KeepAliveTime, 3000);
@@ -274,7 +275,7 @@ public OnPlayerConnect(playerid)
 	TogglePlayerClock(playerid, 0);
 	SetPlayerScore(playerid, 0);
 	GetPlayerIp(playerid, IPADDRESSES[playerid], 18);
-	PlayerData[playerid][MODE] = 100;
+	PlayerData[playerid][MODE] = 976;
 
 	#if DEBUG == 1
     print("Executed OnPlayerConnect");
@@ -362,10 +363,15 @@ public OnPlayerDeath(playerid, killerid, reason)
 	new File:deathlog = fopen("Logs/Death Log.txt", io_append);
 	fwrite(deathlog, string);
 	fclose(deathlog);
-
 	#if DEBUG == 1
     print("Executed OnPlayerDeath");
     #endif
+	if(killerid == INVALID_PLAYER_ID || !IsPlayerConnected(killerid)) return 1;
+	foreach(Player, i) { if(PlayerData[playerid][MODE] == MODE_DEATHMATCH) {
+	new string2[256];
+	format(string2, sizeof(string2), "KILL: %s owned %s with a %s.",GetName(killerid),GetName(playerid),DeathReason[reason]);
+	SendClientMessage(i, COLOR_MAGENTA, string2);
+	}}
 	return 1;
 }
 
@@ -396,6 +402,21 @@ public OnPlayerText(playerid, text[])
 
 //============================================================================//
 // ZCMD Commands
+CMD:setskin(playerid, params[]) // By Robin
+{
+	if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!"); // It'd be more understandable if we use the same error string every time.
+	new player,skin;
+	if(sscanf(params,"un",player,skin)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /setskin (playerid) (skinid)");
+	if(player == INVALID_PLAYER_ID || !IsPlayerConnected(player)) return SendClientMessage(playerid, COLOR_GRAD1, "Player not online.");
+	if(skin <= 0 || skin >= 299) return SendClientMessage(playerid, COLOR_GRAD1, "Invalid skinid! Skins: 0-299.");
+	new string[256];
+	format(string, sizeof(string), "Administrator %s has set your skin to %d.",GetName(playerid),skin);
+	SendClientMessage(player,COLOR_WHITE,string);
+	format(string, sizeof(string), "You've successfully set %s's skin to %d.",GetName(player),skin);
+	SendClientMessage(playerid, COLOR_WHITE, string);
+	return 1;
+}
+
 CMD:help(playerid, params[])
 {
 	ShowPlayerDialog(playerid, DIALOG_HELP, DIALOG_STYLE_LIST, "Andreas Everything - Help List",
@@ -564,7 +585,7 @@ CMD:ban(playerid, params[])
     if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
 	else
     {
-		if(sscanf(params, "us", targetid, reason)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /ban [playerid] [reason]");
+		if(sscanf(params, "us[128]", targetid, reason)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /ban [playerid] [reason]");
 		else
 		{
 			format(string, sizeof(string), "Adm: You have banned %s(%d) from the server.", GetPlayerNameEx(targetid), targetid);
@@ -801,6 +822,16 @@ public OnRconLoginAttempt(ip[], password[], success)
     #if DEBUG == 1
     print("Executed OnRconLoginAttempt");
     #endif
+	//If the player fails the RCON password, he'll be logged.
+	if(success == 0) {
+	new iptwo[16];
+	foreach(Player, i) {
+	GetPlayerIp(i, iptwo, sizeof(iptwo));
+	if(!strcmp(ip,iptwo,true)) {
+	printf("Failed RCON login by IP %s, player %s, id %d.",ip,GetName(i),i);
+	}
+	}
+	}
 	return 1;
 }
 
@@ -809,6 +840,7 @@ public OnPlayerUpdate(playerid)
 	// I guess it's not a good idea to add a debug option here as it will be spammed every 30ms or something - Famalam
 	// Correct @ above - Robin
 	
+	//This odometer code lags the server much, even in localhost mode.
 	if(IsPlayerInAnyVehicle(playerid)) {
         if(GetPlayerVehicleSeat(playerid) == 0) {
 			new vehid = GetPlayerVehicleID(playerid);
@@ -1037,7 +1069,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				}
 				case MAX_MODES:
 				{
-					SendClientMessage(playerid, COLOR_RED, "Goodbye");
+					SendClientMessage(playerid, COLOR_RED, "Goodbye!");
 					Kick(playerid);
 				}
 			}
@@ -1158,7 +1190,6 @@ stock CNR(playerid)
 {
 	SetPlayerVirtualWorld(playerid, CNR_VW);
 	SpawnPlayer(playerid);
-	SetCameraBehindPlayer(playerid);
     ShowMenuForPlayer(CnRClassSelect, playerid);
 	PlayerData[playerid][MODE] = MODE_CNR;
 	TogglePlayerControllable(playerid, 0);
@@ -1177,6 +1208,7 @@ stock DeathMatch(playerid)
     #if DEBUG == 1
     print("Executed DeathMatch()");
     #endif
+	GivePlayerWeapon(playerid, 29, 50000); // I think it's M4/M16. ~ Robin
 	return 1;
 }
 

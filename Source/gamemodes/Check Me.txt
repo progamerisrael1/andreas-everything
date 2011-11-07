@@ -1,3 +1,3 @@
-Robin is editing the game mode
+nobody is editing the game mode
 Note from dowster: will be working on mapping for the DM gamemode, thinking of doing something in grove street, or just a small map in the highway for the DM mode
 Note from Robin: Updated to 0.3D R7. You can download updates and the client from http://forum.sa-mp.com/showthread.php?t=282775.

@@ -132,9 +132,18 @@ enum pData
  	Float:Health,
  	Float:Armour
 }
+
+enum cnrData
+{
+	Class, // Doesn't Save
+	Money,
+	Bank,
+	Cuffed // Doesn't Save
+}
 //Arrays
 new
 	PlayerData[MAX_PLAYERS][pData],
+	CnRData[MAX_PLAYERS][cnrData],
 	IPADDRESSES[MAX_PLAYERS][18],
 	Float:old_veh_pos[MAX_VEHICLES + 1][3],
 	Float:vehicle_odometers[MAX_VEHICLES + 1];
@@ -157,7 +166,7 @@ main()
 {
 	print("\n----------------------------------");
 	print(" Andreas Everything ");
-	print(" Script Lines: 1292 ");//Update it every time. ~Robin
+	print(" Script Lines: 1374 ");//Update it every time. ~Robin
 	print(" Coded by: SA-MP Community ");
 	print("----------------------------------\n");
 }
@@ -183,6 +192,9 @@ public OnGameModeInit()
 	BUD::VerifyColumn("virtualwolrd", BUD::TYPE_NUMBER);
 	BUD::VerifyColumn("health", BUD::TYPE_FLOAT);
 	BUD::VerifyColumn("armour", BUD::TYPE_FLOAT);
+	
+	BUD::VerifyColumn("CNRmoney", BUD::TYPE_NUMBER);
+	BUD::VerifyColumn("CNRbank", BUD::TYPE_NUMBER);
 	// Objects
 	LobbyObjects();
 	AdminAreaObjects();
@@ -402,21 +414,6 @@ public OnPlayerText(playerid, text[])
 
 //============================================================================//
 // ZCMD Commands
-CMD:setskin(playerid, params[]) // By Robin
-{
-	if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!"); // It'd be more understandable if we use the same error string every time.
-	new player,skin;
-	if(sscanf(params,"un",player,skin)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /setskin (playerid) (skinid)");
-	if(player == INVALID_PLAYER_ID || !IsPlayerConnected(player)) return SendClientMessage(playerid, COLOR_GRAD1, "Player not online.");
-	if(skin <= 0 || skin >= 299) return SendClientMessage(playerid, COLOR_GRAD1, "Invalid skinid! Skins: 0-299.");
-	new string[256];
-	format(string, sizeof(string), "Administrator %s has set your skin to %d.",GetName(playerid),skin);
-	SendClientMessage(player,COLOR_WHITE,string);
-	format(string, sizeof(string), "You've successfully set %s's skin to %d.",GetName(player),skin);
-	SendClientMessage(playerid, COLOR_WHITE, string);
-	return 1;
-}
-
 CMD:help(playerid, params[])
 {
 	ShowPlayerDialog(playerid, DIALOG_HELP, DIALOG_STYLE_LIST, "Andreas Everything - Help List",
@@ -434,25 +431,76 @@ new LobbyCommands[][2][40] = {
 	{"/modeselect", "Shows the dialog to switch modes"}
 };
 // CnR Mini Mode Commands
-CMD:cuff(playerid, params[])
+CMD:cuff(playerid, params[]) // Steven82 - untested
 {
+	if(CnRData[playerid][Class] == 1)
+	{
+		new targetid, string[128], Float:Pos[3];
+		GetPlayerPos(targetid, Pos[0], Pos[1], Pos[2]);
+		if(sscanf(params, "d", targetid))
+		    return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /cuff [playerid]");
+		if(!IsPlayerInRangeOfPoint(playerid, 5.0, Pos[0], Pos[1], Pos[2]))
+		    return SendClientMessage(playerid, COLOR_LIGHTRED, "[CnR-Error]: You are not close enough to that player.");
+		if(CnRData[targetid][Cuffed] == 1)
+		    return SendClientMessage(playerid, COLOR_LIGHTRED, "[CnR-Error]: That player is already handcuffed.");
+		//
+		CnRData[targetid][Cuffed] = 1;
+		TogglePlayerControllable(targetid, 0);
+		format(string, sizeof(string), "[CnR-Info]: %s(%d) has handcuffed you.", GetPlayerNameEx(playerid), playerid);
+		SendClientMessage(targetid, COLOR_YELLOW, string);
+		format(string, sizeof(string), "[CnR-Info]: You have handcuffed %s(%d).", GetPlayerNameEx(targetid), targetid);
+		SendClientMessage(playerid, COLOR_YELLOW, string);
+	}
+	else
+		SendClientMessage(playerid, COLOR_LIGHTRED, "[CnR-Error]: Your are not a cop, you may not use this command.");
 	return 1;
 }
 
-CMD:uncuff(playerid, params[])
+CMD:uncuff(playerid, params[]) // Steven82 - untested
 {
+    if(CnRData[playerid][Class] == 1)
+	{
+	    new targetid, string[128], Float:Pos[3];
+		GetPlayerPos(targetid, Pos[0], Pos[1], Pos[2]);
+		if(sscanf(params, "d", targetid))
+		    return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /uncuff [playerid]");
+		if(!IsPlayerInRangeOfPoint(playerid, 5.0, Pos[0], Pos[1], Pos[2]))
+		    return SendClientMessage(playerid, COLOR_LIGHTRED, "[CnR-Error]: You are not close enough to that player.");
+        if(CnRData[targetid][Cuffed] == 0)
+		    return SendClientMessage(playerid, COLOR_LIGHTRED, "[CnR-Error]: That player is not handcuffed.");
+		//
+        CnRData[targetid][Cuffed] = 1;
+		TogglePlayerControllable(targetid, 1);
+		format(string, sizeof(string), "[CnR-Info]: %s(%d) has uncuffed you.", GetPlayerNameEx(playerid), playerid);
+		SendClientMessage(targetid, COLOR_YELLOW, string);
+		format(string, sizeof(string), "[CnR-Info]: You have uncuffed %s(%d).", GetPlayerNameEx(targetid), targetid);
+		SendClientMessage(playerid, COLOR_YELLOW, string);
+	}
+	else
+		SendClientMessage(playerid, COLOR_LIGHTRED, "[CnR-Error]: Your are not a cop, you may not use this command.");
 	return 1;
 }
 
 CMD:ticket(playerid, params[])
 {
+    if(CnRData[playerid][Class] == 1)
+	{
+	}
+	else
+		SendClientMessage(playerid, COLOR_LIGHTRED, "[CnR-Error]: Your are not a cop, you may not use this command.");
 	return 1;
 }
 
 CMD:arrest(playerid, params[])
 {
+    if(CnRData[playerid][Class] == 1)
+	{
+	}
+	else
+		SendClientMessage(playerid, COLOR_LIGHTRED, "[CnR-Error]: Your are not a cop, you may not use this command.");
 	return 1;
 }
+
 new CnRCommands[][2][40] = {
 	{"/help", "Displays the help dialog"},
 	{"/cuff", "Cop only command to cuff a player"},
@@ -501,7 +549,22 @@ CMD:bug(playerid, params[]) // Will eventually be able to view bugs through an i
 }
 #endif
 // Admin Commands
-CMD:mute(playerid, params[])
+CMD:setskin(playerid, params[]) // By Robin
+{
+	if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!"); // It'd be more understandable if we use the same error string every time.
+	new player,skin;
+	if(sscanf(params,"un",player,skin)) return SendClientMessage(playerid, COLOR_GRAD1, "SYNTAX: /setskin (playerid) (skinid)");
+	if(player == INVALID_PLAYER_ID || !IsPlayerConnected(player)) return SendClientMessage(playerid, COLOR_GRAD1, "Player not online.");
+	if(skin <= 0 || skin >= 299) return SendClientMessage(playerid, COLOR_GRAD1, "Invalid skinid! Skins: 0-299.");
+	new string[256];
+	format(string, sizeof(string), "Administrator %s has set your skin to %d.",GetName(playerid),skin);
+	SendClientMessage(player,COLOR_WHITE,string);
+	format(string, sizeof(string), "You've successfully set %s's skin to %d.",GetName(player),skin);
+	SendClientMessage(playerid, COLOR_WHITE, string);
+	return 1;
+}
+
+CMD:mute(playerid, params[]) // Steven82
 {
 	new targetid, string[128];
     if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
@@ -519,25 +582,8 @@ CMD:mute(playerid, params[])
 	}
 	return 1;
 }
-CMD:veh(playerid, params[]) //In-Progress - dowster
-{
-	if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
-	new vehid, string[9];
-	if(!sscanf(params, "si", string, vehid) & (strcmp(string, "create", false, 6) == 0)) {
-		new pint = GetPlayerInterior(playerid), pvw = GetPlayerVirtualWorld(playerid);
-		new Float:ppx, Float:ppy, Float:ppz;
-		GetPlayerPos( playerid, ppx, ppy, ppz);
-		new veh = CreateVehicle( vehid, ppx+2, ppy+2, ppz+2, 0, -1, -1, VEHICLE_RESPAWN_DELAY);
-		GetVehiclePos(veh, old_veh_pos[veh][0], old_veh_pos[veh][1], old_veh_pos[veh][2]);
-		SetVehicleVirtualWorld(veh, pvw), LinkVehicleToInterior(veh, pint); }
-	else if((strcmp(params, "create", false, 6) == 0)) SendClientMessage(playerid, COLOR_GRAD1, "Syntax: /veh [create] [Vehicle ID]");
-	else if(strcmp(params, "menu", false, 4) == 0) {
-		ShowPlayerDialog(playerid, ADMIN_VEHICLE_MENU, DIALOG_STYLE_LIST, "**Admin Vehicle Menu**", "Add Vehicle\r\nDelete Vehicle\r\nChange Vehicle Colors\r\nSave All Vehicles\r\nReload All Vehicles\r\nSave Vehicles In Current Mode\r\nReload Vehicles In Current Mode",  "Accept", "Cancel");
-		SendClientMessage(playerid, COLOR_RED, "Menu not implemented yet"); }
-	else return SendClientMessage( playerid, COLOR_GRAD1, "Syntax:  /veh [create/menu]");
-	return 1;
-}
-CMD:unmute(playerid, params[])
+
+CMD:unmute(playerid, params[]) // Steven82
 {
     new targetid, string[128];
     if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
@@ -556,7 +602,26 @@ CMD:unmute(playerid, params[])
 	return 1;
 }
 
-CMD:kick(playerid, params[])
+CMD:veh(playerid, params[]) //In-Progress - dowster
+{
+	if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
+	new vehid, string[9];
+	if(!sscanf(params, "si", string, vehid) & (strcmp(string, "create", false, 6) == 0)) {
+		new pint = GetPlayerInterior(playerid), pvw = GetPlayerVirtualWorld(playerid);
+		new Float:ppx, Float:ppy, Float:ppz;
+		GetPlayerPos( playerid, ppx, ppy, ppz);
+		new veh = CreateVehicle( vehid, ppx+2, ppy+2, ppz+2, 0, -1, -1, VEHICLE_RESPAWN_DELAY);
+		GetVehiclePos(veh, old_veh_pos[veh][0], old_veh_pos[veh][1], old_veh_pos[veh][2]);
+		SetVehicleVirtualWorld(veh, pvw), LinkVehicleToInterior(veh, pint); }
+	else if((strcmp(params, "create", false, 6) == 0)) SendClientMessage(playerid, COLOR_GRAD1, "Syntax: /veh [create] [Vehicle ID]");
+	else if(strcmp(params, "menu", false, 4) == 0) {
+		ShowPlayerDialog(playerid, ADMIN_VEHICLE_MENU, DIALOG_STYLE_LIST, "**Admin Vehicle Menu**", "Add Vehicle\r\nDelete Vehicle\r\nChange Vehicle Colors\r\nSave All Vehicles\r\nReload All Vehicles\r\nSave Vehicles In Current Mode\r\nReload Vehicles In Current Mode",  "Accept", "Cancel");
+		SendClientMessage(playerid, COLOR_RED, "Menu not implemented yet"); }
+	else return SendClientMessage( playerid, COLOR_GRAD1, "Syntax:  /veh [create/menu]");
+	return 1;
+}
+
+CMD:kick(playerid, params[]) // Steven82
 {
  	new targetid, reason[128], string[128];
     if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
@@ -579,7 +644,7 @@ CMD:kick(playerid, params[])
 	return 1;
 }
 
-CMD:ban(playerid, params[])
+CMD:ban(playerid, params[]) // Steven82
 {
     new targetid, reason[128], string[128];
     if(PlayerData[playerid][Adminlevel] <= 1) return SendClientMessage( playerid, COLOR_RED, "This is an admin only command!");
@@ -755,7 +820,15 @@ public OnPlayerSelectedMenuRow(playerid, row)
 			{
 				//SendClientMessage(playerid, COLOR_YELLOW, "You have pressed select."); Why?
 				TogglePlayerControllable( playerid, 1);
-				if(PlayerData[playerid][CLASS] == CLASS_COP) SetSpawnInfo( playerid, 0, CnRSkins[PlayerData[playerid][CLASS]][PlayerData[playerid][SKIN]],2339.9080,2456.2988,14.9688,179.5063,0,0,0,0,0,0);
+				if(PlayerData[playerid][CLASS] == CLASS_COP)
+				{
+					SetSpawnInfo( playerid, 0, CnRSkins[PlayerData[playerid][CLASS]][PlayerData[playerid][SKIN]],2339.9080,2456.2988,14.9688,179.5063,0,0,0,0,0,0);
+					CnRData[playerid][Class] = 1;
+				}
+				else if(PlayerData[playerid][CLASS] == CLASS_ROBBER)
+    			{
+    			    CnRData[playerid][Class] = 2;
+				}
 				SpawnPlayer(playerid);
 			}
 		}
@@ -1137,6 +1210,9 @@ public SaveAccount(playerid)
 	BUD::SetFloatEntry(userid, "health", health);
 	BUD::SetFloatEntry(userid, "armour", armour);
 
+	BUD::SetIntEntry(userid, "CNRmoney", CnRData[playerid][Money]);
+	BUD::SetIntEntry(userid, "CNRbank", CnRData[playerid][Bank]);
+
 	#if DEBUG == 1
     print("Executed SaveAccount");
     #endif
@@ -1153,6 +1229,10 @@ stock LoginPlayer(playerid)
 	PlayerData[playerid][Score] = BUD::GetIntEntry(userid, "score");
 	PlayerData[playerid][Health] = BUD::GetFloatEntry(userid, "health");
 	PlayerData[playerid][Armour] = BUD::GetFloatEntry(userid, "armour");
+	
+	CnRData[playerid][Money] = BUD::GetIntEntry(userid, "CNRmoney");
+	CnRData[playerid][Bank] = BUD::GetIntEntry(userid, "CNRbank");
+	
 	LoggedIn[playerid] = 1;
 	return 1;
 }
@@ -1192,6 +1272,7 @@ stock CNR(playerid)
 	SpawnPlayer(playerid);
     ShowMenuForPlayer(CnRClassSelect, playerid);
 	PlayerData[playerid][MODE] = MODE_CNR;
+	CnRData[playerid][Class] = 0;
 	TogglePlayerControllable(playerid, 0);
 
 	#if DEBUG == 1

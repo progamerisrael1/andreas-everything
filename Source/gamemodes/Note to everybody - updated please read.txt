@@ -1,0 +1,14 @@
+The 'odometer' code is really lagging the gameplay.
+I have around 700 miliseconds lag before a command reaches the server.
+You can better improve this code or use a timer.
+
+~ Robin.
+
+
+
+Hey guys,
+If you all are avaible this saturday for some team coding we could most likely
+complete the whole CnR mini mode. I am hoping to be able to give the CnR
+a facelift. Get some code written in, interiors, banks, police stations, etc. If
+either of you guys can't make it, we can reschedule to a later date.
+~ Steven

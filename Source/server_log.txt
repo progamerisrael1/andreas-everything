@@ -8451,3 +8451,95 @@ v0.3d RC7, (C)2005-2011 SA-MP Team
 
   > MySQL plugin unloaded.
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3d RC7, (C)2005-2011 SA-MP Team
+
+[19:51:49] filterscripts = ""  (string)
+[19:51:49] weburl = "www.sa-mp.com"  (string)
+[19:51:49] 
+[19:51:49] Server Plugins
+[19:51:49] --------------
+[19:51:49]  Loading plugin: sscanf
+[19:51:49] 
+
+[19:51:49]  ===============================
+
+[19:51:49]       sscanf plugin loaded.     
+
+[19:51:49]    (c) 2009 Alex "Y_Less" Cole
+
+[19:51:49]  ===============================
+
+[19:51:49]   Loaded.
+[19:51:49]  Loading plugin: streamer
+[19:51:49] 
+
+*** Streamer Plugin v2.5.2 by Incognito loaded ***
+
+[19:51:49]   Loaded.
+[19:51:49]  Loading plugin: mysql
+[19:51:49] 
+
+  > MySQL plugin R6-2 successfully loaded.
+
+[19:51:49]   Loaded.
+[19:51:49]  Loaded 3 plugins.
+
+[19:51:50] 
+[19:51:50] Filterscripts
+[19:51:50] ---------------
+[19:51:50]   Loaded 0 filterscripts.
+
+[19:51:50]  
+[19:51:50]  ======================================= 
+[19:51:50]  |                                     | 
+[19:51:50]  |        YSI version 1.04.0000        | 
+[19:51:50]  |        By Alex "Y_Less" Cole        | 
+[19:51:50]  |                                     | 
+[19:51:50]  |  Checking the latest YSI version..  | 
+[19:51:50]  |                                     | 
+[19:51:50]  ======================================= 
+[19:51:50]  
+[19:51:50] BUD v1.0.3 BETA loaded.
+[19:51:50] BUD - Notice: The column "CNRmoney" doesn't exist; attempting to create it.
+[19:51:50] BUD - Notice: The column "CNRbank" doesn't exist; attempting to create it.
+[19:51:50] 
+----------------------------------
+[19:51:50]  Andreas Everything 
+[19:51:50]  Script Lines: 1312 
+[19:51:50]  Coded by: SA-MP Community 
+[19:51:50] ----------------------------------
+
+[19:51:50] Number of vehicle models: 0
+[19:51:50]  
+[19:51:50]  ====================================== 
+[19:51:50]  |                                    | 
+[19:51:50]  |  Congratulations! You are running  | 
+[19:51:50]  |     the latest version of YSI!     | 
+[19:51:50]  |                                    | 
+[19:51:50]  ====================================== 
+[19:51:51]  
+[19:51:51] BUD - Notice: There is a new update available.
+[19:52:19] --- Server Shutting Down.
+[19:52:19] 
+
+[19:52:19]  ===============================
+
+[19:52:19]      sscanf plugin unloaded.    
+
+[19:52:19]  ===============================
+
+[19:52:19] 
+
+*** Streamer Plugin v2.5.2 by Incognito unloaded ***
+
+[19:52:19] 
+
+  > MySQL plugin unloaded.
+
